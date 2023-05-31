@@ -58,6 +58,7 @@ public partial class GarageKeptProgressBar : ProgressBar
         SendMessage(Handle, 0x400 + 16, 1, IntPtr.Zero); // Set the PBM_SETMARQUEE message
     }
 
-    [LibraryImport("user32.dll")]
-    private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+    [DllImport("user32.dll")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "SYSLIB1054:Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time", Justification = "<Pending>")]
+    private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 }
