@@ -134,13 +134,13 @@ public partial class AppointmentItemControl : UserControl
     }
 
     // Linearly interpolate between two colors based on a percentage
-    private static Color InterpolateColors(Color color1, Color color2, float percent)
-    {
-        var r = (int)(color1.R + (color2.R - color1.R) * percent);
-        var g = (int)(color1.G + (color2.G - color1.G) * percent);
-        var b = (int)(color1.B + (color2.B - color1.B) * percent);
-        return Color.FromArgb(r, g, b);
-    }
+    //private static Color InterpolateColors(Color color1, Color color2, float percent)
+    //{
+    //    var r = (int)(color1.R + (color2.R - color1.R) * percent);
+    //    var g = (int)(color1.G + (color2.G - color1.G) * percent);
+    //    var b = (int)(color1.B + (color2.B - color1.B) * percent);
+    //    return Color.FromArgb(r, g, b);
+    //}
 
     private void AppointmentItemControl_Load(object sender, EventArgs e)
     {
