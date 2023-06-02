@@ -1,4 +1,4 @@
-﻿namespace GarageKept.OutlookAlarm.Forms.Common;
+﻿namespace GarageKept.OutlookAlarm.Forms.Audio;
 
 /// <summary>
 ///     Represents the different types of sounds used in the application.

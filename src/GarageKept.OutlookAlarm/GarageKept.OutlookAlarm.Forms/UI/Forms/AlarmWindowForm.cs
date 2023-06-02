@@ -1,4 +1,5 @@
-﻿using GarageKept.OutlookAlarm.Forms.Common;
+﻿using GarageKept.OutlookAlarm.Forms.Audio;
+using GarageKept.OutlookAlarm.Forms.Common;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.UI.Forms;
@@ -11,7 +12,8 @@ public partial class AlarmWindowForm : BaseForm
 
     public AlarmWindowForm(Alarm alarm, Action<AlarmAction> alarmFormClosed) : base(false)
     {
-        _mediaPlayer.PlaySound(SoundType.Warning0);
+        if(alarm.PlaySound)
+            _mediaPlayer.PlaySound(SoundType.Warning0);
 
         MyCallBack = alarmFormClosed;
 

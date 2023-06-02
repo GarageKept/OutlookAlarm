@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace GarageKept.OutlookAlarm.Forms.Common;
+namespace GarageKept.OutlookAlarm.Forms.Audio;
 
 internal static class AudioEngine
 {
@@ -21,7 +21,7 @@ internal static class AudioEngine
 
             var iidAudioEndpointVolume = Iid.IAudioEndpointVolume;
 
-            hr = device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), IntPtr.Zero,
+            hr = device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero,
                 out var endpointVolumeObj);
             if (hr != 0) return null;
 
@@ -57,7 +57,7 @@ internal static class AudioEngine
         var iidAudioEndpointVolume = Iid.IAudioEndpointVolume;
 
 
-        device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), IntPtr.Zero,
+        device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero,
             out var endpointVolumeObj);
 
         var endpointVolume = (IAudioEndpointVolume)endpointVolumeObj;
@@ -69,9 +69,9 @@ internal static class AudioEngine
 
     public static void ToggleSystemVolumeMute()
     {
-        var hWnd = IntPtr.Zero; // Use the HWND_BROADCAST to send the message to all top-level windows
-        var wParam = IntPtr.Zero;
-        IntPtr lParam = NativeMethods.APPCOMMAND_VOLUME_MUTE;
+        var hWnd = nint.Zero; // Use the HWND_BROADCAST to send the message to all top-level windows
+        var wParam = nint.Zero;
+        nint lParam = NativeMethods.APPCOMMAND_VOLUME_MUTE;
         NativeMethods.SendMessageW(hWnd, NativeMethods.WM_APPCOMMAND, wParam, lParam);
     }
 
@@ -89,8 +89,8 @@ internal static class AudioEngine
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IAudioEndpointVolume
     {
-        int RegisterControlChangeNotify(IntPtr pNotify);
-        int UnregisterControlChangeNotify(IntPtr pNotify);
+        int RegisterControlChangeNotify(nint pNotify);
+        int UnregisterControlChangeNotify(nint pNotify);
         int GetChannelCount(out int pnChannelCount);
         int SetMasterVolumeLevel(float fLevelDB, ref Guid pguidEventContext);
         int SetMasterVolumeLevelScalar(float fLevel, ref Guid pguidEventContext);
@@ -168,7 +168,7 @@ internal static class AudioEngine
     internal interface IMMDevice
     {
         [PreserveSig]
-        int Activate(ref Guid iid, int dwClsCtx, IntPtr pActivationParams,
+        int Activate(ref Guid iid, int dwClsCtx, nint pActivationParams,
             [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
     }
 
@@ -178,6 +178,6 @@ internal static class AudioEngine
         public const int APPCOMMAND_VOLUME_MUTE = 0x80000;
 
         [DllImport("user32.dll")]
-        public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+        public static extern nint SendMessageW(nint hWnd, int Msg, nint wParam, nint lParam);
     }
 }

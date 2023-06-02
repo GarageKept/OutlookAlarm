@@ -80,7 +80,6 @@
             Margin = new Padding(0);
             Name = "AppointmentItemControl";
             Size = new Size(256, 82);
-            Load += AppointmentItemControl_Load;
             ResumeLayout(false);
         }
 

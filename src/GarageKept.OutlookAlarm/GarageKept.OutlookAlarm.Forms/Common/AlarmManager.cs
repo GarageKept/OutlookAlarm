@@ -16,6 +16,6 @@ public static class AlarmManager
 
     public static void AddAlarm(CalendarEvents appointments)
     {
-        foreach (var alarm in appointments.Select(@event => new Alarm(@event))) AddAlarm(alarm);
+        foreach (var alarm in appointments.Values.Select(@event => new Alarm(@event))) AddAlarm(alarm);
     }
 }

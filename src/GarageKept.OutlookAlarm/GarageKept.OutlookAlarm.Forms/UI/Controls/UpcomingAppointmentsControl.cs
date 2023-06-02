@@ -29,23 +29,40 @@ public partial class UpcomingAppointmentsControl : UserControl
 
     private void RefreshTimer_Tick(object? sender, EventArgs e)
     {
-        var appointment = AppointmentManager.GetNextAppointment();
+        var currentAppointment = AppointmentManager.GetCurrentAppointment();
+        var nextAppointment = AppointmentManager.GetNextAppointment();
+        var backColor = Program.ApplicationSettings.GreenColor;
+        var barColor = Program.ApplicationSettings.GreenColor;
+        var value = 3600;
 
-        var timeLeft = appointment?.Start.Subtract(DateTime.Now) ?? new TimeSpan(1, 1, 1);
+        if (currentAppointment != null) barColor = Program.ApplicationSettings.RedColor;
 
-        // Check if the appointment is within an hour of starting
-        if (timeLeft.TotalSeconds <= 3600)
+        if(currentAppointment?.End >= nextAppointment?.Start) backColor = Program.ApplicationSettings.YellowColor;
+
+        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ?? new TimeSpan(1, 1, 1);
+        
+        
+        if(timeUntilNextAppointment <  TimeSpan.FromMinutes(60)) backColor = Program.ApplicationSettings.YellowColor;
+
+        //if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.ApplicationSettings.AlarmWarningTime))
+        //{
+        //    barColor = Program.ApplicationSettings.YellowColor;
+        //    backColor = Program.ApplicationSettings.RedColor;
+        //}
+
+        if(timeUntilNextAppointment <  TimeSpan.FromMinutes(5)) backColor = Program.ApplicationSettings.RedColor;
+
+        FooterProgressBar.BackgroundColor = backColor;
+        FooterProgressBar.BarColor = barColor;
+
+        // now we figure out what the value should be
+        if (timeUntilNextAppointment.TotalSeconds <= 3600)
         {
             // Update the progress bar value based on the time left
-            FooterProgressBar.Value = 3600 - (int)timeLeft.TotalSeconds;
-
-            if (timeLeft.TotalMinutes <= 15)
-                FooterProgressBar.BackgroundColor = Program.ApplicationSettings.YellowColor;
-            else if (timeLeft.TotalMinutes <= 5)
-                FooterProgressBar.BackgroundColor = Program.ApplicationSettings.RedColor;
-            else
-                FooterProgressBar.BackgroundColor = Program.ApplicationSettings.GreenColor;
+            value = 3600 - (int)timeUntilNextAppointment.TotalSeconds;
         }
+
+        FooterProgressBar.Value = value;
     }
 
     private void InitializeFooterProgressBar()
@@ -79,7 +96,7 @@ public partial class UpcomingAppointmentsControl : UserControl
         // Reset the row count to 0
         tableLayoutPanel.RowCount = 0;
 
-        foreach (var appointment in appointments) AddRow(new AppointmentItemControl(appointment));
+        foreach (var appointment in appointments.Values) AddRow(new AppointmentItemControl(appointment));
 
         AddFooterRow();
 

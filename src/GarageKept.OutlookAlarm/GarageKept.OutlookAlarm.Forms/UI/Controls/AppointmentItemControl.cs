@@ -1,11 +1,11 @@
-﻿using Microsoft.Office.Interop.Outlook;
+﻿using GarageKept.OutlookAlarm.Forms.Outlook;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.UI.Controls;
 
 public partial class AppointmentItemControl : UserControl
 {
-    public AppointmentItemControl(AppointmentItem appointment)
+    public AppointmentItemControl(Appointment appointment)
     {
         RefreshTimer.Tick += Refresh_Tick;
         RefreshTimer.Start();
@@ -19,7 +19,7 @@ public partial class AppointmentItemControl : UserControl
 
     public Timer RefreshTimer { get; set; } = new() { Interval = 1000 };
 
-    private AppointmentItem Appointment { get; }
+    private Appointment Appointment { get; }
 
     private void Refresh_Tick(object? sender, EventArgs e)
     {
@@ -41,15 +41,22 @@ public partial class AppointmentItemControl : UserControl
 
     private void SetTimeLabels()
     {
-        if (Appointment.Start < DateTime.Now && Appointment.End > DateTime.Now)
+        try
         {
-            SetTimeLeftInAppointment();
-            SetTimeRightLabel(Appointment.End.ToString("hh:mm tt"));
+            if (Appointment.Start < DateTime.Now && Appointment.End > DateTime.Now)
+            {
+                SetTimeLeftInAppointment();
+                SetTimeRightLabel(Appointment.End.ToString("hh:mm tt"));
+            }
+            else if (Appointment.Start > DateTime.Now)
+            {
+                SetTimeUntilMeetingLabel();
+                SetTimeRightLabel(Appointment.Start.ToString("h:mm tt"));
+            }
         }
-        else if (Appointment.Start > DateTime.Now)
+        catch
         {
-            SetTimeUntilMeetingLabel();
-            SetTimeRightLabel(Appointment.Start.ToString("h:mm tt"));
+            // Outlook probably restarted.
         }
     }
 
@@ -65,9 +72,9 @@ public partial class AppointmentItemControl : UserControl
     {
         var timeUntilMeeting = Appointment.Start - DateTime.Now;
 
-        TimeLeft.Text = (timeUntilMeeting.Hours > 0 ? timeUntilMeeting.Hours + ":" : "")
-                        + timeUntilMeeting.Minutes + ":"
-                        + timeUntilMeeting.Seconds;
+        var formatString = timeUntilMeeting.Hours > 0 ? "{0:hh}h {0:mm}m {0:ss}s" : "{0:mm}m {0:ss}s";
+
+        TimeLeft.Text = string.Format(formatString, timeUntilMeeting);
     }
 
     private void SetTimeRightLabel(string text)
@@ -121,7 +128,7 @@ public partial class AppointmentItemControl : UserControl
         var timeLeft = Appointment.End - DateTime.Now;
         if (
             timeLeft.TotalMinutes < 15)
-            BackColor = Program.ApplicationSettings?.YellowColor ?? Color.Yellow;
+            BackColor = Program.ApplicationSettings.YellowColor;
     }
 
     private void SetBackgroundColorForFutureAppointment()
@@ -130,19 +137,6 @@ public partial class AppointmentItemControl : UserControl
 
         var timeUntilMeeting = Appointment.Start - DateTime.Now;
 
-        if (timeUntilMeeting.TotalMinutes < 15) BackColor = Program.ApplicationSettings?.YellowColor ?? Color.Yellow;
-    }
-
-    // Linearly interpolate between two colors based on a percentage
-    //private static Color InterpolateColors(Color color1, Color color2, float percent)
-    //{
-    //    var r = (int)(color1.R + (color2.R - color1.R) * percent);
-    //    var g = (int)(color1.G + (color2.G - color1.G) * percent);
-    //    var b = (int)(color1.B + (color2.B - color1.B) * percent);
-    //    return Color.FromArgb(r, g, b);
-    //}
-
-    private void AppointmentItemControl_Load(object sender, EventArgs e)
-    {
+        if (timeUntilMeeting.TotalMinutes < 15) BackColor = Program.ApplicationSettings.YellowColor;
     }
 }

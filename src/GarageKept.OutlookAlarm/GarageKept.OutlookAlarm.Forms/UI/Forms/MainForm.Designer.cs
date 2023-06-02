@@ -65,6 +65,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "MainForm";
+            ShowInTaskbar = false;
             StartPosition = FormStartPosition.Manual;
             Text = "Main Form";
             FormClosing += MainForm_FormClosing;

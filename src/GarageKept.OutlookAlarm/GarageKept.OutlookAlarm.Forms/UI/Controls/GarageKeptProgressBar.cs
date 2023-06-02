@@ -28,7 +28,6 @@ public partial class GarageKeptProgressBar : ProgressBar
         }
     }
 
-
     protected override void OnPaint(PaintEventArgs e)
     {
         var rect = ClientRectangle;

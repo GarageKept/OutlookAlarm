@@ -1,7 +1,7 @@
 ﻿using Microsoft.Office.Interop.Outlook;
 using Application = Microsoft.Office.Interop.Outlook.Application;
 
-namespace GarageKept.OutlookAlarm.Forms.Common;
+namespace GarageKept.OutlookAlarm.Forms.Outlook;
 
 /// <summary>
 ///     Provides functionality to interact with the Outlook Calendar.
@@ -13,7 +13,7 @@ public static class OutlookCalendarInterop
     /// </summary>
     /// <param name="hours">The number of hours into the future to retrieve events for.</param>
     /// <returns>A list of Outlook.AppointmentItem objects representing the events within the specified time range.</returns>
-    public static List<AppointmentItem> GetEventsForNextXHours(int hours)
+    private static List<AppointmentItem> GetEventsForNextXHours(int hours)
     {
         var outlookApp = new Application();
         var outlookNamespace = outlookApp.GetNamespace("MAPI");
@@ -42,8 +42,22 @@ public static class OutlookCalendarInterop
     ///     A task that represents the asynchronous operation. The task result contains a list of Outlook.AppointmentItem
     ///     objects representing the events within the specified time range.
     /// </returns>
-    public static async Task<List<AppointmentItem>?> GetEventsForNextXHoursAsync(int hours)
+    private static async Task<List<AppointmentItem>?> GetEventsForNextXHoursAsync(int hours)
     {
         return await Task.Run(() => GetEventsForNextXHours(hours));
+    }
+
+    public static List<Appointment> GetAppointmentsInTheNextHours(int hours)
+    {
+        var events = GetEventsForNextXHours(hours);
+
+        var appointments = new List<Appointment>();
+
+        foreach (var appointmentItem in events)
+        {
+            appointments.Add(new Appointment(appointmentItem));
+        }
+
+        return appointments;
     }
 }

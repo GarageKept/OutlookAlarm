@@ -105,8 +105,10 @@
             Controls.Add(SubjectLabel);
             Controls.Add(DismissButton);
             Controls.Add(SnoozeButton);
+            DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.None;
             Name = "AlarmWindowForm";
+            PinTop = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "AlarmWindowForm";
             FormClosing += AlarmWindowForm_FormClosing;

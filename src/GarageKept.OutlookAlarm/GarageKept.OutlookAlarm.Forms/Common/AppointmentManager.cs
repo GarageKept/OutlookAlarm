@@ -1,4 +1,5 @@
-﻿using Microsoft.Office.Interop.Outlook;
+﻿using GarageKept.OutlookAlarm.Forms.Outlook;
+using Microsoft.Office.Interop.Outlook;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.Common;
@@ -20,32 +21,43 @@ public static class AppointmentManager
 
     private static void RefreshTimerTick(object? sender, EventArgs? e)
     {
-        var all = new CalendarEvents(
-            OutlookCalendarInterop.GetEventsForNextXHours(Program.ApplicationSettings.FetchTime));
+        CleanupOldAppointments();
+
+        var all = new CalendarEvents(OutlookCalendarInterop.GetAppointmentsInTheNextHours(Program.ApplicationSettings.FetchTime));
 
         var now = DateTime.Now;
         var twoHoursFromNow = now.AddHours(2);
 
-        var filtered = all.Where(ev =>
+        var filtered = all.Values.Where(ev =>
                 (ev.Start <= now && ev.End >= now) || // Event is currently going on
                 (ev.Start > now && ev.Start <= twoHoursFromNow) // Event will start in 2 hours
         ).ToList();
 
         if (filtered.Count == 0)
         {
-            var nextAppointment = OutlookCalendarInterop.GetEventsForNextXHours(24).MinBy(ev => ev.Start)
+            var nextAppointment = OutlookCalendarInterop.GetAppointmentsInTheNextHours(24).MinBy(ev => ev.Start)
                                   ??
-                                  OutlookCalendarInterop.GetEventsForNextXHours(3600).MinBy(ev => ev.Start);
+                                  OutlookCalendarInterop.GetAppointmentsInTheNextHours(3600).MinBy(ev => ev.Start);
 
             if (nextAppointment != null) filtered.Add(nextAppointment);
         }
 
-
-        Appointments = new CalendarEvents(filtered);
-
+        Appointments.AddRange(filtered);
+        
         AlarmManager.AddAlarm(Appointments);
 
+
         OnRefresh(e);
+    }
+
+    private static void CleanupOldAppointments()
+    {
+        var keysToRemove = (from appointment in Appointments where appointment.Value.End <= DateTime.Now select appointment.Key).ToList();
+
+        foreach (var key in keysToRemove)
+        {
+            Appointments.Remove(key);
+        }
     }
 
     private static void OnRefresh(EventArgs? e)
@@ -66,11 +78,16 @@ public static class AppointmentManager
         RefreshTimerTick(null, null);
     }
 
-    public static AppointmentItem? GetNextAppointment()
+    public static Appointment? GetNextAppointment()
     {
         var now = DateTime.Now;
-        var nextAppointment = Appointments.FirstOrDefault(item => item.Start > now);
+        var nextAppointment = Appointments.Values.FirstOrDefault(item => item.Start > now);
 
         return nextAppointment;
+    }
+
+    public static Appointment? GetCurrentAppointment()
+    {
+        return Appointments.Values.FirstOrDefault(a => a.Start  < DateTime.Now && a.End > DateTime.Now);
     }
 }
