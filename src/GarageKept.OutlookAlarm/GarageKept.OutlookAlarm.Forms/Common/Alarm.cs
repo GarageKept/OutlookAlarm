@@ -1,4 +1,5 @@
-﻿using GarageKept.OutlookAlarm.Forms.Outlook;
+﻿using System.Runtime.InteropServices.JavaScript;
+using GarageKept.OutlookAlarm.Forms.Outlook;
 using GarageKept.OutlookAlarm.Forms.UI.Forms;
 using Timer = System.Windows.Forms.Timer;
 
@@ -8,18 +9,19 @@ public class Alarm
 {
     public Alarm(Appointment item)
     {
-        Time = item.Start;
-        AlarmTime = Time.AddMinutes(-Program.ApplicationSettings.AlarmWarningTime);
+        AppointmentTime = item.Start;
+        AlarmTime = AppointmentTime.AddMinutes(-Program.ApplicationSettings.AlarmWarningTime);
         Id = item.Id;
         Subject = item.Subject;
         State = AlarmState.Active;
         AlarmTimer.Tick += AlarmTimer_Tick;
-        PlaySound = item.Response is ResponseType.Accepted or ResponseType.Organized;
+        PlaySound = item.IsOwnEvent || item.Response is ResponseType.Accepted or ResponseType.Organized;
 
         UpdateTimer();
+        AlarmTimer.Start();
     }
 
-    public DateTime Time { get; set; }
+    public DateTime AppointmentTime { get; set; }
     public DateTime AlarmTime { get; set; }
     public AlarmState State { get; set; }
     public string Subject { get; set; }
@@ -31,11 +33,17 @@ public class Alarm
 
     private void AlarmTimer_Tick(object? sender, EventArgs? e)
     {
+        if (AlarmTime >= DateTime.Now)
+        {
+            UpdateTimer();
+            return;
+        }
+
         AlarmTimer.Stop();
 
         if (State == AlarmState.Dismissed) return;
 
-        if (AlarmForm == null) return;
+        if (AlarmForm != null) return;
 
         AlarmForm = new AlarmWindowForm(this, AlarmFormClosed);
         AlarmForm.Show();
@@ -62,10 +70,10 @@ public class Alarm
     {
         State = AlarmState.Snoozed;
 
-        AlarmTime = Time.AddMinutes(-minutes);
+        AlarmTime = AppointmentTime.AddMinutes(-minutes);
 
-        if (AlarmTime > Time)
-            AlarmTime = Time;
+        if (AlarmTime > AppointmentTime)
+            AlarmTime = AppointmentTime;
 
         UpdateTimer();
     }
@@ -75,8 +83,8 @@ public class Alarm
         //AlarmTimer.Stop();
         AlarmTimer.Enabled = false;
 
-        var ticksUntilAlarm = (int)(AlarmTime - DateTime.Now).TotalMilliseconds -
-                              Program.ApplicationSettings.AlarmWarningTime * 1000;
+        var ticksUntilAlarm = (int)((AlarmTime - DateTime.Now).TotalMilliseconds -
+                              Program.ApplicationSettings.AlarmWarningTime * 1000);
 
         if (ticksUntilAlarm <= 0)
             ticksUntilAlarm = 1;

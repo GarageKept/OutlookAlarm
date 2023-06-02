@@ -114,11 +114,7 @@ public partial class AppointmentItemControl : UserControl
 
     private void SetBackgroundColor()
     {
-        if (Appointment.Start < DateTime.Now && Appointment.End > DateTime.Now)
-            SetBackgroundColorForAppointmentInProgress();
-        else if (Appointment.Start > DateTime.Now) SetBackgroundColorForFutureAppointment();
-        else
-            BackColor = Color.Green;
+        BackColor = Appointment.CategoryColor;
     }
 
     private void SetBackgroundColorForAppointmentInProgress()

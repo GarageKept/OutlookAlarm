@@ -164,7 +164,7 @@ public partial class MainForm : BaseForm
     /// <param name="e">An EventArgs that contains the event data.</param>
     private void SlidingTimer_Tick(object? sender, EventArgs e)
     {
-        var targetY = _isExpanded ? 0 : -Height + 10;
+        var targetY = _isExpanded ? 0 : -Height + Program.ApplicationSettings.BarSize;
 
         if (Math.Abs(Location.Y - targetY) <= 1)
         {

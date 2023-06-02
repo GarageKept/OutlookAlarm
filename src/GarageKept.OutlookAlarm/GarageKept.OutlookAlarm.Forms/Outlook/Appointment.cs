@@ -12,7 +12,9 @@ public class Appointment
         End = item.End;
         Duration = item.Duration;
         Id = item.EntryID;
-        Response = item.ResponseStatus.ResponseTypeConverter() ;
+        Response = item.ResponseStatus.ResponseTypeConverter();
+        CategoryColor = item.Categories.GetCategoryColor();
+        IsOwnEvent = item.Organizer == item.RequiredAttendees;
     }
 
     public string Id { get; set; }
@@ -21,4 +23,6 @@ public class Appointment
     public DateTime End { get; set; }
     public double Duration { get; set; }
     public ResponseType Response { get; set; }
+    public Color CategoryColor { get; set; }
+    public bool IsOwnEvent { get; set; }
 }

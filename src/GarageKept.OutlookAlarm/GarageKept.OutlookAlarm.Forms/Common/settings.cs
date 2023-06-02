@@ -34,6 +34,7 @@ internal class Settings
     public int RefreshRate { get; set; } = 5000;
     public int FetchTime { get; set; } = 24;
     public int AlarmWarningTime { get; set; } = 15;
+    public int BarSize { get; internal set; } = 10;
 
     /// <summary>
     ///     Loads the settings from the settings file.

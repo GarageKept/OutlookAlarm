@@ -104,8 +104,10 @@ public partial class UpcomingAppointmentsControl : UserControl
         {
             parentForm.SubscribeToMouseEvents(parentForm);
             parentForm.AddMouseEvents(parentForm);
-        }
 
+            Top = Height - Program.ApplicationSettings.BarSize;
+        }
+        
 
         // OK now get everything rendered again
         ResumeLayout();

@@ -12,7 +12,7 @@ public partial class AlarmWindowForm : BaseForm
 
     public AlarmWindowForm(Alarm alarm, Action<AlarmAction> alarmFormClosed) : base(false)
     {
-        if(alarm.PlaySound)
+        if (alarm.PlaySound)
             _mediaPlayer.PlaySound(SoundType.Warning0);
 
         MyCallBack = alarmFormClosed;
@@ -22,8 +22,8 @@ public partial class AlarmWindowForm : BaseForm
         MyAlarm = alarm;
 
         SubjectLabel.Text = alarm.Subject;
-        TimeRight.Text = alarm.Time.ToString("hh:mm");
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - alarm.Time);
+        TimeRight.Text = alarm.AlarmTime.ToString("hh:mm");
+        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - alarm.AlarmTime);
 
         ActionSelector.SelectedIndex = 0;
 
@@ -35,11 +35,13 @@ public partial class AlarmWindowForm : BaseForm
     }
 
     public Action<AlarmAction> MyCallBack { get; set; }
+
     public Alarm MyAlarm { get; set; }
 
     private void FormRefresh(object? sender, EventArgs e)
     {
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - MyAlarm.Time);
+        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat,
+            DateTime.Now - MyAlarm.AppointmentTime);
     }
 
     private void AlarmWindowForm_FormClosing(object sender, FormClosingEventArgs e)
