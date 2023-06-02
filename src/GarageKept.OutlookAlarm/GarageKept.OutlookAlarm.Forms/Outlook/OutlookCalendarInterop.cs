@@ -53,10 +53,7 @@ public static class OutlookCalendarInterop
 
         var appointments = new List<Appointment>();
 
-        foreach (var appointmentItem in events)
-        {
-            appointments.Add(new Appointment(appointmentItem));
-        }
+        foreach (var appointmentItem in events) appointments.Add(new Appointment(appointmentItem));
 
         return appointments;
     }

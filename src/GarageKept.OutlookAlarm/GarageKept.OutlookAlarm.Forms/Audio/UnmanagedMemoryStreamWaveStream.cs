@@ -4,9 +4,11 @@ namespace GarageKept.OutlookAlarm.Forms.Audio;
 
 public class UnmanagedMemoryStreamWaveStream : WaveStream
 {
-    private readonly UnmanagedMemoryStream _stream;
     private readonly long _length;
-    
+    private readonly UnmanagedMemoryStream _stream;
+
+    private long _position;
+
     public UnmanagedMemoryStreamWaveStream(UnmanagedMemoryStream stream, long length)
     {
         _stream = stream;
@@ -25,14 +27,12 @@ public class UnmanagedMemoryStreamWaveStream : WaveStream
 
     public override long Length => _length;
 
-    private long _position;
-
     public sealed override long Position
     {
         get => _position;
         set
         {
-            if(value == 0)
+            if (value == 0)
                 _stream.Seek(0, SeekOrigin.Begin);
 
             _position = value;

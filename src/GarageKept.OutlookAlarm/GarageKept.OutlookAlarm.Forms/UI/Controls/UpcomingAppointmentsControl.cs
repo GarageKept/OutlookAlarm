@@ -37,12 +37,12 @@ public partial class UpcomingAppointmentsControl : UserControl
 
         if (currentAppointment != null) barColor = Program.ApplicationSettings.RedColor;
 
-        if(currentAppointment?.End >= nextAppointment?.Start) backColor = Program.ApplicationSettings.YellowColor;
+        if (currentAppointment?.End >= nextAppointment?.Start) backColor = Program.ApplicationSettings.YellowColor;
 
         var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ?? new TimeSpan(1, 1, 1);
-        
-        
-        if(timeUntilNextAppointment <  TimeSpan.FromMinutes(60)) backColor = Program.ApplicationSettings.YellowColor;
+
+
+        if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Program.ApplicationSettings.YellowColor;
 
         //if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.ApplicationSettings.AlarmWarningTime))
         //{
@@ -50,17 +50,15 @@ public partial class UpcomingAppointmentsControl : UserControl
         //    backColor = Program.ApplicationSettings.RedColor;
         //}
 
-        if(timeUntilNextAppointment <  TimeSpan.FromMinutes(5)) backColor = Program.ApplicationSettings.RedColor;
+        if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Program.ApplicationSettings.RedColor;
 
         FooterProgressBar.BackgroundColor = backColor;
         FooterProgressBar.BarColor = barColor;
 
         // now we figure out what the value should be
         if (timeUntilNextAppointment.TotalSeconds <= 3600)
-        {
             // Update the progress bar value based on the time left
             value = 3600 - (int)timeUntilNextAppointment.TotalSeconds;
-        }
 
         FooterProgressBar.Value = value;
     }
@@ -107,7 +105,7 @@ public partial class UpcomingAppointmentsControl : UserControl
 
             Top = Height - Program.ApplicationSettings.BarSize;
         }
-        
+
 
         // OK now get everything rendered again
         ResumeLayout();

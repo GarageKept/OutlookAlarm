@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using GarageKept.OutlookAlarm.Forms.Outlook;
+﻿using GarageKept.OutlookAlarm.Forms.Outlook;
 using GarageKept.OutlookAlarm.Forms.UI.Forms;
 using Timer = System.Windows.Forms.Timer;
 
@@ -84,7 +83,7 @@ public class Alarm
         AlarmTimer.Enabled = false;
 
         var ticksUntilAlarm = (int)((AlarmTime - DateTime.Now).TotalMilliseconds -
-                              Program.ApplicationSettings.AlarmWarningTime * 1000);
+                                    Program.ApplicationSettings.AlarmWarningTime * 1000);
 
         if (ticksUntilAlarm <= 0)
             ticksUntilAlarm = 1;
@@ -118,7 +117,7 @@ public class Alarm
                 Console.WriteLine(@"Unhandled AlarmAction found: " + action);
                 break;
         }
-        
+
         AlarmForm = null;
     }
 }

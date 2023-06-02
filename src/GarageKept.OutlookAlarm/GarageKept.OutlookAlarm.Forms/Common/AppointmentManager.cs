@@ -1,5 +1,4 @@
 ﻿using GarageKept.OutlookAlarm.Forms.Outlook;
-using Microsoft.Office.Interop.Outlook;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.Common;
@@ -23,7 +22,8 @@ public static class AppointmentManager
     {
         CleanupOldAppointments();
 
-        var all = new CalendarEvents(OutlookCalendarInterop.GetAppointmentsInTheNextHours(Program.ApplicationSettings.FetchTime));
+        var all = new CalendarEvents(
+            OutlookCalendarInterop.GetAppointmentsInTheNextHours(Program.ApplicationSettings.FetchTime));
 
         var now = DateTime.Now;
         var twoHoursFromNow = now.AddHours(2);
@@ -43,7 +43,7 @@ public static class AppointmentManager
         }
 
         Appointments.AddRange(filtered);
-        
+
         AlarmManager.AddAlarm(Appointments);
 
 
@@ -52,12 +52,11 @@ public static class AppointmentManager
 
     private static void CleanupOldAppointments()
     {
-        var keysToRemove = (from appointment in Appointments where appointment.Value.End <= DateTime.Now select appointment.Key).ToList();
+        var keysToRemove = (from appointment in Appointments
+            where appointment.Value.End <= DateTime.Now
+            select appointment.Key).ToList();
 
-        foreach (var key in keysToRemove)
-        {
-            Appointments.Remove(key);
-        }
+        foreach (var key in keysToRemove) Appointments.Remove(key);
     }
 
     private static void OnRefresh(EventArgs? e)
@@ -88,6 +87,6 @@ public static class AppointmentManager
 
     public static Appointment? GetCurrentAppointment()
     {
-        return Appointments.Values.FirstOrDefault(a => a.Start  < DateTime.Now && a.End > DateTime.Now);
+        return Appointments.Values.FirstOrDefault(a => a.Start < DateTime.Now && a.End > DateTime.Now);
     }
 }

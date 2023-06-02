@@ -5,7 +5,6 @@ namespace GarageKept.OutlookAlarm.Forms.Outlook;
 
 public static class GarageKeptExtensions
 {
-
     public static ResponseType ResponseTypeConverter(this OlResponseStatus status)
     {
         return status switch

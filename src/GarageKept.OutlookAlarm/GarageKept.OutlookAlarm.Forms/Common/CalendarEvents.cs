@@ -10,7 +10,9 @@ public class CalendarEvents : Dictionary<string, Appointment>
     /// <summary>
     ///     Initializes a new instance of the CalendarEvents class and loads events for the next 24 hours.
     /// </summary>
-    public CalendarEvents() {}
+    public CalendarEvents()
+    {
+    }
 
     public CalendarEvents(IEnumerable<Appointment>? items)
     {
@@ -41,7 +43,6 @@ public class CalendarEvents : Dictionary<string, Appointment>
     /// <returns>The next AppointmentItem in the collection.</returns>
     public Appointment? GetNextAppointment()
     {
-
-        return this.Values.MinBy(a => a.Start);
+        return Values.MinBy(a => a.Start);
     }
 }
