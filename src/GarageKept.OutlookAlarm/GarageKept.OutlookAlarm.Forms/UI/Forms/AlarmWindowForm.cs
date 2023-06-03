@@ -12,20 +12,37 @@ public partial class AlarmWindowForm : BaseForm
 
     public AlarmWindowForm(Alarm alarm, Action<AlarmAction> alarmFormClosed) : base(false)
     {
+        InitializeComponent();
+        
+        ActionSelector.Items.Clear();
+        ActionSelector.DataSource = Enum.GetValues(typeof(AlarmAction))
+            .Cast<AlarmAction>()
+            .Select(s => new
+            {
+                Value = s,
+                Text = AlarmActionHelpers.GetEnumDisplayValue(s)
+            }).Where(a=>a.Text !="Dismissed")
+            .ToList();
+        ActionSelector.DisplayMember = "Text";
+        ActionSelector.ValueMember = "Value";
+
         if (alarm.PlaySound)
-            _mediaPlayer.PlaySound(SoundType.Warning0);
+        {
+            if(string.IsNullOrEmpty(alarm.Appointment.CustomSound))
+                _mediaPlayer.PlaySound(SoundType.Warning0);
+            else
+                _mediaPlayer.PlaySound(alarm.Appointment.CustomSound);
+        }
 
         MyCallBack = alarmFormClosed;
-
-        InitializeComponent();
 
         MyAlarm = alarm;
 
         SubjectLabel.Text = alarm.Appointment.Subject;
         TimeRight.Text = alarm.AlarmTime.ToString("hh:mm");
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - alarm.AlarmTime);
+        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - MyAlarm.Appointment.Start);
 
-        ActionSelector.SelectedIndex = 0;
+        UpdateDropdown();
 
         _refreshTimer.Tick += FormRefresh;
         _refreshTimer.Start();
@@ -34,14 +51,30 @@ public partial class AlarmWindowForm : BaseForm
         SubscribeToMouseEvents(this);
     }
 
+    private void UpdateDropdown()
+    {
+        if (DateTime.Now - MyAlarm.AlarmTime > TimeSpan.FromMinutes(5))
+        {
+            ActionSelector.Items.Remove("5 minutes before start");
+        }
+
+        if (DateTime.Now - MyAlarm.AlarmTime > TimeSpan.FromMinutes(0))
+        {
+            ActionSelector.Items.Remove("0 hours before start");
+        }
+
+        if(ActionSelector.SelectedIndex <= 0) {ActionSelector.SelectedIndex = 0;}
+    }
+
     public Action<AlarmAction> MyCallBack { get; set; }
 
     public Alarm MyAlarm { get; set; }
 
     private void FormRefresh(object? sender, EventArgs e)
     {
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat,
-            DateTime.Now - MyAlarm.Appointment.Start);
+        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - MyAlarm.Appointment.Start);
+
+        UpdateDropdown();
     }
 
     private void AlarmWindowForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -51,19 +84,7 @@ public partial class AlarmWindowForm : BaseForm
 
     private void SnoozeButton_Click(object sender, EventArgs e)
     {
-        // 5 minutes before start
-        // 0 hours before start
-        // 5 minutes
-        // 10 minutes
-
-        _alarmAction = ActionSelector.SelectedIndex switch
-        {
-            0 => AlarmAction.FiveMinBefore,
-            1 => AlarmAction.ZeroMinBefore,
-            2 => AlarmAction.SnoozeFiveMin,
-            3 => AlarmAction.SnoozeTenMin,
-            _ => _alarmAction
-        };
+        _alarmAction = (AlarmAction)(ActionSelector.SelectedValue ?? AlarmAction.FiveMinBefore);
 
         Close();
     }

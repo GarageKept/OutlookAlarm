@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using GarageKept.OutlookAlarm.Forms.Common;
 using GarageKept.OutlookAlarm.Forms.UI.Controls;
 using Timer = System.Windows.Forms.Timer;
@@ -41,6 +42,19 @@ public partial class MainForm : BaseForm
         rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
         rightClickMenu.Items.Add(new ToolStripSeparator());
         rightClickMenu.Items.Add("Close", null, (_, _) => Close());
+        
+
+        var advanced = new ToolStripMenuItem("Advanced");
+        var advancedDropdown = new ToolStripDropDownMenu();
+
+        var reset = new ToolStripMenuItem("Reset All");
+        reset.Click += RightClick_ResetAllAppointments;
+
+        advancedDropdown.Items.Add(reset);
+        advanced.DropDown = advancedDropdown;
+        
+        rightClickMenu.Items.Add(new ToolStripSeparator());
+        rightClickMenu.Items.Add(advanced);
 
         // Subscribe to MouseEnter and MouseLeave events for each child control
         SubscribeToMouseEvents(this);
@@ -49,6 +63,12 @@ public partial class MainForm : BaseForm
         // Initialize and set up the sliding timer
         _slidingTimer.Tick += SlidingTimer_Tick;
         _slidingTimer.Start();
+    }
+
+    private void RightClick_ResetAllAppointments(object? sender, EventArgs e)
+    {
+        AppointmentManager.ResetAll();
+        UpcomingAppointments.ResetAppointmentControls();
     }
 
     /// <summary>

@@ -31,4 +31,12 @@ public static class AlarmManager
             alarm.State = AlarmState.Dismissed;
         }
     }
+
+    public static void ResetAll()
+    {
+        foreach (var item in Alarms.Values)
+        {
+            item.Reset();
+        }
+    }
 }

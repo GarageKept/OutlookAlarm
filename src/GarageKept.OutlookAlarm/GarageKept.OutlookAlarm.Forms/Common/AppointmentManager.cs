@@ -36,15 +36,6 @@ public static class AppointmentManager
                 (ev.Start > now && ev.Start <= twoHoursFromNow) // Event will start in 2 hours
         ).Where(a => !DismissedAppointments.ContainsKey(a.Id)).ToList();
 
-        if (filtered.Count == 0)
-        {
-            var nextAppointment = OutlookCalendarInterop.GetAppointmentsInTheNextHours(24).MinBy(ev => ev.Start)
-                                  ??
-                                  OutlookCalendarInterop.GetAppointmentsInTheNextHours(3600).MinBy(ev => ev.Start);
-
-            if (nextAppointment != null) filtered.Add(nextAppointment);
-        }
-
         Appointments.AddRange(filtered);
 
         AlarmManager.AddAlarm(Appointments);
@@ -100,8 +91,18 @@ public static class AppointmentManager
         {
             Appointments.Remove(item.Id);
             DismissedAppointments.Add(item);
+
+            AlarmManager.RemoveAlarm(item.Id);
         }
 
         Program.MainWindow?.UpcomingAppointments.UpdateAppointmentControls(Appointments);
+    }
+
+    public static void ResetAll()
+    {
+        Appointments.AddRange(DismissedAppointments.Values);
+        DismissedAppointments.Clear();
+
+        AlarmManager.ResetAll();
     }
 }

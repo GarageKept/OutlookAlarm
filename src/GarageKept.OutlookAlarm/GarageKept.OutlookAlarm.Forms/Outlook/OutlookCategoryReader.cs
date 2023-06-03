@@ -8,6 +8,8 @@ public static class OutlookCategoryColorExtensions
 {
     public static Color GetCategoryColor(this string categoryName)
     {
+        if (string.IsNullOrEmpty(categoryName)) return SystemColors.Control;
+
         categoryName = categoryName.GetFirstFromCsv();
 
         if (string.IsNullOrWhiteSpace(categoryName)) return Color.Empty;
@@ -44,7 +46,7 @@ public static class OutlookCategoryColorExtensions
     {
         return olCategoryColor switch
         {
-            OlCategoryColor.olCategoryColorNone => Color.Empty,
+            OlCategoryColor.olCategoryColorNone => SystemColors.Control,
             OlCategoryColor.olCategoryColorRed => Color.FromArgb(240, 125, 136),
             OlCategoryColor.olCategoryColorOrange => Color.FromArgb(255, 140, 0),
             OlCategoryColor.olCategoryColorPeach => Color.FromArgb(254, 203, 111),
@@ -70,7 +72,7 @@ public static class OutlookCategoryColorExtensions
             OlCategoryColor.olCategoryColorDarkBlue => Color.FromArgb(37, 64, 105),
             OlCategoryColor.olCategoryColorDarkPurple => Color.FromArgb(86, 38, 133),
             OlCategoryColor.olCategoryColorDarkMaroon => Color.FromArgb(128, 39, 93),
-            _ => Color.Empty
+            _ => SystemColors.Control
         };
     }
 }

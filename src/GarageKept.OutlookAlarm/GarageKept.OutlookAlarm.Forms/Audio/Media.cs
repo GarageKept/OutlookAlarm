@@ -16,7 +16,7 @@ public class Media
         { SoundType.Start, Resources.guitar_notification }
     };
 
-    private readonly WaveOutEvent player = new();
+    private readonly WaveOutEvent _player = new();
 
     /// <summary>
     ///     Plays the specified sound if it has not already been played for the given event.
@@ -30,12 +30,24 @@ public class Media
         var unmanagedStream = new UnmanagedMemoryStreamWaveStream(stream); // Make it playable by NAudio
         var loop = new LoopStream(unmanagedStream); // Make it looping
 
-        player.Init(loop);
-        player.Play();
+        _player.Init(loop);
+        _player.Play();
     }
 
     public void Stop()
     {
-        player.Stop();
+        _player.Stop();
+    }
+
+    public void PlaySound(string customSound)
+    {
+        if (string.IsNullOrEmpty(customSound)) return;
+        if (!File.Exists(customSound)) return;
+
+        AudioEngine.UnMuteSystemVolume();
+
+        using var wav = new LoopStream(new AudioFileReader(customSound));
+        _player.Init(wav);
+        _player.Play();
     }
 }

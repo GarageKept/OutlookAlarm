@@ -8,12 +8,13 @@ public class Appointment
     public Appointment(_AppointmentItem item)
     {
         CategoryColor = item.Categories.GetCategoryColor();
+        CustomSound = item.ReminderSoundFile;
         Duration = item.Duration;
         End = item.End;
         Id = item.EntryID;
         IsOwnEvent = item.Organizer == item.RequiredAttendees;
         ReminderEnabled = item.ReminderSet;
-        ReminderTime = Start.AddMinutes(-item.ReminderMinutesBeforeStart);
+        ReminderTime = item.Start.AddMinutes(-item.ReminderMinutesBeforeStart);
         Response = item.ResponseStatus.ResponseTypeConverter();
         Start = item.Start;
         Subject = item.Subject;
@@ -29,4 +30,5 @@ public class Appointment
     public ResponseType Response { get; set; }
     public DateTime Start { get; set; }
     public string Subject { get; set; }
+    public string CustomSound { get; set; }
 }

@@ -11,20 +11,19 @@ public class Alarm
         Appointment = item;
         AlarmTime = item.ReminderTime;
         State = AlarmState.Active;
-        UpdateTimer();
+        PlaySound = item.ReminderEnabled;
 
-        AlarmTimer.Tick += AlarmTimer_Tick;
-        AlarmTimer.Start();
+        SetupAlarm();
+        UpdateTimer();
     }
 
     public DateTime AlarmTime { get; set; }
-
     public Appointment Appointment { get; set; }
     public AlarmState State { get; set; }
     public bool PlaySound { get; set; }
     public Timer AlarmTimer { get; set; } = new();
     public AlarmWindowForm? AlarmForm { get; set; }
-
+    
     public void AlarmFormClosed(AlarmAction action)
     {
         switch (action)
@@ -54,6 +53,14 @@ public class Alarm
         State = AlarmState.Dismissed;
         AlarmTimer.Stop();
         AlarmTimer.Dispose();
+    }
+
+    public void SetupAlarm()
+    {   
+        if (!Appointment.ReminderEnabled) return;
+
+        AlarmTimer = new Timer();
+        AlarmTimer.Tick += AlarmTimer_Tick;
     }
 
     public void Snooze(int minutes)
@@ -92,7 +99,7 @@ public class Alarm
         AlarmTimer.Interval = ticksUntilAlarm;
 
         AlarmTimer.Enabled = true;
-        //AlarmTimer.Start();
+        AlarmTimer.Start();
     }
 
     private void AlarmTimer_Tick(object? sender, EventArgs? e)
@@ -111,5 +118,12 @@ public class Alarm
 
         AlarmForm = new AlarmWindowForm(this, AlarmFormClosed);
         AlarmForm.Show();
+    }
+
+    public void Reset()
+    {
+        SetupAlarm();
+
+        UpdateTimer();
     }
 }

@@ -84,6 +84,11 @@ public partial class UpcomingAppointmentsControl : UserControl
         UpdateAppointmentControls(appointments);
     }
 
+    public void ResetAppointmentControls()
+    {
+        UpdateAppointmentControls(AppointmentManager.Appointments);
+    }
+
     public void UpdateAppointmentControls(CalendarEvents appointments)
     {
         // Pause updates until we redo everything
@@ -98,7 +103,7 @@ public partial class UpcomingAppointmentsControl : UserControl
         // Reset the row count to 0
         tableLayoutPanel.RowCount = 0;
 
-        foreach (var appointment in appointments.Values) AddRow(new AppointmentItemControl(appointment));
+        foreach (var appointment in appointments.Values.OrderBy(a=>a.Start)) AddRow(new AppointmentItemControl(appointment));
 
         AddFooterRow();
 

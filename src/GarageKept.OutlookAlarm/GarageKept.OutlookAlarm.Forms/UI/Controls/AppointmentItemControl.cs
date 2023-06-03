@@ -16,7 +16,7 @@ public partial class AppointmentItemControl : UserControl
         RefreshTimer.Start();
 
         Appointment = appointment;
-
+        
         AddContextMenu();
 
         UpdateDisplay();
@@ -39,12 +39,12 @@ public partial class AppointmentItemControl : UserControl
         dismiss.Click += DismissAppointment;
 
         _appointmentContextMenuStrip.Items.Add(remove);
-        _appointmentContextMenuStrip.Items.Add(new ToolStripSeparator());
         _appointmentContextMenuStrip.Items.Add(dismiss);
+        _appointmentContextMenuStrip.Items.Add(new ToolStripSeparator());
 
         ContextMenuStrip = _appointmentContextMenuStrip;
 
-        this.MouseDown += Control_MouseDown;
+        MouseDown += Control_MouseDown;
     }
 
     private static void DismissAppointment(object? sender, EventArgs e)
@@ -177,5 +177,16 @@ public partial class AppointmentItemControl : UserControl
         if (Appointment == null) return;
 
         BackColor = Appointment.CategoryColor;
+    }
+
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        base.OnPaint(e);
+
+        // Draw the bottom border
+        using (Pen borderPen = new Pen(Color.Black))
+        {
+            e.Graphics.DrawLine(borderPen, 0, Height - 1, Width, Height - 1);
+        }
     }
 }
