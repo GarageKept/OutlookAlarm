@@ -71,6 +71,10 @@ public partial class UpcomingAppointmentsControl : UserControl
         FooterProgressBar.Margin = Padding.Empty;
         FooterProgressBar.Minimum = 0;
         FooterProgressBar.Maximum = 3600; // 1 hour in seconds
+
+        var tempControl = new AppointmentItemControl(null);
+
+        FooterProgressBar.Width = tempControl.Width;
     }
 
     private void AppointmentManager_Refresh(object? sender, EventArgs? e)
@@ -138,6 +142,7 @@ public partial class UpcomingAppointmentsControl : UserControl
 
         // Add the label to the TableLayoutPanel at row 0, column 0
         tableLayoutPanel.Controls.Add(FooterProgressBar, 0, newRow);
+
         FooterProgressBar.Dock = DockStyle.Fill; // Fill the entire row
     }
 }

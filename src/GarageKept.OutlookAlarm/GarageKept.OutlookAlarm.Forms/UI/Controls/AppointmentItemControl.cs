@@ -1,25 +1,78 @@
 ﻿using GarageKept.OutlookAlarm.Forms.Outlook;
+using GarageKept.OutlookAlarm.Forms.Common;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.UI.Controls;
 
 public partial class AppointmentItemControl : UserControl
 {
-    public AppointmentItemControl(Appointment appointment)
+    public AppointmentItemControl(Appointment? appointment)
     {
+        InitializeComponent();
+
+        if (appointment == null) return;
+
         RefreshTimer.Tick += Refresh_Tick;
         RefreshTimer.Start();
 
-        InitializeComponent();
-
         Appointment = appointment;
+
+        AddContextMenu();
 
         UpdateDisplay();
     }
 
     public Timer RefreshTimer { get; set; } = new() { Interval = 1000 };
 
-    private Appointment Appointment { get; }
+    private Appointment? Appointment { get; }
+
+    private readonly ContextMenuStrip _appointmentContextMenuStrip = new();
+
+    private void AddContextMenu()
+    {
+        _appointmentContextMenuStrip.Items.Clear();
+
+        var remove = new ToolStripMenuItem("Remove");
+        remove.Click += RemoveAppointment;
+
+        var dismiss = new ToolStripMenuItem("Dismiss");
+        dismiss.Click += DismissAppointment;
+
+        _appointmentContextMenuStrip.Items.Add(remove);
+        _appointmentContextMenuStrip.Items.Add(new ToolStripSeparator());
+        _appointmentContextMenuStrip.Items.Add(dismiss);
+
+        ContextMenuStrip = _appointmentContextMenuStrip;
+
+        this.MouseDown += Control_MouseDown;
+    }
+
+    private static void DismissAppointment(object? sender, EventArgs e)
+    {
+        var control = ((sender as ToolStripMenuItem)?.Owner as ContextMenuStrip)?.SourceControl;
+
+        var appointment = (control as AppointmentItemControl)?.Appointment;
+        
+        if (appointment?.Id != null) AlarmManager.DismissAlarm(appointment.Id);
+    }
+
+    private static void RemoveAppointment(object? sender, EventArgs e)
+    {
+        var control = ((sender as ToolStripMenuItem)?.Owner as ContextMenuStrip)?.SourceControl;
+
+        var appointment = (control as AppointmentItemControl)?.Appointment;
+
+        AppointmentManager.Remove(appointment);
+        if (appointment?.Id != null) AlarmManager.RemoveAlarm(appointment.Id);
+    }
+
+    private void Control_MouseDown(object? sender, MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Right)
+        {
+            _appointmentContextMenuStrip.Show(this, e.Location);
+        }
+    }
 
     private void Refresh_Tick(object? sender, EventArgs e)
     {
@@ -36,32 +89,31 @@ public partial class AppointmentItemControl : UserControl
 
     private void SetSubjectLabel()
     {
+        if (Appointment == null) return;
+
         SubjectLabel.Text = Appointment.Subject;
     }
 
     private void SetTimeLabels()
     {
-        try
+        if (Appointment == null) return;
+
+        if (Appointment.Start < DateTime.Now && Appointment.End > DateTime.Now)
         {
-            if (Appointment.Start < DateTime.Now && Appointment.End > DateTime.Now)
-            {
-                SetTimeLeftInAppointment();
-                SetTimeRightLabel(Appointment.End.ToString("hh:mm tt"));
-            }
-            else if (Appointment.Start > DateTime.Now)
-            {
-                SetTimeUntilMeetingLabel();
-                SetTimeRightLabel(Appointment.Start.ToString("h:mm tt"));
-            }
+            SetTimeLeftInAppointment();
+            SetTimeRightLabel(Appointment.End.ToString("hh:mm tt"));
         }
-        catch
+        else if (Appointment?.Start > DateTime.Now)
         {
-            // Outlook probably restarted.
+            SetTimeUntilMeetingLabel();
+            SetTimeRightLabel(Appointment.Start.ToString("h:mm tt"));
         }
     }
 
     private void SetTimeLeftInAppointment()
     {
+        if (Appointment == null) return;
+
         var timeLeft = Appointment.End - DateTime.Now;
         if (timeLeft.TotalMinutes < 0) timeLeft = TimeSpan.Zero;
 
@@ -70,6 +122,8 @@ public partial class AppointmentItemControl : UserControl
 
     private void SetTimeUntilMeetingLabel()
     {
+        if (Appointment == null) return;
+
         var timeUntilMeeting = Appointment.Start - DateTime.Now;
 
         var formatString = timeUntilMeeting.Hours > 0 ? "{0:hh}h {0:mm}m {0:ss}s" : "{0:mm}m {0:ss}s";
@@ -84,6 +138,8 @@ public partial class AppointmentItemControl : UserControl
 
     private void SetProgressBar()
     {
+        if (Appointment == null) return;
+
         if (Appointment.Start < DateTime.Now && Appointment.End > DateTime.Now)
             SetProgressBarForAppointmentInProgress();
         else if (Appointment.Start > DateTime.Now) SetProgressBarForFutureAppointment();
@@ -91,6 +147,8 @@ public partial class AppointmentItemControl : UserControl
 
     private void SetProgressBarForAppointmentInProgress()
     {
+        if (Appointment == null) return;
+
         var timeLeft = Appointment.End - DateTime.Now;
 
         var progress = (int)((1 - timeLeft.TotalMinutes / Appointment.Duration) * 100);
@@ -99,6 +157,8 @@ public partial class AppointmentItemControl : UserControl
 
     private void SetProgressBarForFutureAppointment()
     {
+        if (Appointment == null) return;
+
         var timeUntilMeeting = Appointment.Start - DateTime.Now;
 
         if (timeUntilMeeting.TotalMinutes < 60)
@@ -114,25 +174,8 @@ public partial class AppointmentItemControl : UserControl
 
     private void SetBackgroundColor()
     {
+        if (Appointment == null) return;
+
         BackColor = Appointment.CategoryColor;
-    }
-
-    private void SetBackgroundColorForAppointmentInProgress()
-    {
-        BackColor = Color.Red;
-
-        var timeLeft = Appointment.End - DateTime.Now;
-        if (
-            timeLeft.TotalMinutes < 15)
-            BackColor = Program.ApplicationSettings.YellowColor;
-    }
-
-    private void SetBackgroundColorForFutureAppointment()
-    {
-        BackColor = Color.Green;
-
-        var timeUntilMeeting = Appointment.Start - DateTime.Now;
-
-        if (timeUntilMeeting.TotalMinutes < 15) BackColor = Program.ApplicationSettings.YellowColor;
     }
 }

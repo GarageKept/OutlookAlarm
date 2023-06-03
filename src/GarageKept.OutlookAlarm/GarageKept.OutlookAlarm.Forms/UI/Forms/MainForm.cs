@@ -1,4 +1,5 @@
 using GarageKept.OutlookAlarm.Forms.Common;
+using GarageKept.OutlookAlarm.Forms.UI.Controls;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.UI.Forms;
@@ -6,7 +7,14 @@ namespace GarageKept.OutlookAlarm.Forms.UI.Forms;
 public partial class MainForm : BaseForm
 {
     private readonly Timer _slidingTimer = new() { Interval = 10 };
+
     private bool _isExpanded;
+
+    public UpcomingAppointmentsControl UpcomingAppointments
+    {
+        get => upcomingAppointments;
+        set => upcomingAppointments = value;
+    }
 
     public MainForm() : base(true)
     {

@@ -1,4 +1,5 @@
 ﻿using GarageKept.OutlookAlarm.Forms.Outlook;
+using GarageKept.OutlookAlarm.Forms.UI.Forms;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.Common;
@@ -13,6 +14,8 @@ public static class AppointmentManager
     {
         RefreshTimer.Tick += RefreshTimerTick;
     }
+
+    public static CalendarEvents DismissedAppointments { get; set; } = new();
 
     public static CalendarEvents Appointments { get; set; } = new();
 
@@ -31,7 +34,7 @@ public static class AppointmentManager
         var filtered = all.Values.Where(ev =>
                 (ev.Start <= now && ev.End >= now) || // Event is currently going on
                 (ev.Start > now && ev.Start <= twoHoursFromNow) // Event will start in 2 hours
-        ).ToList();
+        ).Where(a => !DismissedAppointments.ContainsKey(a.Id)).ToList();
 
         if (filtered.Count == 0)
         {
@@ -45,7 +48,6 @@ public static class AppointmentManager
         Appointments.AddRange(filtered);
 
         AlarmManager.AddAlarm(Appointments);
-
 
         OnRefresh(e);
     }
@@ -88,5 +90,18 @@ public static class AppointmentManager
     public static Appointment? GetCurrentAppointment()
     {
         return Appointments.Values.FirstOrDefault(a => a.Start < DateTime.Now && a.End > DateTime.Now);
+    }
+
+    public static void Remove(Appointment? appointment)
+    {
+        var toRemove = Appointments.Values.Where(a => a.Id == appointment?.Id);
+        
+        foreach (var item in toRemove)
+        {
+            Appointments.Remove(item.Id);
+            DismissedAppointments.Add(item);
+        }
+
+        Program.MainWindow?.UpcomingAppointments.UpdateAppointmentControls(Appointments);
     }
 }

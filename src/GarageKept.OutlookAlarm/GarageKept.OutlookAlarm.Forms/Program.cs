@@ -13,6 +13,8 @@ internal static class Program
     /// </summary>
     public static Settings ApplicationSettings { get; set; } = new();
 
+    public static MainForm? MainWindow { get; set; }
+
     /// <summary>
     ///     The main entry point for the application.
     /// </summary>
@@ -22,15 +24,15 @@ internal static class Program
         // Load or create the settings for the application.
         ApplicationSettings = Settings.LoadOrCreate();
 
-        // Customize application configuration (such as set high DPI settings or default font).
-        // For more details, refer to https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
 
         Application.EnableVisualStyles();
 
         Application.SetCompatibleTextRenderingDefault(false);
 
+        MainWindow = new MainForm();
+
         // Start the application with the main form.
-        Application.Run(new MainForm());
+        Application.Run(MainWindow);
     }
 }

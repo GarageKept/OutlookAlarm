@@ -21,7 +21,7 @@ public partial class AlarmWindowForm : BaseForm
 
         MyAlarm = alarm;
 
-        SubjectLabel.Text = alarm.Subject;
+        SubjectLabel.Text = alarm.Appointment.Subject;
         TimeRight.Text = alarm.AlarmTime.ToString("hh:mm");
         TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - alarm.AlarmTime);
 
@@ -41,7 +41,7 @@ public partial class AlarmWindowForm : BaseForm
     private void FormRefresh(object? sender, EventArgs e)
     {
         TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat,
-            DateTime.Now - MyAlarm.AppointmentTime);
+            DateTime.Now - MyAlarm.Appointment.Start);
     }
 
     private void AlarmWindowForm_FormClosing(object sender, FormClosingEventArgs e)

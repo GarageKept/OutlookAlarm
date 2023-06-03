@@ -8,44 +8,45 @@ public class Alarm
 {
     public Alarm(Appointment item)
     {
-        AppointmentTime = item.Start;
-        AlarmTime = AppointmentTime.AddMinutes(-Program.ApplicationSettings.AlarmWarningTime);
-        Id = item.Id;
-        Subject = item.Subject;
+        Appointment = item;
+        AlarmTime = item.ReminderTime;
         State = AlarmState.Active;
-        AlarmTimer.Tick += AlarmTimer_Tick;
-        PlaySound = item.IsOwnEvent || item.Response is ResponseType.Accepted or ResponseType.Organized;
-
         UpdateTimer();
+
+        AlarmTimer.Tick += AlarmTimer_Tick;
         AlarmTimer.Start();
     }
 
-    public DateTime AppointmentTime { get; set; }
     public DateTime AlarmTime { get; set; }
+
+    public Appointment Appointment { get; set; }
     public AlarmState State { get; set; }
-    public string Subject { get; set; }
-    public string Id { get; set; }
     public bool PlaySound { get; set; }
     public Timer AlarmTimer { get; set; } = new();
-
     public AlarmWindowForm? AlarmForm { get; set; }
 
-    private void AlarmTimer_Tick(object? sender, EventArgs? e)
+    public void AlarmFormClosed(AlarmAction action)
     {
-        if (AlarmTime >= DateTime.Now)
+        switch (action)
         {
-            UpdateTimer();
-            return;
+            case AlarmAction.Dismiss:
+                Dismiss();
+                break;
+            case AlarmAction.FiveMinBefore:
+                SnoozeBefore(5);
+                break;
+            case AlarmAction.SnoozeFiveMin:
+                Snooze(5);
+                break;
+            case AlarmAction.SnoozeTenMin:
+                Snooze(10);
+                break;
+            case AlarmAction.ZeroMinBefore:
+                SnoozeBefore(0);
+                break;
         }
 
-        AlarmTimer.Stop();
-
-        if (State == AlarmState.Dismissed) return;
-
-        if (AlarmForm != null) return;
-
-        AlarmForm = new AlarmWindowForm(this, AlarmFormClosed);
-        AlarmForm.Show();
+        AlarmForm = null;
     }
 
     public void Dismiss()
@@ -69,10 +70,10 @@ public class Alarm
     {
         State = AlarmState.Snoozed;
 
-        AlarmTime = AppointmentTime.AddMinutes(-minutes);
+        AlarmTime = Appointment.Start.AddMinutes(-minutes);
 
-        if (AlarmTime > AppointmentTime)
-            AlarmTime = AppointmentTime;
+        if (AlarmTime > Appointment.Start)
+            AlarmTime = Appointment.Start;
 
         UpdateTimer();
     }
@@ -94,30 +95,21 @@ public class Alarm
         //AlarmTimer.Start();
     }
 
-    public void AlarmFormClosed(AlarmAction action)
+    private void AlarmTimer_Tick(object? sender, EventArgs? e)
     {
-        switch (action)
+        if (AlarmTime >= DateTime.Now)
         {
-            case AlarmAction.FiveMinBefore:
-                SnoozeBefore(5);
-                break;
-            case AlarmAction.ZeroMinBefore:
-                SnoozeBefore(0);
-                break;
-            case AlarmAction.SnoozeFiveMin:
-                Snooze(5);
-                break;
-            case AlarmAction.SnoozeTenMin:
-                Snooze(10);
-                break;
-            case AlarmAction.Dismiss:
-                Dismiss();
-                break;
-            default:
-                Console.WriteLine(@"Unhandled AlarmAction found: " + action);
-                break;
+            UpdateTimer();
+            return;
         }
 
-        AlarmForm = null;
+        AlarmTimer.Stop();
+
+        if (State == AlarmState.Dismissed) return;
+
+        if (AlarmForm != null) return;
+
+        AlarmForm = new AlarmWindowForm(this, AlarmFormClosed);
+        AlarmForm.Show();
     }
 }

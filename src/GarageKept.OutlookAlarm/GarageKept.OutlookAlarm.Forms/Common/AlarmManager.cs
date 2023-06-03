@@ -6,16 +6,29 @@ public static class AlarmManager
 
     public static void AddAlarm(Alarm alarm)
     {
-        Alarms[alarm.Id] = alarm;
+        Alarms[alarm.Appointment.Id] = alarm;
     }
 
     public static void RemoveAlarm(Alarm alarm)
     {
-        Alarms.Remove(alarm.Id);
+        Alarms.Remove(alarm.Appointment.Id);
     }
 
     public static void AddAlarm(CalendarEvents appointments)
     {
         foreach (var alarm in appointments.Values.Select(@event => new Alarm(@event))) AddAlarm(alarm);
+    }
+
+    public static void RemoveAlarm(string id)
+    {
+        Alarms.Remove(id);
+    }
+
+    public static void DismissAlarm(string id)
+    {
+        if (Alarms.TryGetValue(id, out var alarm))
+        {
+            alarm.State = AlarmState.Dismissed;
+        }
     }
 }
