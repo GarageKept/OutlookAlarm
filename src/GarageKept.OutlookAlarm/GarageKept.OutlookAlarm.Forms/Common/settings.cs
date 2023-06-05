@@ -15,26 +15,29 @@ internal class Settings
     /// </summary>
     public Settings()
     {
-        Left = 0;
-        SliderSpeed = 5;
+        AlarmWarningTime = 15;
+        BarSize = 10;
         GreenColor = Color.Green;
+        Left = 0;
         RedColor = Color.Red;
-        YellowColor = Color.Yellow;
+        RefreshRate = 5000;
+        SliderSpeed = 5;
         TimeFormat = "hh:mm:ss";
         TimeLeftStringFormat = "{0:%h}h {0:mm}m {0:ss}s";
+        YellowColor = Color.Yellow;
     }
 
-    public int SliderSpeed { get; set; }
-    public Color YellowColor { get; set; }
     public Color GreenColor { get; set; }
     public Color RedColor { get; set; }
-    public string TimeFormat { get; set; }
+    public Color YellowColor { get; set; }
+    public int AlarmWarningTime { get; set; }
+    public int BarSize { get; internal set; }
+    public int FetchTime { get; set; }
     public int Left { get; set; }
+    public int RefreshRate { get; set; }
+    public int SliderSpeed { get; set; }
+    public string TimeFormat { get; set; }
     public string TimeLeftStringFormat { get; set; }
-    public int RefreshRate { get; set; } = 5000;
-    public int FetchTime { get; set; } = 24;
-    public int AlarmWarningTime { get; set; } = 15;
-    public int BarSize { get; internal set; } = 10;
 
     /// <summary>
     ///     Loads the settings from the settings file.

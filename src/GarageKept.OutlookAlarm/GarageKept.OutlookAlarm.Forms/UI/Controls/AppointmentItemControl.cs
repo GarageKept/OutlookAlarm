@@ -184,9 +184,7 @@ public partial class AppointmentItemControl : UserControl
         base.OnPaint(e);
 
         // Draw the bottom border
-        using (Pen borderPen = new Pen(Color.Black))
-        {
-            e.Graphics.DrawLine(borderPen, 0, Height - 1, Width, Height - 1);
-        }
+        using Pen borderPen = new(Color.Black);
+        e.Graphics.DrawLine(borderPen, 0, Height - 1, Width, Height - 1);
     }
 }
