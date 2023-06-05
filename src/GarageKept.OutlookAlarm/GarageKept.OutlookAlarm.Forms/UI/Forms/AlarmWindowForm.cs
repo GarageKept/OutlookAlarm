@@ -1,4 +1,5 @@
-﻿using GarageKept.OutlookAlarm.Forms.Audio;
+﻿using System.DirectoryServices.ActiveDirectory;
+using GarageKept.OutlookAlarm.Forms.Audio;
 using GarageKept.OutlookAlarm.Forms.Common;
 using Timer = System.Windows.Forms.Timer;
 
@@ -13,7 +14,9 @@ public partial class AlarmWindowForm : BaseForm
     public AlarmWindowForm(Alarm alarm, Action<AlarmAction> alarmFormClosed) : base(false)
     {
         InitializeComponent();
-        
+
+        ShowInTaskbar = false;
+
         ActionSelector.Items.Clear();
         ActionSelector.DataSource = Enum.GetValues(typeof(AlarmAction))
             .Cast<AlarmAction>()
@@ -55,12 +58,12 @@ public partial class AlarmWindowForm : BaseForm
     {
         if (DateTime.Now - MyAlarm.AlarmTime > TimeSpan.FromMinutes(5))
         {
-            ActionSelector.Items.Remove("5 minutes before start");
+            ActionSelector.Items.Remove(AlarmAction.FiveMinBefore);
         }
 
         if (DateTime.Now - MyAlarm.AlarmTime > TimeSpan.FromMinutes(0))
         {
-            ActionSelector.Items.Remove("0 hours before start");
+            ActionSelector.Items.Remove(AlarmAction.ZeroMinBefore);
         }
 
         if(ActionSelector.SelectedIndex <= 0) {ActionSelector.SelectedIndex = 0;}
