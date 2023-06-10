@@ -1,17 +1,17 @@
-﻿using System.DirectoryServices.ActiveDirectory;
-using GarageKept.OutlookAlarm.Forms.Audio;
+﻿using GarageKept.OutlookAlarm.Forms.Audio;
 using GarageKept.OutlookAlarm.Forms.Common;
+using GarageKept.OutlookAlarm.Forms.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.UI.Forms;
 
-public partial class AlarmWindowForm : BaseForm
+public partial class AlarmWindow : BaseForm
 {
     private readonly Media _mediaPlayer = new();
     private readonly Timer _refreshTimer = new() { Interval = 1000 };
     private AlarmAction _alarmAction = AlarmAction.Dismiss;
 
-    public AlarmWindowForm(Common.Alarm alarm, Action<AlarmAction> alarmFormClosed) : base(false)
+    public AlarmWindow(IAlarm alarm, Action<AlarmAction, string> alarmFormCallback)
     {
         InitializeComponent();
 
@@ -24,26 +24,26 @@ public partial class AlarmWindowForm : BaseForm
             {
                 Value = s,
                 Text = AlarmActionHelpers.GetEnumDisplayValue(s)
-            }).Where(a=>a.Text !="Dismissed")
+            }).Where(a => a.Text != "Dismissed")
             .ToList();
         ActionSelector.DisplayMember = "Text";
         ActionSelector.ValueMember = "Value";
 
-        if (alarm.PlaySound)
+        if (alarm.IsAudible)
         {
-            if(string.IsNullOrEmpty(alarm.Appointment.CustomSound))
-                _mediaPlayer.PlaySound(SoundType.Warning0);
+            if (alarm.HasCustomSound)
+                _mediaPlayer.PlaySound(alarm.CustomSound);
             else
-                _mediaPlayer.PlaySound(alarm.Appointment.CustomSound);
+                _mediaPlayer.PlaySound(Program.ApplicationSettings.DefaultSound);
         }
 
-        MyCallBack = alarmFormClosed;
+        MyCallBack = alarmFormCallback;
 
-        MyAlarm = alarm;
+        Alarm = alarm;
 
-        SubjectLabel.Text = alarm.Appointment.Subject;
-        TimeRight.Text = alarm.AlarmTime.ToString("hh:mm");
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - MyAlarm.Appointment.Start);
+        SubjectLabel.Text = alarm.Name;
+        TimeRight.Text = alarm.ReminderTime.ToString("hh:mm");
+        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
 
         UpdateDropdown();
 
@@ -53,36 +53,33 @@ public partial class AlarmWindowForm : BaseForm
         // Subscribe to MouseEnter and MouseLeave events for each child control
         SubscribeToMouseEvents(this);
     }
+    
+
+    private IAlarm Alarm { get; }
+
+    public Action<AlarmAction, string> MyCallBack { get; set; }
 
     private void UpdateDropdown()
     {
-        if (DateTime.Now - MyAlarm.AlarmTime > TimeSpan.FromMinutes(5))
-        {
+        if (DateTime.Now - Alarm.Start > TimeSpan.FromMinutes(5))
             ActionSelector.Items.Remove(AlarmAction.FiveMinBefore);
-        }
 
-        if (DateTime.Now - MyAlarm.AlarmTime > TimeSpan.FromMinutes(0))
-        {
+        if (DateTime.Now - Alarm.Start > TimeSpan.FromMinutes(0))
             ActionSelector.Items.Remove(AlarmAction.ZeroMinBefore);
-        }
 
-        if(ActionSelector.SelectedIndex <= 0) {ActionSelector.SelectedIndex = 0;}
+        if (ActionSelector.SelectedIndex <= 0) ActionSelector.SelectedIndex = 0;
     }
-
-    public Action<AlarmAction> MyCallBack { get; set; }
-
-    public Common.Alarm MyAlarm { get; set; }
 
     private void FormRefresh(object? sender, EventArgs e)
     {
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - MyAlarm.Appointment.Start);
+        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
 
         UpdateDropdown();
     }
 
     private void AlarmWindowForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        MyCallBack(_alarmAction);
+        MyCallBack(_alarmAction, Alarm.Id);
     }
 
     private void SnoozeButton_Click(object sender, EventArgs e)
