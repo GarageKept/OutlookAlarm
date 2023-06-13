@@ -44,7 +44,19 @@ public partial class UpcomingAppointmentsControl : UserControl
 
 
         if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Program.ApplicationSettings.YellowColor;
-        
+
+        //if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.ApplicationSettings.AlarmWarningTime))
+        //{
+        //    barColor = Program.ApplicationSettings.YellowColor;
+        //    backColor = Program.ApplicationSettings.RedColor;
+        //}
+
+        //if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.ApplicationSettings.AlarmWarningTime))
+        //{
+        //    barColor = Program.ApplicationSettings.YellowColor;
+        //    backColor = Program.ApplicationSettings.RedColor;
+        //}
+
         if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Program.ApplicationSettings.RedColor;
 
         FooterProgressBar.BackgroundColor = backColor;
@@ -98,7 +110,8 @@ public partial class UpcomingAppointmentsControl : UserControl
         // Reset the row count to 0
         tableLayoutPanel.RowCount = 0;
 
-        foreach (var appointment in appointments.Values.OrderBy(a=>a.Start)) AddRow(new AppointmentItemControl(appointment));
+        foreach (var appointment in appointments.Values.OrderBy(a => a.Start))
+            AddRow(new AppointmentItemControl(appointment));
 
         AddFooterRow();
 

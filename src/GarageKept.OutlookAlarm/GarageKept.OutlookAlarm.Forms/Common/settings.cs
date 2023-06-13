@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using GarageKept.OutlookAlarm.Forms.Audio;
 
 namespace GarageKept.OutlookAlarm.Forms.Common;
 
@@ -39,9 +40,11 @@ internal class Settings
     public int SliderSpeed { get; set; }
     public string TimeFormat { get; set; }
     public string TimeLeftStringFormat { get; set; }
-
-    public DateTime QuietHoursStart { get; set; }
-    public DateTime QuietHoursEnd { get; set; }
+    public int RefreshRate { get; set; } = 5000;
+    public int FetchTime { get; set; } = 1;
+    public int AlarmWarningTime { get; set; } = 15;
+    public int BarSize { get; internal set; } = 10;
+    public SoundType DefaultSound { get; set; } = SoundType.Warning0;
 
     /// <summary>
     ///     Loads the settings from the settings file.
