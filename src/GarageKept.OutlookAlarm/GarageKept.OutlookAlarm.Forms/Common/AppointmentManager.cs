@@ -1,5 +1,6 @@
 ﻿using GarageKept.OutlookAlarm.Forms.Outlook;
 using GarageKept.OutlookAlarm.Forms.UI.Forms;
+using System.ComponentModel;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.Common;
@@ -23,10 +24,11 @@ public static class AppointmentManager
 
     private static void RefreshTimerTick(object? sender, EventArgs? e)
     {
+        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
+
         CleanupOldAppointments();
 
-        var all = new CalendarEvents(
-            OutlookCalendarInterop.GetAppointmentsInTheNextHours(Program.ApplicationSettings.FetchTime));
+        var all = new CalendarEvents(OutlookCalendarInterop.GetAppointmentsInTheNextHours(Program.ApplicationSettings.FetchTime));
 
         var now = DateTime.Now;
         var twoHoursFromNow = now.AddHours(2);

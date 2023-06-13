@@ -6,12 +6,14 @@ public static class AlarmManager
 
     public static void AddAlarm(Alarm alarm)
     {
-        Alarms[alarm.Appointment.Id] = alarm;
+        if (alarm.Appointment != null)
+            Alarms[alarm.Appointment.Id] = alarm;
     }
 
     public static void RemoveAlarm(Alarm alarm)
     {
-        Alarms.Remove(alarm.Appointment.Id);
+        if (alarm.Appointment != null)
+            Alarms.Remove(alarm.Appointment.Id);
     }
 
     public static void AddAlarm(CalendarEvents appointments)

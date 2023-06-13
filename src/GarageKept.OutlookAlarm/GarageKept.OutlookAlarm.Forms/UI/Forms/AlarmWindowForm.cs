@@ -1,6 +1,8 @@
 ﻿using System.DirectoryServices.ActiveDirectory;
 using GarageKept.OutlookAlarm.Forms.Audio;
 using GarageKept.OutlookAlarm.Forms.Common;
+using GarageKept.OutlookAlarm.Forms.Outlook;
+using Microsoft.Office.Interop.Outlook;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.UI.Forms;
@@ -14,7 +16,7 @@ public partial class AlarmWindowForm : BaseForm
     public AlarmWindowForm(Alarm alarm, Action<AlarmAction> alarmFormClosed) : base(false)
     {
         InitializeComponent();
-
+        
         ShowInTaskbar = false;
 
         ActionSelector.Items.Clear();
@@ -28,22 +30,22 @@ public partial class AlarmWindowForm : BaseForm
             .ToList();
         ActionSelector.DisplayMember = "Text";
         ActionSelector.ValueMember = "Value";
-
-        if (alarm.PlaySound)
+        
+        if (alarm.PlaySound && !DesignMode)
         {
-            if(string.IsNullOrEmpty(alarm.Appointment.CustomSound))
+            if(string.IsNullOrEmpty(alarm.Appointment?.CustomSound))
                 _mediaPlayer.PlaySound(SoundType.Warning0);
             else
                 _mediaPlayer.PlaySound(alarm.Appointment.CustomSound);
         }
 
         MyCallBack = alarmFormClosed;
-
+        
         MyAlarm = alarm;
 
-        SubjectLabel.Text = alarm.Appointment.Subject;
+        SubjectLabel.Text = alarm.Appointment?.Subject;
         TimeRight.Text = alarm.AlarmTime.ToString("hh:mm");
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - MyAlarm.Appointment.Start);
+        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - MyAlarm.Appointment?.Start);
 
         UpdateDropdown();
 
@@ -75,7 +77,7 @@ public partial class AlarmWindowForm : BaseForm
 
     private void FormRefresh(object? sender, EventArgs e)
     {
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - MyAlarm.Appointment.Start);
+        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - MyAlarm.Appointment?.Start);
 
         UpdateDropdown();
     }

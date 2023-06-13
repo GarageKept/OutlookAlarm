@@ -10,6 +10,8 @@ public partial class AppointmentItemControl : UserControl
     {
         InitializeComponent();
 
+        if (DesignMode) return;
+
         if (appointment == null) return;
 
         RefreshTimer.Tick += Refresh_Tick;

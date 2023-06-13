@@ -18,9 +18,10 @@ internal class Settings
         AlarmWarningTime = 15;
         BarSize = 10;
         GreenColor = Color.Green;
+        FetchTime = 2;
         Left = 0;
         RedColor = Color.Red;
-        RefreshRate = 5000;
+        RefreshRate = 1;
         SliderSpeed = 5;
         TimeFormat = "hh:mm:ss";
         TimeLeftStringFormat = "{0:%h}h {0:mm}m {0:ss}s";
@@ -38,6 +39,9 @@ internal class Settings
     public int SliderSpeed { get; set; }
     public string TimeFormat { get; set; }
     public string TimeLeftStringFormat { get; set; }
+
+    public DateTime QuietHoursStart { get; set; }
+    public DateTime QuietHoursEnd { get; set; }
 
     /// <summary>
     ///     Loads the settings from the settings file.

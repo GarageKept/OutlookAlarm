@@ -1,5 +1,7 @@
 ﻿using GarageKept.OutlookAlarm.Forms.Outlook;
 using GarageKept.OutlookAlarm.Forms.UI.Forms;
+using System.ComponentModel;
+using Windows.ApplicationModel;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.Common;
@@ -13,12 +15,24 @@ public class Alarm
         State = AlarmState.Active;
         PlaySound = item.ReminderEnabled;
 
+
+        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+        {
+            PlaySound = false;
+            return;
+        }
+
         SetupAlarm();
         UpdateTimer();
     }
 
+    public Alarm()
+    {
+
+    }
+
     public DateTime AlarmTime { get; set; }
-    public Appointment Appointment { get; set; }
+    public Appointment? Appointment { get; set; }
     public AlarmState State { get; set; }
     public bool PlaySound { get; set; }
     public Timer AlarmTimer { get; set; } = new();
@@ -56,8 +70,9 @@ public class Alarm
     }
 
     public void SetupAlarm()
-    {   
-        if (!Appointment.ReminderEnabled) return;
+    {
+
+        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
 
         AlarmTimer = new Timer();
         AlarmTimer.Tick += AlarmTimer_Tick;
@@ -77,9 +92,9 @@ public class Alarm
     {
         State = AlarmState.Snoozed;
 
-        AlarmTime = Appointment.Start.AddMinutes(-minutes);
+        AlarmTime = Appointment?.Start.AddMinutes(-minutes) ?? DateTime.MaxValue;
 
-        if (AlarmTime > Appointment.Start)
+        if (AlarmTime > Appointment?.Start)
             AlarmTime = Appointment.Start;
 
         UpdateTimer();
@@ -117,6 +132,7 @@ public class Alarm
         if (AlarmForm != null) return;
 
         AlarmForm = new AlarmWindowForm(this, AlarmFormClosed);
+
         AlarmForm.Show();
     }
 

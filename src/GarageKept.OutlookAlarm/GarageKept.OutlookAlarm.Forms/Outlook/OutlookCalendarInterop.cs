@@ -1,4 +1,5 @@
 ﻿using Microsoft.Office.Interop.Outlook;
+using System.ComponentModel;
 using Application = Microsoft.Office.Interop.Outlook.Application;
 
 namespace GarageKept.OutlookAlarm.Forms.Outlook;
@@ -49,12 +50,11 @@ public static class OutlookCalendarInterop
 
     public static List<Appointment> GetAppointmentsInTheNextHours(int hours)
     {
+        if(LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            return new List<Appointment>();
+
         var events = GetEventsForNextXHours(hours);
 
-        var appointments = new List<Appointment>();
-
-        foreach (var appointmentItem in events) appointments.Add(new Appointment(appointmentItem));
-
-        return appointments;
+        return events.Select(appointmentItem => new Appointment(appointmentItem)).ToList();
     }
 }

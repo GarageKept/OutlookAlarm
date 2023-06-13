@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using GarageKept.OutlookAlarm.Forms.Common;
 using GarageKept.OutlookAlarm.Forms.UI.Controls;
 using Timer = System.Windows.Forms.Timer;
@@ -21,6 +20,8 @@ public partial class MainForm : BaseForm
     {
         InitializeComponent();
 
+        if (DesignMode) return;
+
         // Set the form's start position to manual
         StartPosition = FormStartPosition.Manual;
 
@@ -42,7 +43,7 @@ public partial class MainForm : BaseForm
         rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
         rightClickMenu.Items.Add(new ToolStripSeparator());
         rightClickMenu.Items.Add("Close", null, (_, _) => Close());
-        
+
 
         var advanced = new ToolStripMenuItem("Advanced");
         var advancedDropdown = new ToolStripDropDownMenu();
@@ -52,7 +53,7 @@ public partial class MainForm : BaseForm
 
         advancedDropdown.Items.Add(reset);
         advanced.DropDown = advancedDropdown;
-        
+
         rightClickMenu.Items.Add(new ToolStripSeparator());
         rightClickMenu.Items.Add(advanced);
 

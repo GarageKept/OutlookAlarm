@@ -8,13 +8,14 @@ public partial class UpcomingAppointmentsControl : UserControl
 {
     public UpcomingAppointmentsControl()
     {
-        AutoSizeMode = AutoSizeMode.GrowAndShrink;
-
         InitializeComponent();
 
-        InitializeFooterProgressBar();
-
         tableLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+        if (DesignMode) return;
+
+        InitializeFooterProgressBar();
 
         AppointmentManager.Refresh += AppointmentManager_Refresh;
         AppointmentManager.Start();
@@ -43,13 +44,7 @@ public partial class UpcomingAppointmentsControl : UserControl
 
 
         if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Program.ApplicationSettings.YellowColor;
-
-        //if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.ApplicationSettings.AlarmWarningTime))
-        //{
-        //    barColor = Program.ApplicationSettings.YellowColor;
-        //    backColor = Program.ApplicationSettings.RedColor;
-        //}
-
+        
         if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Program.ApplicationSettings.RedColor;
 
         FooterProgressBar.BackgroundColor = backColor;
@@ -109,10 +104,11 @@ public partial class UpcomingAppointmentsControl : UserControl
 
         if (FindForm() is MainForm parentForm)
         {
-            parentForm.SubscribeToMouseEvents(parentForm);
+ //           parentForm.SubscribeToMouseEvents(parentForm);
             parentForm.AddMouseEvents(parentForm);
 
-            Top = Height - Program.ApplicationSettings.BarSize;
+            if(parentForm.Top < 0)
+                parentForm.Top = -parentForm.Height + Program.ApplicationSettings.BarSize;
         }
 
 
