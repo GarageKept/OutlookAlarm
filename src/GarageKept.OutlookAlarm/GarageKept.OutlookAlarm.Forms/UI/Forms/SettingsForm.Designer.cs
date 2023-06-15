@@ -1,6 +1,6 @@
 ﻿namespace GarageKept.OutlookAlarm.Forms.UI.Forms
 {
-    partial class SettingsWindow
+    partial class SettingsForm
     {
         /// <summary>
         /// Required designer variable.

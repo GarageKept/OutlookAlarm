@@ -1,30 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace GarageKept.OutlookAlarm.Forms.Common;
 
 public enum AlarmAction
 {
-    [Display("5 Minutes Before Start")]
-    FiveMinBefore,
-    [Display("0 Minutes Before Start")]
-    ZeroMinBefore,
-    [Display("5 Minutes")]
-    SnoozeFiveMin,
-    [Display("10 Minutes")]
-    SnoozeTenMin,
-    [Display("Dismissed")]
-    Dismiss
+    [Display("5 Minutes Before Start")] FiveMinBefore,
+    [Display("0 Minutes Before Start")] ZeroMinBefore,
+    [Display("5 Minutes")] SnoozeFiveMin,
+    [Display("10 Minutes")] SnoozeTenMin,
+    [Display("Dismissed")] Dismiss
 }
 
 public class DisplayAttribute : Attribute
 {
-    public string Value { get; }
-
     public DisplayAttribute(string value)
     {
         Value = value;
     }
+
+    public string Value { get; }
 }
 
 public static class AlarmActionHelpers

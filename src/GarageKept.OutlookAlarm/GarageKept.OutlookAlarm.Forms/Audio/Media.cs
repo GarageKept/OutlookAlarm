@@ -8,6 +8,8 @@ namespace GarageKept.OutlookAlarm.Forms.Audio;
 /// </summary>
 public class Media
 {
+    private readonly WaveOutEvent _player = new();
+
     private readonly Dictionary<SoundType, UnmanagedMemoryStream> _soundStreams = new()
     {
         { SoundType.Warning15, Resources.double_beep },
@@ -15,8 +17,6 @@ public class Media
         { SoundType.Warning0, Resources.tick_tock },
         { SoundType.Start, Resources.guitar_notification }
     };
-
-    private readonly WaveOutEvent _player = new();
 
     /// <summary>
     ///     Plays the specified sound if it has not already been played for the given event.

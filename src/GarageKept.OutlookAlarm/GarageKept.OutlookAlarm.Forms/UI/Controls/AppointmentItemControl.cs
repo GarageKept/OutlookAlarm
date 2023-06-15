@@ -64,7 +64,7 @@ public partial class AppointmentItemControl : UserControl
 
         var appointment = (control as AppointmentItemControl)?.Appointment;
 
-        AppointmentManager.Remove(appointment);
+        //AppointmentManager.Remove(appointment);
         if (appointment?.Id != null) AlarmManager.RemoveAlarm(appointment.Id);
     }
 
@@ -119,7 +119,7 @@ public partial class AppointmentItemControl : UserControl
         var timeLeft = Appointment.End - DateTime.Now;
         if (timeLeft.TotalMinutes < 0) timeLeft = TimeSpan.Zero;
 
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, timeLeft);
+        //TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, timeLeft);
     }
 
     private void SetTimeUntilMeetingLabel()

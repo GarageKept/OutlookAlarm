@@ -1,27 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GarageKept.OutlookAlarm.Forms.Interfaces;
+﻿using GarageKept.OutlookAlarm.Forms.Interfaces;
 
-namespace GarageKept.OutlookAlarm.Forms.AlarmSources
+namespace GarageKept.OutlookAlarm.Forms.AlarmSources;
+
+internal class OutlookAlarmSource : IAlarmSource
 {
-    internal class OutlookAlarmSource : IAlarmSource
+    public List<IAlarm> GetAlarms(int hours)
     {
-        public List<IAlarm> GetAlarms(int hours)
-        {
-            throw new NotImplementedException();
-        }
+        return new List<IAlarm>(0);
+    }
 
-        public void Start()
-        {
-            throw new NotImplementedException();
-        }
+    public void Start()
+    {
+    }
 
-        public void Stop()
-        {
-            throw new NotImplementedException();
-        }
+    public void Stop()
+    {
     }
 }

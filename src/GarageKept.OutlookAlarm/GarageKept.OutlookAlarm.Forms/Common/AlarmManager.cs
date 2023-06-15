@@ -28,17 +28,11 @@ public static class AlarmManager
 
     public static void DismissAlarm(string id)
     {
-        if (Alarms.TryGetValue(id, out var alarm))
-        {
-            alarm.State = AlarmState.Dismissed;
-        }
+        if (Alarms.TryGetValue(id, out var alarm)) alarm.State = AlarmState.Dismissed;
     }
 
     public static void ResetAll()
     {
-        foreach (var item in Alarms.Values)
-        {
-            item.Reset();
-        }
+        foreach (var item in Alarms.Values) item.Reset();
     }
 }

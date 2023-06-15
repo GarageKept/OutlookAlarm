@@ -16,7 +16,7 @@ public class BaseForm : Form
     /// <summary>
     ///     Initializes a new instance of the <see cref="BaseForm" /> class with PinTop set to true.
     /// </summary>
-    public BaseForm() : this(true)
+    internal BaseForm() : this(true)
     {
     }
 
@@ -24,7 +24,7 @@ public class BaseForm : Form
     ///     Initializes a new instance of the <see cref="BaseForm" /> class.
     /// </summary>
     /// <param name="pinTop">Whether the form should be pinned to the top of the screen.</param>
-    public BaseForm(bool pinTop)
+    internal BaseForm(bool pinTop)
     {
         SubscribeToMouseEvents(this);
 
@@ -37,27 +37,27 @@ public class BaseForm : Form
     /// <summary>
     ///     Gets the width of the primary screen, caches the value for future use.
     /// </summary>
-    public int ScreenWidth => _screenWidth > 0
+    internal int ScreenWidth => _screenWidth > 0
         ? _screenWidth
         : _screenWidth = Screen.PrimaryScreen?.WorkingArea.Width ?? 0;
 
     /// <summary>
     ///     Gets the height of the primary screen, caches the value for future use.
     /// </summary>
-    public int ScreenHeight => _screenHeight > 0
+    internal int ScreenHeight => _screenHeight > 0
         ? _screenHeight
         : _screenHeight = Screen.PrimaryScreen?.WorkingArea.Height ?? 0;
 
     /// <summary>
     ///     Gets or sets a value indicating whether the form should be pinned to the top of the screen.
     /// </summary>
-    public bool PinTop { get; set; }
+    internal bool PinTop { get; set; }
 
     /// <summary>
     ///     Adds mouse event handlers to a given control and all its children.
     /// </summary>
     /// <param name="control">The control to add event handlers to.</param>
-    public void SubscribeToMouseEvents(Control control)
+    internal void SubscribeToMouseEvents(Control control)
     {
         control.MouseDown += MouseDownHandler;
         control.MouseMove += MouseMoveHandler;
@@ -69,7 +69,7 @@ public class BaseForm : Form
     /// <summary>
     ///     Event handler for MouseDown event, begins form dragging.
     /// </summary>
-    public void MouseDownHandler(object? sender, MouseEventArgs e)
+    internal void MouseDownHandler(object? sender, MouseEventArgs e)
     {
         if (e.Button == MouseButtons.Left)
         {
@@ -82,7 +82,7 @@ public class BaseForm : Form
     /// <summary>
     ///     Event handler for MouseMove event, updates form location while dragging.
     /// </summary>
-    public void MouseMoveHandler(object? sender, MouseEventArgs e)
+    internal void MouseMoveHandler(object? sender, MouseEventArgs e)
     {
         if (_isDragging)
         {
@@ -106,7 +106,7 @@ public class BaseForm : Form
     /// <summary>
     ///     Event handler for MouseUp event, ends form dragging.
     /// </summary>
-    public void MouseUpHandler(object? sender, MouseEventArgs e)
+    internal void MouseUpHandler(object? sender, MouseEventArgs e)
     {
         if (e.Button == MouseButtons.Left) _isDragging = false;
     }

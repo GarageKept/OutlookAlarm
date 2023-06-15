@@ -7,24 +7,26 @@ using Timer = System.Threading.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.Alarm;
 
-public static class AlarmManager2
+public class AlarmManager2 : IAlarmManager
 {
-    static AlarmManager2()
+    public AlarmManager2(ISettings appSettings)
     {
         AlarmTimers = new Dictionary<string, Timer>();
         Alarms = new List<IAlarm>();
         AlarmSource = new OutlookAlarmSource();
+        AppSettings = appSettings;
         IsRunning = false;
     }
 
-    private static IAlarmSource AlarmSource { get; }
-    private static List<IAlarm> Alarms { get; }
-    private static Dictionary<string, Timer> AlarmTimers { get; }
-    private static Timer? UpdateAlarmListTimer { get; set; }
+    private ISettings AppSettings { get; }
+    private IAlarmSource AlarmSource { get; }
+    private List<IAlarm> Alarms { get; }
+    private Dictionary<string, Timer> AlarmTimers { get; }
+    private Timer? UpdateAlarmListTimer { get; set; }
 
-    public static bool IsRunning { get; set; }
+    public bool IsRunning { get; set; }
 
-    public static void AddAlarm(IAlarm alarm)
+    public void AddAlarm(IAlarm alarm)
     {
         Alarms.Add(alarm);
 
@@ -36,7 +38,7 @@ public static class AlarmManager2
         Debug.WriteLineIf(!added, "Alarm not added");
     }
 
-    public static void RemoveAlarm(IAlarm alarm)
+    public void RemoveAlarm(IAlarm alarm)
     {
         if (Alarms.Any(a => a.Id == alarm.Id))
             Alarms.Remove(alarm);
@@ -44,7 +46,22 @@ public static class AlarmManager2
         RemoveAlarmTimers(alarm.Id);
     }
 
-    private static void RemoveAlarmTimers(string alarmId)
+    public void Start()
+    {
+        UpdateAlarmListTimer = new Timer(UpdateAlarms, null, 0, AppSettings.FetchTime * 60000);
+
+        IsRunning = true;
+    }
+
+    public void Stop()
+    {
+        UpdateAlarmListTimer?.Dispose();
+
+        AlarmSource.Stop();
+        IsRunning = false;
+    }
+
+    private void RemoveAlarmTimers(string alarmId)
     {
         if (!AlarmTimers.ContainsKey(alarmId)) return;
 
@@ -53,7 +70,7 @@ public static class AlarmManager2
         AlarmTimers.Remove(alarmId);
     }
 
-    private static void AlarmTriggered(object? id)
+    private void AlarmTriggered(object? id)
     {
         if (id is string alarmId)
             if (Alarms.Any(a => a.Id == alarmId))
@@ -69,29 +86,22 @@ public static class AlarmManager2
         // if not reset timer to fire at correct time
     }
 
-    private static void AlarmFormCallback(AlarmAction action, string id)
+    private void AlarmFormCallback(AlarmAction action, string id)
     {
     }
 
-    public static void Start()
-    {
-        UpdateAlarmListTimer = new Timer(UpdateAlarms, null, 0, Program.ApplicationSettings.FetchTime * 60000);
-
-        IsRunning = true;
-    }
-
-    private static void UpdateAlarms(object? state)
+    private void UpdateAlarms(object? state)
     {
         var alarms = GetAlarms(2);
         AddAlarm(alarms);
     }
 
-    private static void AddAlarm(List<IAlarm> alarms)
+    private void AddAlarm(List<IAlarm> alarms)
     {
         foreach (var alarm in alarms) AddAlarm(alarm);
     }
 
-    private static List<IAlarm> GetAlarms(int hours)
+    private List<IAlarm> GetAlarms(int hours)
     {
         var alarms = AlarmSource.GetAlarms(hours);
 
@@ -99,13 +109,5 @@ public static class AlarmManager2
             alarms = GetAlarms(hours + 2);
 
         return alarms;
-    }
-
-    public static void Stop()
-    {
-        UpdateAlarmListTimer?.Dispose();
-
-        AlarmSource.Stop();
-        IsRunning = false;
     }
 }

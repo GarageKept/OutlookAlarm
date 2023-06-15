@@ -1,13 +1,19 @@
-﻿namespace GarageKept.OutlookAlarm.Forms.UI.Forms;
+﻿using GarageKept.OutlookAlarm.Forms.Interfaces;
 
-public partial class SettingsWindow : BaseForm
+namespace GarageKept.OutlookAlarm.Forms.UI.Forms;
+
+public partial class SettingsForm : BaseForm , ISettingsForm
 {
-    public SettingsWindow() : base(false)
+    //public ISettings AppSettings { get; set; }
+
+    public SettingsForm(ISettings appSettings) : base(false)
     {
         InitializeComponent();
 
         Top = (ScreenHeight - Height) / 2;
         Left = (ScreenWidth - Width) / 2;
+
+        //AppSettings = appSettings;
 
         // Subscribe to MouseEnter and MouseLeave events for each child control
         SubscribeToMouseEvents(this);
@@ -15,7 +21,7 @@ public partial class SettingsWindow : BaseForm
 
     private void SaveButton_Click(object sender, EventArgs e)
     {
-        Program.ApplicationSettings?.Save();
+        //AppSettings.Save();
         Close();
     }
 }

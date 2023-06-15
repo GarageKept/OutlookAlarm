@@ -1,6 +1,6 @@
 ﻿namespace GarageKept.OutlookAlarm.Forms.UI.Controls
 {
-    partial class GarageKeptProgressBar
+    public partial class GarageKeptProgressBar : ProgressBar
     {
         /// <summary> 
         /// Required designer variable.

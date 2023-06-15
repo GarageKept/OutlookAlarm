@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace GarageKept.OutlookAlarm.Forms.UI.Controls;
+namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 
 public partial class GarageKeptProgressBar : ProgressBar
 {

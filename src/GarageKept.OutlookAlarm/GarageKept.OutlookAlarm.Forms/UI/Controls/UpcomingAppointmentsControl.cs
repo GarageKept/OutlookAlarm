@@ -17,8 +17,8 @@ public partial class UpcomingAppointmentsControl : UserControl
 
         InitializeFooterProgressBar();
 
-        AppointmentManager.Refresh += AppointmentManager_Refresh;
-        AppointmentManager.Start();
+        //AppointmentManager.Refresh += AppointmentManager_Refresh;
+        //AppointmentManager.Start();
 
         RefreshTimer.Tick += RefreshTimer_Tick;
         RefreshTimer.Start();
@@ -30,26 +30,20 @@ public partial class UpcomingAppointmentsControl : UserControl
 
     private void RefreshTimer_Tick(object? sender, EventArgs e)
     {
-        var currentAppointment = AppointmentManager.GetCurrentAppointment();
-        var nextAppointment = AppointmentManager.GetNextAppointment();
-        var backColor = Program.ApplicationSettings.GreenColor;
-        var barColor = Program.ApplicationSettings.GreenColor;
-        var value = 3600;
+        //var currentAppointment = AppointmentManager.GetCurrentAppointment();
+        //var nextAppointment = AppointmentManager.GetNextAppointment();
+        //var backColor = Program.ApplicationSettings.GreenColor;
+        //var barColor = Program.ApplicationSettings.GreenColor;
+        //var value = 3600;
 
-        if (currentAppointment != null) barColor = Program.ApplicationSettings.RedColor;
+        //if (currentAppointment != null) barColor = Program.ApplicationSettings.RedColor;
 
-        if (currentAppointment?.End >= nextAppointment?.Start) backColor = Program.ApplicationSettings.YellowColor;
+        //if (currentAppointment?.End >= nextAppointment?.Start) backColor = Program.ApplicationSettings.YellowColor;
 
-        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ?? new TimeSpan(1, 1, 1);
+        //var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ?? new TimeSpan(1, 1, 1);
 
 
-        if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Program.ApplicationSettings.YellowColor;
-
-        //if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.ApplicationSettings.AlarmWarningTime))
-        //{
-        //    barColor = Program.ApplicationSettings.YellowColor;
-        //    backColor = Program.ApplicationSettings.RedColor;
-        //}
+        //if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Program.ApplicationSettings.YellowColor;
 
         //if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.ApplicationSettings.AlarmWarningTime))
         //{
@@ -57,17 +51,23 @@ public partial class UpcomingAppointmentsControl : UserControl
         //    backColor = Program.ApplicationSettings.RedColor;
         //}
 
-        if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Program.ApplicationSettings.RedColor;
+        //if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.ApplicationSettings.AlarmWarningTime))
+        //{
+        //    barColor = Program.ApplicationSettings.YellowColor;
+        //    backColor = Program.ApplicationSettings.RedColor;
+        //}
 
-        FooterProgressBar.BackgroundColor = backColor;
-        FooterProgressBar.BarColor = barColor;
+        //if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Program.ApplicationSettings.RedColor;
 
-        // now we figure out what the value should be
-        if (timeUntilNextAppointment.TotalSeconds <= 3600)
-            // Update the progress bar value based on the time left
-            value = 3600 - (int)timeUntilNextAppointment.TotalSeconds;
+        //FooterProgressBar.BackgroundColor = backColor;
+        //FooterProgressBar.BarColor = barColor;
 
-        FooterProgressBar.Value = value;
+        //// now we figure out what the value should be
+        //if (timeUntilNextAppointment.TotalSeconds <= 3600)
+        //    // Update the progress bar value based on the time left
+        //    value = 3600 - (int)timeUntilNextAppointment.TotalSeconds;
+
+        //FooterProgressBar.Value = value;
     }
 
     private void InitializeFooterProgressBar()
@@ -86,14 +86,14 @@ public partial class UpcomingAppointmentsControl : UserControl
 
     private void AppointmentManager_Refresh(object? sender, EventArgs? e)
     {
-        var appointments = AppointmentManager.Appointments;
+        //var appointments = AppointmentManager.Appointments;
 
-        UpdateAppointmentControls(appointments);
+        //UpdateAppointmentControls(appointments);
     }
 
     public void ResetAppointmentControls()
     {
-        UpdateAppointmentControls(AppointmentManager.Appointments);
+        //UpdateAppointmentControls(AppointmentManager.Appointments);
     }
 
     public void UpdateAppointmentControls(CalendarEvents appointments)
@@ -120,8 +120,8 @@ public partial class UpcomingAppointmentsControl : UserControl
  //           parentForm.SubscribeToMouseEvents(parentForm);
             parentForm.AddMouseEvents(parentForm);
 
-            if(parentForm.Top < 0)
-                parentForm.Top = -parentForm.Height + Program.ApplicationSettings.BarSize;
+           // if(parentForm.Top < 0)
+           //     parentForm.Top = -parentForm.Height + Program.ApplicationSettings.BarSize;
         }
 
 

@@ -1,7 +1,6 @@
-﻿using GarageKept.OutlookAlarm.Forms.Outlook;
+﻿using System.ComponentModel;
+using GarageKept.OutlookAlarm.Forms.Outlook;
 using GarageKept.OutlookAlarm.Forms.UI.Forms;
-using System.ComponentModel;
-using Windows.ApplicationModel;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.Common;
@@ -26,18 +25,13 @@ public class Alarm
         UpdateTimer();
     }
 
-    public Alarm()
-    {
-
-    }
-
     public DateTime AlarmTime { get; set; }
     public Appointment? Appointment { get; set; }
     public AlarmState State { get; set; }
     public bool PlaySound { get; set; }
     public Timer AlarmTimer { get; set; } = new();
     public AlarmWindowForm? AlarmForm { get; set; }
-    
+
     public void AlarmFormClosed(AlarmAction action)
     {
         switch (action)
@@ -71,7 +65,6 @@ public class Alarm
 
     public void SetupAlarm()
     {
-
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
 
         AlarmTimer = new Timer();
@@ -105,8 +98,7 @@ public class Alarm
         //AlarmTimer.Stop();
         AlarmTimer.Enabled = false;
 
-        var ticksUntilAlarm = (int)((AlarmTime - DateTime.Now).TotalMilliseconds -
-                                    Program.ApplicationSettings.AlarmWarningTime * 1000);
+        var ticksUntilAlarm = (int)(AlarmTime - DateTime.Now).TotalMilliseconds;
 
         if (ticksUntilAlarm <= 0)
             ticksUntilAlarm = 1;

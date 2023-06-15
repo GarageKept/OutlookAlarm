@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using GarageKept.OutlookAlarm.Forms.Audio;
+using GarageKept.OutlookAlarm.Forms.Interfaces;
 
 namespace GarageKept.OutlookAlarm.Forms.Common;
 
@@ -7,7 +8,7 @@ namespace GarageKept.OutlookAlarm.Forms.Common;
 ///     Represents the application settings.
 ///     Provides methods to save and load settings from a JSON file.
 /// </summary>
-internal class Settings
+internal class Settings : ISettings
 {
     private const string SettingsFilePath = "settings.json";
 
@@ -16,35 +17,37 @@ internal class Settings
     /// </summary>
     public Settings()
     {
-        AlarmWarningTime = 15;
-        BarSize = 10;
-        GreenColor = Color.Green;
-        FetchTime = 2;
-        Left = 0;
-        RedColor = Color.Red;
-        RefreshRate = 1;
-        SliderSpeed = 5;
-        TimeFormat = "hh:mm:ss";
-        TimeLeftStringFormat = "{0:%h}h {0:mm}m {0:ss}s";
-        YellowColor = Color.Yellow;
+        //  LoadOrCreate();
     }
 
-    public Color GreenColor { get; set; }
-    public Color RedColor { get; set; }
-    public Color YellowColor { get; set; }
-    public int AlarmWarningTime { get; set; }
-    public int BarSize { get; internal set; }
-    public int FetchTime { get; set; }
+    public Color GreenColor { get; set; } = Color.Green;
+    public Color RedColor { get; set; } = Color.Red;
+    public Color YellowColor { get; set; } = Color.Yellow;
     public int Left { get; set; }
-    public int RefreshRate { get; set; }
-    public int SliderSpeed { get; set; }
-    public string TimeFormat { get; set; }
-    public string TimeLeftStringFormat { get; set; }
+    public int SliderSpeed { get; set; } = 5;
+    public string TimeFormat { get; set; } = "hh:mm:ss";
+    public string TimeLeftStringFormat { get; set; } = "{0:%h}h {0:mm}m {0:ss}s";
     public int RefreshRate { get; set; } = 5000;
     public int FetchTime { get; set; } = 1;
     public int AlarmWarningTime { get; set; } = 15;
     public int BarSize { get; internal set; } = 10;
     public SoundType DefaultSound { get; set; } = SoundType.Warning0;
+
+    /// <summary>
+    ///     Saves the current instance of the <see cref="Settings" /> object to the settings file.
+    /// </summary>
+    public void Save()
+    {
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new ColorJsonConverter() }
+        };
+
+        var settingsJson = JsonSerializer.Serialize(this, options);
+        File.WriteAllText(SettingsFilePath, settingsJson);
+    }
 
     /// <summary>
     ///     Loads the settings from the settings file.
@@ -72,21 +75,5 @@ internal class Settings
         };
 
         return JsonSerializer.Deserialize<Settings>(settingsJson, options) ?? settings;
-    }
-
-    /// <summary>
-    ///     Saves the current instance of the <see cref="Settings" /> object to the settings file.
-    /// </summary>
-    public void Save()
-    {
-        var options = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters = { new ColorJsonConverter() }
-        };
-
-        var settingsJson = JsonSerializer.Serialize(this, options);
-        File.WriteAllText(SettingsFilePath, settingsJson);
     }
 }

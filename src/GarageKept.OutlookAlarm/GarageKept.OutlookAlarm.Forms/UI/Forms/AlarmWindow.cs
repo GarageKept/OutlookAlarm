@@ -33,8 +33,8 @@ public partial class AlarmWindow : BaseForm
         {
             if (alarm.HasCustomSound)
                 _mediaPlayer.PlaySound(alarm.CustomSound);
-            else
-                _mediaPlayer.PlaySound(Program.ApplicationSettings.DefaultSound);
+            //else
+            //    _mediaPlayer.PlaySound(Program.ApplicationSettings.DefaultSound);
         }
 
         MyCallBack = alarmFormCallback;
@@ -43,7 +43,7 @@ public partial class AlarmWindow : BaseForm
 
         SubjectLabel.Text = alarm.Name;
         TimeRight.Text = alarm.ReminderTime.ToString("hh:mm");
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
+//        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
 
         UpdateDropdown();
 
@@ -72,7 +72,7 @@ public partial class AlarmWindow : BaseForm
 
     private void FormRefresh(object? sender, EventArgs e)
     {
-        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
+//        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
 
         UpdateDropdown();
     }

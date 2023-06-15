@@ -1,24 +1,33 @@
+using ABI.Windows.Media.Capture;
 using GarageKept.OutlookAlarm.Forms.Common;
+using GarageKept.OutlookAlarm.Forms.Interfaces;
 using GarageKept.OutlookAlarm.Forms.UI.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Forms.UI.Forms;
 
-public partial class MainForm : BaseForm
+public partial class MainForm : BaseForm, IMainForm
 {
     private readonly Timer _slidingTimer = new() { Interval = 10 };
 
     private bool _isExpanded;
 
-    public UpcomingAppointmentsControl UpcomingAppointments
+    private ISettings AppSettings { get; set; }
+    private ISettingsForm SettingsForm { get; set; }
+
+    internal UpcomingAppointmentsControl UpcomingAppointments
     {
         get => upcomingAppointments;
         set => upcomingAppointments = value;
     }
 
-    public MainForm() : base(true)
+    public MainForm(ISettings appSettings, ISettingsForm settingsForm) : base(true)
     {
         InitializeComponent();
+
+        AppSettings = appSettings;
+        SettingsForm = settingsForm;
 
         if (DesignMode) return;
 
@@ -26,7 +35,7 @@ public partial class MainForm : BaseForm
         StartPosition = FormStartPosition.Manual;
 
         // Calculate the form's initial x and y positions
-        var xPos = Program.ApplicationSettings.Left;
+        var xPos = AppSettings.Left;
         var yPos = -Height + 10;
 
         // Set the form's location
@@ -68,7 +77,7 @@ public partial class MainForm : BaseForm
 
     private void RightClick_ResetAllAppointments(object? sender, EventArgs e)
     {
-        AppointmentManager.ResetAll();
+       // AppointmentManager.ResetAll();
         UpcomingAppointments.ResetAppointmentControls();
     }
 
@@ -76,7 +85,7 @@ public partial class MainForm : BaseForm
     ///     Subscribes to MouseEnter and MouseLeave events for each child control.
     /// </summary>
     /// <param name="control">The control we are adding mouse events to.</param>
-    public void AddMouseEvents(Control control)
+    internal void AddMouseEvents(Control control)
     {
         control.MouseEnter += ChildControl_MouseEnter;
         control.MouseLeave += ChildControl_MouseLeave;
@@ -89,7 +98,7 @@ public partial class MainForm : BaseForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void ChildControl_MouseEnter(object? sender, EventArgs e)
+    internal void ChildControl_MouseEnter(object? sender, EventArgs e)
     {
         MainWindow_MouseEnter(sender, e);
     }
@@ -99,7 +108,7 @@ public partial class MainForm : BaseForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void ChildControl_MouseLeave(object? sender, EventArgs e)
+    internal void ChildControl_MouseLeave(object? sender, EventArgs e)
     {
         CheckMouseLeaveForm();
     }
@@ -107,7 +116,7 @@ public partial class MainForm : BaseForm
     /// <summary>
     ///     Checks if the mouse pointer is still within the form bounds.
     /// </summary>
-    private void CheckMouseLeaveForm()
+    internal void CheckMouseLeaveForm()
     {
         var clientCursorPos = PointToClient(Cursor.Position);
 
@@ -122,12 +131,12 @@ public partial class MainForm : BaseForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+    internal void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
         // Save the current position so we can restore it back to where it was on next run
-        Program.ApplicationSettings.Left = Location.X;
+        AppSettings.Left = Location.X;
 
-        Program.ApplicationSettings.Save();
+        AppSettings.Save();
     }
 
     /// <summary>
@@ -135,7 +144,7 @@ public partial class MainForm : BaseForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void MainWindow_MouseEnter(object? sender, EventArgs e)
+    internal void MainWindow_MouseEnter(object? sender, EventArgs e)
     {
         _isExpanded = true;
         _slidingTimer.Start();
@@ -146,7 +155,7 @@ public partial class MainForm : BaseForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void MainWindow_MouseLeave(object? sender, EventArgs e)
+    internal void MainWindow_MouseLeave(object? sender, EventArgs e)
     {
         if (rightClickMenu.Visible) return;
 
@@ -159,7 +168,7 @@ public partial class MainForm : BaseForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void RightClickMenu_AboutClick(object? sender, EventArgs e)
+    internal void RightClickMenu_AboutClick(object? sender, EventArgs e)
     {
         // Implement your About functionality here
     }
@@ -169,11 +178,11 @@ public partial class MainForm : BaseForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void RightClickMenu_SettingsClick(object? sender, EventArgs e)
+    internal void RightClickMenu_SettingsClick(object? sender, EventArgs e)
     {
-        var settingsForm = new SettingsWindow();
+//        var settingsForm = Program.AppServiceProvider?.GetService<ISettingsForm>() as Form;
 
-        settingsForm.ShowDialog(this);
+//        settingsForm?.ShowDialog(this);
     }
 
     /// <summary>
@@ -181,9 +190,9 @@ public partial class MainForm : BaseForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void RightClickMenu_RefreshClick(object? sender, EventArgs e)
+    internal void RightClickMenu_RefreshClick(object? sender, EventArgs e)
     {
-        AppointmentManager.ForceRefresh();
+//        AppointmentManager.ForceRefresh();
     }
 
     /// <summary>
@@ -191,9 +200,9 @@ public partial class MainForm : BaseForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void SlidingTimer_Tick(object? sender, EventArgs e)
+    internal void SlidingTimer_Tick(object? sender, EventArgs e)
     {
-        var targetY = _isExpanded ? 0 : -Height + Program.ApplicationSettings.BarSize;
+        var targetY = _isExpanded ? 0 : -Height + AppSettings.BarSize;
 
         if (Math.Abs(Location.Y - targetY) <= 1)
         {
@@ -202,7 +211,7 @@ public partial class MainForm : BaseForm
         }
         else
         {
-            var step = (targetY - Location.Y) / Program.ApplicationSettings.SliderSpeed;
+            var step = (targetY - Location.Y) / AppSettings.SliderSpeed;
 
             if (step == 0) step = targetY > Location.Y ? 1 : -1;
 
