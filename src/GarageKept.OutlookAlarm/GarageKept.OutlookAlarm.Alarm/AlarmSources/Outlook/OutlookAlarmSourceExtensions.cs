@@ -23,8 +23,9 @@ public static class OutlookAlarmSourceExtensions
         // Retrieve the Category from the Categories collection
         var category = outlookNamespace.Categories[categoryName];
 
-        // Get the Category Color
+        if(category is null) return Color.Empty;
 
+        // Get the Category Color
         var categoryColor = category.Color.ToColor();
 
         // Release the COM objects
