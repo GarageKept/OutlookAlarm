@@ -8,9 +8,9 @@ public interface IAlarm
     DateTime End { get; set; }
     DateTime ReminderTime { get; set; }
     bool IsReminderEnabled { get; set; }
-    bool IsEnabled { get; set; }
+    bool IsActive { get; set; }
     bool IsAudible { get; set; }
     Color AlarmColor { get; set; }
     string CustomSound { get; set; }
-    bool HasCustomSound => string.IsNullOrEmpty(CustomSound);
+    bool HasCustomSound { get; set; }
 }

@@ -8,14 +8,13 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 public partial class AlarmForm : BaseForm, IAlarmForm
 {
     private readonly Media _mediaPlayer = new();
-    private readonly Timer _refreshTimer = new() { Interval = 1000 };
-    private AlarmAction _alarmAction = AlarmAction.Dismiss;
+    private Timer? _refreshTimer;
 
-    public AlarmForm(IAlarm alarm, Action<AlarmAction, string> alarmFormCallback)
+    public AlarmForm() : base(true)
     {
         InitializeComponent();
 
-        ShowInTaskbar = false;
+        ShowInTaskbar = true;
 
         ActionSelector.Items.Clear();
         ActionSelector.DataSource = Enum.GetValues(typeof(AlarmAction))
@@ -28,66 +27,44 @@ public partial class AlarmForm : BaseForm, IAlarmForm
             .ToList();
         ActionSelector.DisplayMember = "Text";
         ActionSelector.ValueMember = "Value";
-
-        if (alarm.IsAudible)
-            if (alarm.HasCustomSound)
-                _mediaPlayer.PlaySound(alarm.CustomSound);
-        //else
-        //    _mediaPlayer.PlaySound(Program.ApplicationSettings.DefaultSound);
-        MyCallBack = alarmFormCallback;
-
-        Alarm = alarm;
-
-        SubjectLabel.Text = alarm.Name;
-        TimeRight.Text = alarm.ReminderTime.ToString("hh:mm");
-//        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
-
-        UpdateDropdown();
-
-        _refreshTimer.Tick += FormRefresh;
-        _refreshTimer.Start();
-
-        // Subscribe to MouseEnter and MouseLeave events for each child control
-        SetDraggable(this);
     }
 
-    public IAlarm Alarm { get; set; }
-
-    public Action<AlarmAction, string> MyCallBack { get; set; }
+    private IAlarm? Alarm { get; set; }
 
     private void UpdateDropdown()
     {
-        if (DateTime.Now - Alarm.Start > TimeSpan.FromMinutes(5))
+        if (DateTime.Now - Alarm?.Start > TimeSpan.FromMinutes(5))
             ActionSelector.Items.Remove(AlarmAction.FiveMinBefore);
 
-        if (DateTime.Now - Alarm.Start > TimeSpan.FromMinutes(0))
+        if (DateTime.Now - Alarm?.Start > TimeSpan.FromMinutes(0))
             ActionSelector.Items.Remove(AlarmAction.ZeroMinBefore);
 
         if (ActionSelector.SelectedIndex <= 0) ActionSelector.SelectedIndex = 0;
     }
 
-    private void FormRefresh(object? sender, EventArgs e)
+    private void FormRefresh(object? sender, EventArgs? e)
     {
-//        TimeLeft.Text = string.Format(Program.ApplicationSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
+        TimeLeft.Text = string.Format(Program.AppSettings.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
 
         UpdateDropdown();
     }
 
-    private void AlarmWindowForm_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        MyCallBack(_alarmAction, Alarm.Id);
-    }
-
     private void SnoozeButton_Click(object sender, EventArgs e)
     {
-        _alarmAction = (AlarmAction)(ActionSelector.SelectedValue ?? AlarmAction.FiveMinBefore);
+        if (Alarm == null) return;
+
+        var selectedAction = (AlarmAction)(ActionSelector.SelectedValue ?? AlarmAction.FiveMinBefore);
+
+        Program.AlarmManager.ChangeAlarmState(Alarm, selectedAction);
 
         Close();
     }
 
     private void DismissButton_Click(object sender, EventArgs e)
     {
-        _alarmAction = AlarmAction.Dismiss;
+        if (Alarm == null) return;
+
+        Program.AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
 
         Close();
     }
@@ -97,5 +74,37 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         _mediaPlayer.Stop();
 
         base.OnFormClosing(e);
+    }
+
+    public void Show(IAlarm alarm)
+    {
+        Alarm = alarm ?? throw new ArgumentNullException(typeof(IAlarm).ToString());
+
+        if (Alarm.IsAudible)
+            if (Alarm.HasCustomSound)
+                _mediaPlayer.PlaySound(Alarm.CustomSound);
+            else
+                _mediaPlayer.PlaySound(Program.AppSettings.DefaultSound);
+
+        SubjectLabel.Text = Alarm.Name;
+        TimeRight.Text = Alarm.ReminderTime.ToString("hh:mm");
+        TimeLeft.Text = string.Format(Program.AppSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
+
+        UpdateDropdown();
+
+        _refreshTimer = new Timer
+        {
+            Interval = 1000 // 1000 ms = 1 second
+        };
+
+        _refreshTimer.Tick += FormRefresh;
+        _refreshTimer.Start();
+
+        // Subscribe to MouseEnter and MouseLeave events for each child control
+        SetDraggable(this);
+
+        this.Location = new Point(0, 0);
+
+        base.Show();
     }
 }

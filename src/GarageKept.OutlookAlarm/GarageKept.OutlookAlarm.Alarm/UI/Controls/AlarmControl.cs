@@ -57,14 +57,14 @@ public partial class AlarmControl : UserControl, IAlarmControl
     {
         if (Alarm is null) return;
 
-        Program.AlarmManager.AlarmActionChange(Alarm, AlarmAction.Dismiss);
+        Program.AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
     }
 
     private void RemoveAppointment(object? sender, EventArgs e)
     {
         if (Alarm is null) return;
 
-        Program.AlarmManager.RemoveAlarm(Alarm);
+        Program.AlarmManager.DeactivateAlarm(Alarm);
     }
     
     private void Control_MouseDown(object? sender, MouseEventArgs e)

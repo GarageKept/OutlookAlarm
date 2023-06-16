@@ -11,7 +11,6 @@ namespace GarageKept.OutlookAlarm.Alarm;
 
 internal static class Program
 {
-
     static Program()
     {
         AppServices = new ServiceCollection();

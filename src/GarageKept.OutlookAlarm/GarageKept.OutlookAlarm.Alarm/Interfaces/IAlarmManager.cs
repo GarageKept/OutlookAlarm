@@ -4,22 +4,21 @@ namespace GarageKept.OutlookAlarm.Alarm.Interfaces;
 
 public interface IAlarmManager
 {
-    bool IsRunning { get; }
     event EventHandler<AlarmEventArgs> AlarmAdded;
     event EventHandler<AlarmEventArgs> AlarmChanged;
     event EventHandler<AlarmEventArgs> AlarmRemoved;
     event EventHandler<AlarmEventArgs> AlarmsUpdated;
 
     IEnumerable<IAlarm> GetActiveAlarms();
-    bool AddAlarm(IAlarm alarm);
-    void AlarmActionChange(IAlarm alarm, AlarmAction action);
+    
+    void ChangeAlarmState(IAlarm alarm, AlarmAction action);
+    void DeactivateAlarm(IAlarm alarm);
+    void ForceFetch();
+
     IAlarm? GetCurrentAppointment();
     IAlarm? GetNextAppointment();
-    bool RemoveAlarm(IAlarm alarm);
-    bool UpdateAlarm(IAlarm alarm);
 
     void Start();
     void Stop();
     void Reset();
-    void ForceFetch();
 }

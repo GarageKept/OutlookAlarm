@@ -60,8 +60,7 @@ partial class AlarmForm
         // ActionSelector
         // 
         ActionSelector.FormattingEnabled = true;
-        ActionSelector.Items.AddRange(new object[]
-            { "5 minutes before start", "0 hours before start", "5 minutes", "10 minutes" });
+        ActionSelector.Items.AddRange(new object[] { "5 minutes before start", "0 hours before start", "5 minutes", "10 minutes" });
         ActionSelector.Location = new Point(12, 61);
         ActionSelector.Name = "ActionSelector";
         ActionSelector.Size = new Size(142, 23);
@@ -97,7 +96,7 @@ partial class AlarmForm
         SnoozeButton.UseVisualStyleBackColor = true;
         SnoozeButton.Click += SnoozeButton_Click;
         // 
-        // AlarmWindowForm
+        // AlarmForm
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
@@ -110,11 +109,9 @@ partial class AlarmForm
         Controls.Add(SnoozeButton);
         DoubleBuffered = true;
         FormBorderStyle = FormBorderStyle.None;
-        Name = "AlarmWindowForm";
-        PinTop = false;
-        StartPosition = FormStartPosition.CenterScreen;
+        Name = "AlarmForm";
+        StartPosition = FormStartPosition.Manual;
         Text = "AlarmWindowForm";
-        FormClosing += AlarmWindowForm_FormClosing;
         ResumeLayout(false);
         PerformLayout();
     }

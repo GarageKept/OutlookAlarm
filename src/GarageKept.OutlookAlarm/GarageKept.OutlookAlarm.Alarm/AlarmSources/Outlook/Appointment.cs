@@ -13,13 +13,14 @@ public class Appointment : IAlarm
         End = item.End;
         Id = item.EntryID;
         IsOwnEvent = item.Organizer == item.RequiredAttendees;
-        IsReminderEnabled = item.ReminderSet;
+        IsReminderEnabled = true;
         ReminderTime = item.Start.AddMinutes(-item.ReminderMinutesBeforeStart);
         Response = item.ResponseStatus.ResponseTypeConverter();
         Start = item.Start;
         Name = item.Subject;
         IsAudible = true;
-        IsEnabled = true;
+        IsActive = true;
+        HasCustomSound = !string.IsNullOrEmpty(CustomSound);
     }
 
     public double Duration { get; set; }
@@ -32,8 +33,9 @@ public class Appointment : IAlarm
     public string Id { get; set; }
     public DateTime ReminderTime { get; set; }
     public bool IsReminderEnabled { get; set; }
-    public bool IsEnabled { get; set; }
+    public bool IsActive { get; set; }
     public DateTime Start { get; set; }
     public string Name { get; set; }
     public string CustomSound { get; set; }
+    public bool HasCustomSound { get; set; }
 }

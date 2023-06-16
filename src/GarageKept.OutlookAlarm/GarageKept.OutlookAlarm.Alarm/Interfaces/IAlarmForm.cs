@@ -2,6 +2,5 @@
 
 internal interface IAlarmForm
 {
-    void Show();
-    IAlarm Alarm { get; set; }
+    void Show(IAlarm alarm);
 }

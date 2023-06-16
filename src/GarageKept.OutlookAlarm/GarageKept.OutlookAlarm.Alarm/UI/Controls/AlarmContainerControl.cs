@@ -31,7 +31,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
     public void DismissAlarm(IAlarm alarm)
     {
-        Program.AlarmManager.AlarmActionChange(alarm, AlarmAction.Dismiss);
+        Program.AlarmManager.ChangeAlarmState(alarm, AlarmAction.Dismiss);
     }
 
     private void RefreshTimer_Tick(object? sender, EventArgs e)
