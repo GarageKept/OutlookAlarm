@@ -4,9 +4,9 @@ using Timer = System.Threading.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.AlarmManager;
 
-public class AlarmManager : IAlarmManager
+public class OutlookAlarmManager : IAlarmManager
 {
-    public AlarmManager(ISettings appSettings, IAlarmSource alarmSource)
+    public OutlookAlarmManager(ISettings appSettings, IAlarmSource alarmSource)
     {
         AppSettings = appSettings;
         AlarmSource = alarmSource;
@@ -216,8 +216,9 @@ public class AlarmManager : IAlarmManager
         var alarm = Alarms[alarmId];
 
         // Launch alarm window or perform related actions
-        var alarmWindow = ActivatorUtilities.CreateInstance<IAlarmForm>(Program.ServiceProvider, alarm);
-
+        var alarmWindow = Program.ServiceProvider.GetRequiredService<IAlarmForm>();
+        alarmWindow.Alarm = alarm;
+        
         alarmWindow.Show();
     }
 

@@ -7,20 +7,17 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 
 public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 {
-    public AlarmContainerControl(ISettings appSettings, IAlarmManager alarmManager)
+    public AlarmContainerControl()
     {
         InitializeComponent();
 
         tableLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
         AutoSizeMode = AutoSizeMode.GrowAndShrink;
-
-        AppSettings = appSettings;
-        AlarmManager = alarmManager;
-
-        alarmManager.AlarmAdded += UpdateAppointmentControls;
-        alarmManager.AlarmChanged += UpdateAppointmentControls;
-        alarmManager.AlarmRemoved += UpdateAppointmentControls;
-        alarmManager.AlarmsUpdated += UpdateAppointmentControls;
+        
+        Program.AlarmManager.AlarmAdded += UpdateAppointmentControls;
+        Program.AlarmManager.AlarmChanged += UpdateAppointmentControls;
+        Program.AlarmManager.AlarmRemoved += UpdateAppointmentControls;
+        Program.AlarmManager.AlarmsUpdated += UpdateAppointmentControls;
 
         InitializeFooterProgressBar();
 
@@ -28,34 +25,26 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         RefreshTimer.Start();
     }
 
-    public ISettings AppSettings { get; set; }
-    public IAlarmManager AlarmManager { get; set; }
-
     public Timer RefreshTimer { get; set; } = new() { Interval = 5000 };
 
     public AlarmProgressBar FooterProgressBar { get; set; } = new();
 
     public void DismissAlarm(IAlarm alarm)
     {
-        AlarmManager.AlarmActionChange(alarm, AlarmAction.Dismiss);
-    }
-
-    public void RemoveAlarm(IAlarm alarm)
-    {
-        AlarmManager.RemoveAlarm(alarm);
+        Program.AlarmManager.AlarmActionChange(alarm, AlarmAction.Dismiss);
     }
 
     private void RefreshTimer_Tick(object? sender, EventArgs e)
     {
-        var currentAppointment = AlarmManager.GetCurrentAppointment();
-        var nextAppointment = AlarmManager.GetNextAppointment();
-        var backColor = AppSettings.GreenColor;
-        var barColor = AppSettings.GreenColor;
+        var currentAppointment = Program.AlarmManager.GetCurrentAppointment();
+        var nextAppointment = Program.AlarmManager.GetNextAppointment();
+        var backColor = Program.AppSettings.GreenColor;
+        var barColor = Program.AppSettings.GreenColor;
         var value = 3600;
 
-        if (currentAppointment != null) barColor = AppSettings.RedColor;
+        if (currentAppointment != null) barColor = Program.AppSettings.RedColor;
 
-        if (currentAppointment?.End >= nextAppointment?.Start) backColor = AppSettings.YellowColor;
+        if (currentAppointment?.End >= nextAppointment?.Start) backColor =Program.AppSettings.YellowColor;
 
         var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ??
                                        currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
@@ -63,25 +52,25 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
         if (nextAppointment is null)
         {
-            backColor = AppSettings.GreenColor;
+            backColor = Program.AppSettings.GreenColor;
         }
         else
         {
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = AppSettings.YellowColor;
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Program.AppSettings.YellowColor;
 
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(AppSettings.AlarmWarningTime))
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.AppSettings.AlarmWarningTime))
             {
-                barColor = AppSettings.YellowColor;
-                backColor = AppSettings.RedColor;
+                barColor = Program.AppSettings.YellowColor;
+                backColor = Program.AppSettings.RedColor;
             }
 
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(AppSettings.AlarmWarningTime))
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.AppSettings.AlarmWarningTime))
             {
-                barColor = AppSettings.YellowColor;
-                backColor = AppSettings.RedColor;
+                barColor = Program.AppSettings.YellowColor;
+                backColor = Program.AppSettings.RedColor;
             }
 
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = AppSettings.RedColor;
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Program.AppSettings.RedColor;
         }
 
         FooterProgressBar.BackgroundColor = backColor;
@@ -132,7 +121,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         // Reset the row count to 0
         tableLayoutPanel.RowCount = 0;
 
-        foreach (var alarm in AlarmManager.GetActiveAlarms().OrderBy(a => a.Start))
+        foreach (var alarm in Program.AlarmManager.GetActiveAlarms().OrderBy(a => a.Start))
         {
             var alarmControl =
                 Program.ServiceProvider
@@ -153,7 +142,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
                 Parent.Top = 0;
 
             if (Parent.Top < 0)
-                Parent.Top = -Parent.Height + AppSettings.BarSize;
+                Parent.Top = -Parent.Height + Program.AppSettings.BarSize;
         }
 
         ResumeLayout();

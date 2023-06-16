@@ -1,4 +1,5 @@
-﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
+﻿using GarageKept.OutlookAlarm.Alarm.AlarmManager;
+using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
@@ -7,14 +8,12 @@ public partial class AlarmControl : UserControl, IAlarmControl
 {
     private readonly ContextMenuStrip _appointmentContextMenuStrip = new();
 
-    public AlarmControl(ISettings settings)
+    public AlarmControl()
     {
         InitializeComponent();
 
         RefreshTimer.Tick += Refresh_Tick;
         RefreshTimer.Start();
-
-        AppSettings = settings;
 
         AddContextMenu();
 
@@ -22,9 +21,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
     }
 
     private Timer RefreshTimer { get; } = new() { Interval = 1000 };
-
-    public ISettings? AppSettings { get; set; }
-
+    
     public IAlarm? Alarm { get; set; }
 
     public void UpdateDisplay()
@@ -60,30 +57,16 @@ public partial class AlarmControl : UserControl, IAlarmControl
     {
         if (Alarm is null) return;
 
-        var containerControl = FindAlarmContainerControl(this);
-
-        containerControl?.DismissAlarm(Alarm);
+        Program.AlarmManager.AlarmActionChange(Alarm, AlarmAction.Dismiss);
     }
 
     private void RemoveAppointment(object? sender, EventArgs e)
     {
         if (Alarm is null) return;
 
-        var containerControl = FindAlarmContainerControl(this);
-
-        containerControl?.RemoveAlarm(Alarm);
+        Program.AlarmManager.RemoveAlarm(Alarm);
     }
-
-    private IAlarmContainerControl? FindAlarmContainerControl(Control child)
-    {
-        return child.Parent switch
-        {
-            null => null,
-            IAlarmContainerControl parent => parent,
-            _ => FindAlarmContainerControl(child.Parent)
-        };
-    }
-
+    
     private void Control_MouseDown(object? sender, MouseEventArgs e)
     {
         if (e.Button == MouseButtons.Right) _appointmentContextMenuStrip.Show(this, e.Location);
@@ -122,9 +105,10 @@ public partial class AlarmControl : UserControl, IAlarmControl
         if (Alarm is null) return;
 
         var timeLeft = Alarm.End - DateTime.Now;
+
         if (timeLeft.TotalMinutes < 0) timeLeft = TimeSpan.Zero;
 
-        TimeLeft.Text = string.Format(AppSettings?.TimeLeftStringFormat ?? "h:mm tt", timeLeft);
+        TimeLeft.Text = string.Format(Program.AppSettings.TimeLeftStringFormat, timeLeft);
     }
 
     private void SetTimeUntilMeetingLabel()

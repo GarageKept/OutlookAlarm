@@ -51,7 +51,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         SetDraggable(this);
     }
 
-    private IAlarm Alarm { get; }
+    public IAlarm Alarm { get; set; }
 
     public Action<AlarmAction, string> MyCallBack { get; set; }
 
