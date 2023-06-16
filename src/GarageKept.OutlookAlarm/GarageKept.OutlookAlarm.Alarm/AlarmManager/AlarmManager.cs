@@ -1,9 +1,8 @@
-﻿using GarageKept.OutlookAlarm.Alarm.Common;
-using GarageKept.OutlookAlarm.Alarm.Interfaces;
+﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Timer = System.Threading.Timer;
 
-namespace GarageKept.OutlookAlarm.Alarm.Alarm;
+namespace GarageKept.OutlookAlarm.Alarm.AlarmManager;
 
 public class AlarmManager : IAlarmManager
 {
@@ -55,12 +54,9 @@ public class AlarmManager : IAlarmManager
             RemoveAlarmTimer(alarm);
         }
 
-        foreach (var alarm in alarmsToRemove)
-        {
-            RemoveAlarm(alarm);
-        }
+        foreach (var alarm in alarmsToRemove) RemoveAlarm(alarm);
 
-
+        FetchAlarms(this);
     }
 
     public IEnumerable<IAlarm> GetActiveAlarms()
@@ -103,14 +99,22 @@ public class AlarmManager : IAlarmManager
         }
     }
 
-    public IAlarm GetCurrentAppointment()
+    public IAlarm? GetCurrentAppointment()
     {
-        throw new NotImplementedException();
+        var now = DateTime.Now;
+
+        var current = Alarms.Values.OrderBy(a => a.Start).FirstOrDefault(a => a.Start < now && a.End > now);
+
+        return current;
     }
 
-    public IAlarm GetNextAppointment()
+    public IAlarm? GetNextAppointment()
     {
-        throw new NotImplementedException();
+        var now = DateTime.Now;
+
+        var current = Alarms.Values.OrderBy(a => a.Start).FirstOrDefault(a => a.Start > now);
+
+        return current;
     }
 
     public bool RemoveAlarm(IAlarm alarm)
@@ -136,6 +140,11 @@ public class AlarmManager : IAlarmManager
         OnAlarmChanged(new AlarmEventArgs(alarm, AlarmEvent.Updated));
 
         return updatedTimer;
+    }
+
+    public void ForceFetch()
+    {
+        FetchAlarms(this);
     }
 
     protected virtual void OnAlarmChanged(AlarmEventArgs e)
@@ -217,12 +226,10 @@ public class AlarmManager : IAlarmManager
         var alarms = GetAlarms(AppSettings.FetchTime);
 
         foreach (var alarm in alarms)
-        {
             if (Alarms.ContainsKey(alarm.Id))
                 UpdateAlarm(alarm);
             else
                 AddAlarm(alarm);
-        }
 
         OnAlarmsUpdated(new AlarmEventArgs(AlarmEvent.Updated));
     }

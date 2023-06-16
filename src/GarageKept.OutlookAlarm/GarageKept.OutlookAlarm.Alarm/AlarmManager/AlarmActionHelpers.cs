@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace GarageKept.OutlookAlarm.Alarm.Common;
+namespace GarageKept.OutlookAlarm.Alarm.AlarmManager;
 
 public static class AlarmActionHelpers
 {

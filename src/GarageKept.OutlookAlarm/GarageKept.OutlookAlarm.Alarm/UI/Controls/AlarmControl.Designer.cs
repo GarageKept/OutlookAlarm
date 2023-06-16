@@ -1,4 +1,4 @@
-﻿namespace GarageKept.OutlookAlarm.Alarms.UI.Controls;
+﻿namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 
 partial class AlarmControl
 {

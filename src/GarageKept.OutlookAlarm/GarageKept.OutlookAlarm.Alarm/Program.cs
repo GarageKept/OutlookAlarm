@@ -1,10 +1,8 @@
 using GarageKept.OutlookAlarm.Alarm.AlarmSources.Outlook;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
+using GarageKept.OutlookAlarm.Alarm.Settings;
+using GarageKept.OutlookAlarm.Alarm.UI.Controls;
 using GarageKept.OutlookAlarm.Alarm.UI.Forms;
-using GarageKept.OutlookAlarm.Alarm.Alarm;
-using GarageKept.OutlookAlarm.Alarm.Common;
-using GarageKept.OutlookAlarm.Alarm.Interfaces;
-using GarageKept.OutlookAlarm.Alarms.UI.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -42,8 +40,6 @@ internal static class Program
             return;
         }
 
-        MyAlarmManager.Start();
-
         Application.Run(ServiceProvider.GetRequiredService<IMainForm>() as Form);
     }
 
@@ -53,11 +49,12 @@ internal static class Program
             .ConfigureServices(services =>
             {
                 services.AddSingleton<IAlarmSource, OutlookAlarmSource>();
-                services.AddSingleton<IAlarmManager, AlarmManager>();
-                services.AddSingleton<ISettings, Settings>();
+                services.AddSingleton<IAlarmManager, AlarmManager.AlarmManager>();
+                services.AddSingleton<ISettings, OutlookAlarmSettings>();
                 services.AddSingleton<IMainForm, MainForm>();
+                services.AddSingleton<ISettingsForm, SettingsForm>();
                 services.AddTransient<IAlarmForm, AlarmForm>();
-                services.AddSingleton<IAlarmContainerControl, IAlarmContainerControl>();
+                services.AddSingleton<IAlarmContainerControl, AlarmContainerControl>();
                 services.AddTransient<IAlarmControl, AlarmControl>();
             });
     }

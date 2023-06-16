@@ -1,4 +1,4 @@
-﻿using GarageKept.OutlookAlarm.Alarm.UI.Controls;
+﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
@@ -34,7 +34,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
         {
             components = new System.ComponentModel.Container();
             rightClickMenu = new ContextMenuStrip(components);
-            upcomingAppointments = Program.ServiceProvider.GetService<AlarmContainerControl>();
+            upcomingAppointments = (Controls.AlarmContainerControl)Program.ServiceProvider.GetService<IAlarmContainerControl>();
             SuspendLayout();
             // 
             // rightClickMenu

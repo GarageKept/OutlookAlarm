@@ -1,6 +1,6 @@
-﻿using GarageKept.OutlookAlarm.Alarm.Alarm;
+﻿using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
-using GarageKept.OutlookAlarm.Alarms.UI.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
@@ -31,13 +31,13 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
     public ISettings AppSettings { get; set; }
     public IAlarmManager AlarmManager { get; set; }
 
-    public Timer RefreshTimer { get; set; } = new() { Interval = 1000 };
+    public Timer RefreshTimer { get; set; } = new() { Interval = 5000 };
 
     public AlarmProgressBar FooterProgressBar { get; set; } = new();
 
     public void DismissAlarm(IAlarm alarm)
     {
-        throw new NotImplementedException();
+        AlarmManager.AlarmActionChange(alarm, AlarmAction.Dismiss);
     }
 
     public void RemoveAlarm(IAlarm alarm)
@@ -57,24 +57,32 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
         if (currentAppointment?.End >= nextAppointment?.Start) backColor = AppSettings.YellowColor;
 
-        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ?? new TimeSpan(1, 1, 1);
+        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ??
+                                       currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
 
 
-        if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = AppSettings.YellowColor;
-
-        if (timeUntilNextAppointment < TimeSpan.FromMinutes(AppSettings.AlarmWarningTime))
+        if (nextAppointment is null)
         {
-            barColor = AppSettings.YellowColor;
-            backColor = AppSettings.RedColor;
+            backColor = AppSettings.GreenColor;
         }
-
-        if (timeUntilNextAppointment < TimeSpan.FromMinutes(AppSettings.AlarmWarningTime))
+        else
         {
-            barColor = AppSettings.YellowColor;
-            backColor = AppSettings.RedColor;
-        }
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = AppSettings.YellowColor;
 
-        if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = AppSettings.RedColor;
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(AppSettings.AlarmWarningTime))
+            {
+                barColor = AppSettings.YellowColor;
+                backColor = AppSettings.RedColor;
+            }
+
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(AppSettings.AlarmWarningTime))
+            {
+                barColor = AppSettings.YellowColor;
+                backColor = AppSettings.RedColor;
+            }
+
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = AppSettings.RedColor;
+        }
 
         FooterProgressBar.BackgroundColor = backColor;
         FooterProgressBar.BarColor = barColor;
@@ -82,7 +90,8 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         // now we figure out what the value should be
         if (timeUntilNextAppointment.TotalSeconds <= 3600)
             // Update the progress bar value based on the time left
-            value = 3600 - (int)timeUntilNextAppointment.TotalSeconds;
+            value = (int)timeUntilNextAppointment.TotalSeconds;
+        //value = 3600 - (int)timeUntilNextAppointment.TotalSeconds;
 
         FooterProgressBar.Value = value;
     }
@@ -101,6 +110,16 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
     public void UpdateAppointmentControls(object? sender, AlarmEventArgs e)
     {
+        if (!IsHandleCreated) return;
+
+        if (InvokeRequired && IsHandleCreated)
+            Invoke((MethodInvoker)UpdateAlarmControls);
+        else
+            UpdateAlarmControls();
+    }
+
+    private void UpdateAlarmControls()
+    {
         // Pause updates until we redo everything
         SuspendLayout();
 
@@ -114,13 +133,24 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         tableLayoutPanel.RowCount = 0;
 
         foreach (var alarm in AlarmManager.GetActiveAlarms().OrderBy(a => a.Start))
-            AddRow(new AlarmControl { Alarm = alarm, AppSettings = AppSettings });
+        {
+            var alarmControl =
+                Program.ServiceProvider
+                    .GetRequiredService<IAlarmControl>(); //new AlarmControl { Alarm = alarm, AppSettings = AppSettings };
+            alarmControl.Alarm = alarm;
+            alarmControl.UpdateDisplay();
+
+            AddRow(alarmControl as Control);
+        }
 
         AddFooterRow();
 
         if (Parent is IMainForm parentForm)
         {
-            parentForm.SubscribeToMouseEvents();
+            parentForm.AddMouseEvents((Form)parentForm);
+
+            if (Parent.Top > 0)
+                Parent.Top = 0;
 
             if (Parent.Top < 0)
                 Parent.Top = -Parent.Height + AppSettings.BarSize;
@@ -129,8 +159,10 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         ResumeLayout();
     }
 
-    public void AddRow(Control control)
+    public void AddRow(Control? control)
     {
+        if (control == null) return;
+
         var newRow = tableLayoutPanel.RowCount; // Get the current row count
         tableLayoutPanel.RowCount++; // Increment the row count by 1
 

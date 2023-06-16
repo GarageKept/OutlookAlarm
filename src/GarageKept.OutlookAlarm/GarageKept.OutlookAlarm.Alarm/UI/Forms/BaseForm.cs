@@ -26,12 +26,14 @@ public class BaseForm : Form
     /// <param name="pinTop">Whether the form should be pinned to the top of the screen.</param>
     internal BaseForm(bool pinTop)
     {
-        SubscribeToMouseEvents(this);
+        SetDraggable(this);
 
         // Make the form stay on top of other windows
         TopMost = true;
 
         PinTop = pinTop;
+
+        Top = 0;
     }
 
     /// <summary>
@@ -57,13 +59,13 @@ public class BaseForm : Form
     ///     Adds mouse event handlers to a given control and all its children.
     /// </summary>
     /// <param name="control">The control to add event handlers to.</param>
-    public void SubscribeToMouseEvents(Control control)
+    public void SetDraggable(Control control)
     {
         control.MouseDown += MouseDownHandler;
         control.MouseMove += MouseMoveHandler;
         control.MouseUp += MouseUpHandler;
 
-        foreach (Control child in control.Controls) SubscribeToMouseEvents(child);
+        foreach (Control child in control.Controls) SetDraggable(child);
     }
 
     /// <summary>

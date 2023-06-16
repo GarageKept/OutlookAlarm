@@ -1,4 +1,4 @@
-﻿namespace GarageKept.OutlookAlarm.Alarm.Alarm;
+﻿namespace GarageKept.OutlookAlarm.Alarm.AlarmManager;
 
 public enum AlarmEvent
 {

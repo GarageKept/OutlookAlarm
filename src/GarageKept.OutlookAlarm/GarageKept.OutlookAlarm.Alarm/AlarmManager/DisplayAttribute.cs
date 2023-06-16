@@ -1,4 +1,4 @@
-﻿namespace GarageKept.OutlookAlarm.Alarm.Common;
+﻿namespace GarageKept.OutlookAlarm.Alarm.AlarmManager;
 
 public class DisplayAttribute : Attribute
 {

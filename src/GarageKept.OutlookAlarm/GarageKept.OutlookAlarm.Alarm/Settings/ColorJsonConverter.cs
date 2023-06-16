@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace GarageKept.OutlookAlarm.Alarm.Common;
+namespace GarageKept.OutlookAlarm.Alarm.Settings;
 
 public class ColorJsonConverter : JsonConverter<Color>
 {

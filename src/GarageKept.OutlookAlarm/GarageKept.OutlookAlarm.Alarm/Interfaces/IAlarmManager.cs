@@ -1,5 +1,4 @@
-﻿using GarageKept.OutlookAlarm.Alarm.Alarm;
-using GarageKept.OutlookAlarm.Alarm.Common;
+﻿using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 
 namespace GarageKept.OutlookAlarm.Alarm.Interfaces;
 
@@ -14,12 +13,13 @@ public interface IAlarmManager
     IEnumerable<IAlarm> GetActiveAlarms();
     bool AddAlarm(IAlarm alarm);
     void AlarmActionChange(IAlarm alarm, AlarmAction action);
-    IAlarm GetCurrentAppointment();
-    IAlarm GetNextAppointment();
+    IAlarm? GetCurrentAppointment();
+    IAlarm? GetNextAppointment();
     bool RemoveAlarm(IAlarm alarm);
     bool UpdateAlarm(IAlarm alarm);
 
     void Start();
     void Stop();
     void Reset();
+    void ForceFetch();
 }

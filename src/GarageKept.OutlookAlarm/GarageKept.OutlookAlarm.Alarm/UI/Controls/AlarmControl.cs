@@ -1,18 +1,20 @@
 ﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
-namespace GarageKept.OutlookAlarm.Alarms.UI.Controls;
+namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 
 public partial class AlarmControl : UserControl, IAlarmControl
 {
     private readonly ContextMenuStrip _appointmentContextMenuStrip = new();
 
-    public AlarmControl()
+    public AlarmControl(ISettings settings)
     {
         InitializeComponent();
 
         RefreshTimer.Tick += Refresh_Tick;
         RefreshTimer.Start();
+
+        AppSettings = settings;
 
         AddContextMenu();
 
@@ -24,6 +26,16 @@ public partial class AlarmControl : UserControl, IAlarmControl
     public ISettings? AppSettings { get; set; }
 
     public IAlarm? Alarm { get; set; }
+
+    public void UpdateDisplay()
+    {
+        if (Alarm == null) return;
+
+        SetSubjectLabel();
+        SetTimeLabels();
+        SetProgressBar();
+        SetBackgroundColor();
+    }
 
     private void AddContextMenu()
     {
@@ -48,20 +60,28 @@ public partial class AlarmControl : UserControl, IAlarmControl
     {
         if (Alarm is null) return;
 
-        if (Parent is not IAlarmContainerControl) return;
+        var containerControl = FindAlarmContainerControl(this);
 
-        var parent = Parent as IAlarmContainerControl;
-        parent?.DismissAlarm(Alarm);
+        containerControl?.DismissAlarm(Alarm);
     }
 
     private void RemoveAppointment(object? sender, EventArgs e)
     {
         if (Alarm is null) return;
 
-        if (Parent is not IAlarmContainerControl) return;
+        var containerControl = FindAlarmContainerControl(this);
 
-        var parent = Parent as IAlarmContainerControl;
-        parent?.RemoveAlarm(Alarm);
+        containerControl?.RemoveAlarm(Alarm);
+    }
+
+    private IAlarmContainerControl? FindAlarmContainerControl(Control child)
+    {
+        return child.Parent switch
+        {
+            null => null,
+            IAlarmContainerControl parent => parent,
+            _ => FindAlarmContainerControl(child.Parent)
+        };
     }
 
     private void Control_MouseDown(object? sender, MouseEventArgs e)
@@ -72,16 +92,6 @@ public partial class AlarmControl : UserControl, IAlarmControl
     private void Refresh_Tick(object? sender, EventArgs e)
     {
         UpdateDisplay();
-    }
-
-    public void UpdateDisplay()
-    {
-        if (Alarm == null) return;
-
-        SetSubjectLabel();
-        SetTimeLabels();
-        SetProgressBar();
-        SetBackgroundColor();
     }
 
     private void SetSubjectLabel()
@@ -149,7 +159,9 @@ public partial class AlarmControl : UserControl, IAlarmControl
         var timeLeft = Alarm.End - DateTime.Now;
 
         var progress = (int)((1 - timeLeft.TotalMinutes / (Alarm.End - Alarm.Start).Minutes) * 100);
-        progressBar.Value = progress;
+
+
+        progressBar.Value = progress < 0 ? 0 : progress;
     }
 
     private void SetProgressBarForFutureAppointment()
