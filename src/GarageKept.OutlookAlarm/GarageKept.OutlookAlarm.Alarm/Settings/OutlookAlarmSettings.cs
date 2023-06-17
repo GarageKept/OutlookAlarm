@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using Accessibility;
 using GarageKept.OutlookAlarm.Alarm.Audio;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 
@@ -9,7 +10,7 @@ namespace GarageKept.OutlookAlarm.Alarm.Settings;
 ///     Represents the application settings.
 ///     Provides methods to save and load settings from a JSON file.
 /// </summary>
-internal class OutlookAlarmSettings : ISettings
+public class OutlookAlarmSettings : ISettings
 {
     private const string SettingsFilePath = "settings.json";
 
@@ -39,6 +40,7 @@ internal class OutlookAlarmSettings : ISettings
     public int BarSize { get; internal set; } = 10;
     public SoundType DefaultSound { get; set; } = SoundType.Warning0;
     public int TurnOffAlarmAfterStart { get; set; } = 15;
+    public AlarmSettings AlarmSettings { get; set; } = new AlarmSettings();
 
     /// <summary>
     ///     Saves the current instance of the <see cref="OutlookAlarmSettings" /> object to the settings file.
@@ -115,4 +117,25 @@ internal class OutlookAlarmSettings : ISettings
 
         return settings;
     }
+
+}
+
+public class AlarmSettings
+{
+    private int _left = -1;
+    public Color AlarmPastStartColor { get; } = Color.Red;
+    public string TimeLeftStringFormat { get; } = "{0:%h}h {0:mm}m {0:ss}s";
+    public string AlarmStartStringFormat { get; } = "hh:mm tt";
+
+    public int Left
+    {
+        get
+        {
+            if (_left < 0) return Screen.PrimaryScreen?.Bounds.Width/2 ?? 0;
+            return _left;
+        }
+        set => _left = value;
+    }
+
+    public int Top { get; set; } = 0;
 }

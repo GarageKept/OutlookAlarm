@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.ComponentModel;
 using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Audio;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
@@ -13,7 +12,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
     private Timer? _refreshTimer;
     private bool _playSound = true;
 
-    public AlarmForm() : base(true)
+    public AlarmForm() : base(false)
     {
         InitializeComponent();
 
@@ -32,6 +31,13 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         ActionSelector.ValueMember = "Value";
 
         ActionSelector.DataSource = dataSource;
+        
+        Move += (sender, args) =>
+        {
+            Program.AppSettings.AlarmSettings.Left = Left;
+            Program.AppSettings.AlarmSettings.Top = Top;
+            Program.AppSettings.Save();
+        };
     }
 
     private IAlarm? Alarm { get; set; }
@@ -53,8 +59,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         var dataSource = ((IEnumerable)ActionSelector.DataSource).Cast<dynamic>()
             .Select(item => new
             {
-                Value = (AlarmAction)item.Value,
-                Text = item.Text
+                Value = (AlarmAction)item.Value, item.Text
             })
             .ToList();
 
@@ -71,13 +76,16 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
     private void FormRefresh(object? sender, EventArgs? e)
     {
-        TimeLeft.Text = string.Format(Program.AppSettings.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
+        TimeLeft.Text = string.Format(Program.AppSettings.AlarmSettings.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
 
         if (_playSound && Program.AppSettings.TurnOffAlarmAfterStart >= 0 && Alarm?.Start - DateTime.Now > TimeSpan.FromMinutes(Program.AppSettings.TurnOffAlarmAfterStart))
         {
             _mediaPlayer.Stop();
             _playSound = false;
         }
+
+        if(DateTime.Now > Alarm?.Start)
+            SetBackGroundColor(Program.AppSettings.AlarmSettings.AlarmPastStartColor);
 
         UpdateDropdown();
     }
@@ -109,6 +117,21 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         base.OnFormClosing(e);
     }
 
+    private void SetBackGroundColor(Color backGroundColor)
+    {
+        BackColor = backGroundColor;
+        ForeColor = DetermineTextColor(backGroundColor);
+
+        // Exclude buttons from text color adjustment
+        foreach (Control control in this.Controls)
+        {
+            if (control is Button)
+            {
+                control.ForeColor = SystemColors.ControlText;
+            }
+        }
+    }
+
     public void Show(IAlarm alarm)
     {
         Alarm = alarm ?? throw new ArgumentNullException(typeof(IAlarm).ToString());
@@ -120,8 +143,10 @@ public partial class AlarmForm : BaseForm, IAlarmForm
                 _mediaPlayer.PlaySound(Program.AppSettings.DefaultSound);
 
         SubjectLabel.Text = Alarm.Name;
-        TimeRight.Text = Alarm.ReminderTime.ToString("hh:mm");
-        TimeLeft.Text = string.Format(Program.AppSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
+        TimeRight.Text = Alarm.ReminderTime.ToString(Program.AppSettings.AlarmSettings.AlarmStartStringFormat);
+        TimeLeft.Text = string.Format(Program.AppSettings.AlarmSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
+
+        FormRefresh(null, null);
 
         UpdateDropdown();
 
@@ -136,18 +161,9 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         // Subscribe to MouseEnter and MouseLeave events for each child control
         SetDraggable(this);
 
-        this.Location = new Point(0, 0);
+        this.Location = new Point(Program.AppSettings.AlarmSettings.Left, Program.AppSettings.AlarmSettings.Top);
 
-        BackColor = Alarm.AlarmColor;
-        ForeColor = DetermineTextColor(BackColor);
-        // Exclude buttons from text color adjustment
-        foreach (Control control in this.Controls)
-        {
-            if (control is Button)
-            {
-                control.ForeColor = SystemColors.ControlText;
-            }
-        }
+        SetBackGroundColor(Alarm.AlarmColor);
 
         base.Show();
     }
