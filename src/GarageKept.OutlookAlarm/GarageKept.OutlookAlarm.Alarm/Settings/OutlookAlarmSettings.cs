@@ -38,6 +38,7 @@ internal class OutlookAlarmSettings : ISettings
     public int AlarmWarningTime { get; set; } = 15;
     public int BarSize { get; internal set; } = 10;
     public SoundType DefaultSound { get; set; } = SoundType.Warning0;
+    public int TurnOffAlarmAfterStart { get; set; } = 15;
 
     /// <summary>
     ///     Saves the current instance of the <see cref="OutlookAlarmSettings" /> object to the settings file.

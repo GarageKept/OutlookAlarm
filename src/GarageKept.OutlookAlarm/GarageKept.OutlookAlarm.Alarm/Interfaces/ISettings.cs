@@ -16,6 +16,7 @@ public interface ISettings
     string TimeFormat { get; set; }
     string TimeLeftStringFormat { get; set; }
     SoundType DefaultSound { get; set; }
+    int TurnOffAlarmAfterStart { get; set; }
 
     /// <summary>
     ///     Saves the current instance of the <see cref="Settings" /> object to the settings file.

@@ -11,6 +11,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 {
     private readonly Media _mediaPlayer = new();
     private Timer? _refreshTimer;
+    private bool _playSound = true;
 
     public AlarmForm() : base(true)
     {
@@ -38,15 +39,15 @@ public partial class AlarmForm : BaseForm, IAlarmForm
     private void UpdateDropdown()
     {
         if ((Alarm?.Start -DateTime.Now)!.Value.TotalMinutes < TimeSpan.FromMinutes(5).TotalMinutes)
-            RemoveActionSelctorItem(AlarmAction.FiveMinBefore);
+            RemoveActionSelectorItem(AlarmAction.FiveMinBefore);
 
         if (DateTime.Now > Alarm?.Start)
-            RemoveActionSelctorItem(AlarmAction.ZeroMinBefore);
+            RemoveActionSelectorItem(AlarmAction.ZeroMinBefore);
 
         //if (ActionSelector.SelectedIndex <= 0) ActionSelector.SelectedIndex = 1;
     }
 
-    private void RemoveActionSelctorItem(AlarmAction action)
+    private void RemoveActionSelectorItem(AlarmAction action)
     {
         // Retrieve the current data source as a list of anonymous objects
         var dataSource = ((IEnumerable)ActionSelector.DataSource).Cast<dynamic>()
@@ -71,6 +72,12 @@ public partial class AlarmForm : BaseForm, IAlarmForm
     private void FormRefresh(object? sender, EventArgs? e)
     {
         TimeLeft.Text = string.Format(Program.AppSettings.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
+
+        if (_playSound && Program.AppSettings.TurnOffAlarmAfterStart >= 0 && Alarm?.Start - DateTime.Now > TimeSpan.FromMinutes(Program.AppSettings.TurnOffAlarmAfterStart))
+        {
+            _mediaPlayer.Stop();
+            _playSound = false;
+        }
 
         UpdateDropdown();
     }
