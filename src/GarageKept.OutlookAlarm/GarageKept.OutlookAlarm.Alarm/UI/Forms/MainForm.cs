@@ -116,7 +116,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// <summary>
     ///     Checks if the mouse pointer is still within the form bounds.
     /// </summary>
-    internal void CheckMouseLeaveForm()
+    public void CheckMouseLeaveForm()
     {
         var clientCursorPos = PointToClient(Cursor.Position);
 

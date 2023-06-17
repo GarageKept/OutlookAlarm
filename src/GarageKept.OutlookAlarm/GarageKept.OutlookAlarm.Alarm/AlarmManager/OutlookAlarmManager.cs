@@ -5,7 +5,7 @@ using Timer = System.Threading.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.AlarmManager;
 
-public class OutlookAlarmManager : IAlarmManager
+public sealed class OutlookAlarmManager : IAlarmManager
 {
     public OutlookAlarmManager(IAlarmSource alarmSource)
     {
@@ -175,22 +175,22 @@ public class OutlookAlarmManager : IAlarmManager
         FetchAlarms(this);
     }
 
-    protected virtual void OnAlarmChanged(AlarmEventArgs e)
+    private void OnAlarmChanged(AlarmEventArgs e)
     {
         AlarmChanged.Invoke(this, e);
     }
 
-    protected virtual void OnAlarmAdded(AlarmEventArgs e)
+    private void OnAlarmAdded(AlarmEventArgs e)
     {
         AlarmAdded.Invoke(this, e);
     }
 
-    protected virtual void OnAlarmRemoved(AlarmEventArgs e)
+    private void OnAlarmRemoved(AlarmEventArgs e)
     {
         AlarmRemoved.Invoke(this, e);
     }
 
-    protected virtual void OnAlarmsUpdated(AlarmEventArgs e)
+    private void OnAlarmsUpdated(AlarmEventArgs e)
     {
         AlarmsUpdated.Invoke(this, e);
     }

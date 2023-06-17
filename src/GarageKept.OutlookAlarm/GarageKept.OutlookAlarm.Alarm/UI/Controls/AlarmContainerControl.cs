@@ -29,11 +29,6 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
     public AlarmProgressBar FooterProgressBar { get; set; } = new();
 
-    public void DismissAlarm(IAlarm alarm)
-    {
-        Program.AlarmManager.ChangeAlarmState(alarm, AlarmAction.Dismiss);
-    }
-
     private void RefreshTimer_Tick(object? sender, EventArgs e)
     {
         var currentAppointment = Program.AlarmManager.GetCurrentAppointment();
@@ -143,6 +138,8 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
             if (Parent.Top < 0)
                 Parent.Top = -Parent.Height + Program.AppSettings.BarSize;
+
+            parentForm.CheckMouseLeaveForm();
         }
 
         ResumeLayout();
