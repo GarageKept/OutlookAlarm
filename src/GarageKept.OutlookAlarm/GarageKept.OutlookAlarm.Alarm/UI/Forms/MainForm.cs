@@ -10,13 +10,11 @@ public partial class MainForm : BaseForm, IMainForm
 
     private bool _isExpanded;
 
-    public MainForm(ISettings appSettings, ISettingsForm settingsForm, IAlarmManager alarmManager) : base(true)
+    public MainForm(ISettingsForm settingsForm) : base(true)
     {
         InitializeComponent();
 
-        AppSettings = appSettings;
         SettingsForm = settingsForm;
-        AlarmManager = alarmManager;
 
         if (DesignMode) return;
 
@@ -24,7 +22,7 @@ public partial class MainForm : BaseForm, IMainForm
         StartPosition = FormStartPosition.Manual;
 
         // Calculate the form's initial x and y positions
-        var xPos = AppSettings.Left;
+        var xPos = Program.AppSettings.Main.Left;
         var yPos = 0;
 
         // Set the form's location
@@ -42,10 +40,10 @@ public partial class MainForm : BaseForm, IMainForm
         rightClickMenu.Items.Add(new ToolStripSeparator());
         rightClickMenu.Items.Add("Close", null, (_, _) => Close());
 
-        Move += (sender, args) =>
+        Move += (_, _) =>
         {
-            AppSettings.Left = Left;
-            AppSettings.Save();
+            Program.AppSettings.Main.Left = Left;
+            Program.AppSettings.Save();
         };
 
         var advanced = new ToolStripMenuItem("Advanced");
@@ -67,12 +65,10 @@ public partial class MainForm : BaseForm, IMainForm
         _slidingTimer.Tick += SlidingTimer_Tick;
         _slidingTimer.Start();
 
-        AlarmManager.Start();
+        Program.AlarmManager.Start();
     }
 
-    private ISettings AppSettings { get; }
     private ISettingsForm SettingsForm { get; set; }
-    private IAlarmManager AlarmManager { get; }
 
     /// <summary>
     ///     Subscribes to MouseEnter and MouseLeave events for each child control.
@@ -90,7 +86,7 @@ public partial class MainForm : BaseForm, IMainForm
 
     private void RightClick_ResetAllAppointments(object? sender, EventArgs e)
     {
-        AlarmManager.Reset();
+        Program.AlarmManager.Reset();
     }
 
     /// <summary>
@@ -134,9 +130,9 @@ public partial class MainForm : BaseForm, IMainForm
     internal void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
         // Save the current position so we can restore it back to where it was on next run
-        AppSettings.Left = Location.X;
+        Program.AppSettings.Main.Left = Location.X;
 
-        AppSettings.Save();
+        Program.AppSettings.Save();
     }
 
     /// <summary>
@@ -193,7 +189,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// <param name="e">An EventArgs that contains the event data.</param>
     internal void RightClickMenu_RefreshClick(object? sender, EventArgs e)
     {
-        AlarmManager.ForceFetch();
+        Program.AlarmManager.ForceFetch();
     }
 
     /// <summary>
@@ -203,7 +199,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// <param name="e">An EventArgs that contains the event data.</param>
     internal void SlidingTimer_Tick(object? sender, EventArgs e)
     {
-        var targetY = _isExpanded ? 0 : -Height + AppSettings.BarSize;
+        var targetY = _isExpanded ? 0 : -Height + Program.AppSettings.Main.BarSize;
 
         if (Math.Abs(Location.Y - targetY) <= 1)
         {
@@ -212,7 +208,7 @@ public partial class MainForm : BaseForm, IMainForm
         }
         else
         {
-            var step = (targetY - Location.Y) / AppSettings.SliderSpeed;
+            var step = (targetY - Location.Y) / Program.AppSettings.Main.SliderSpeed;
 
             if (step == 0) step = targetY > Location.Y ? 1 : -1;
 

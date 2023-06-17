@@ -32,10 +32,10 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         ActionSelector.DataSource = dataSource;
         
-        Move += (sender, args) =>
+        Move += (_, args) =>
         {
-            Program.AppSettings.AlarmSettings.Left = Left;
-            Program.AppSettings.AlarmSettings.Top = Top;
+            Program.AppSettings.Alarm.Left = Left;
+            Program.AppSettings.Alarm.Top = Top;
             Program.AppSettings.Save();
         };
     }
@@ -76,16 +76,16 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
     private void FormRefresh(object? sender, EventArgs? e)
     {
-        TimeLeft.Text = string.Format(Program.AppSettings.AlarmSettings.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
+        TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
 
-        if (_playSound && Program.AppSettings.TurnOffAlarmAfterStart >= 0 && Alarm?.Start - DateTime.Now > TimeSpan.FromMinutes(Program.AppSettings.TurnOffAlarmAfterStart))
+        if (_playSound && Program.AppSettings.Audio.TurnOffAlarmAfterStart >= 0 && Alarm?.Start - DateTime.Now > TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart))
         {
             _mediaPlayer.Stop();
             _playSound = false;
         }
 
         if(DateTime.Now > Alarm?.Start)
-            SetBackGroundColor(Program.AppSettings.AlarmSettings.AlarmPastStartColor);
+            SetBackGroundColor(Program.AppSettings.Color.AlarmPastStartColor);
 
         UpdateDropdown();
     }
@@ -140,11 +140,11 @@ public partial class AlarmForm : BaseForm, IAlarmForm
             if (Alarm.HasCustomSound)
                 _mediaPlayer.PlaySound(Alarm.CustomSound);
             else
-                _mediaPlayer.PlaySound(Program.AppSettings.DefaultSound);
+                _mediaPlayer.PlaySound(Program.AppSettings.Audio.DefaultSound);
 
         SubjectLabel.Text = Alarm.Name;
-        TimeRight.Text = Alarm.ReminderTime.ToString(Program.AppSettings.AlarmSettings.AlarmStartStringFormat);
-        TimeLeft.Text = string.Format(Program.AppSettings.AlarmSettings.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
+        TimeRight.Text = Alarm.ReminderTime.ToString(Program.AppSettings.Alarm.AlarmStartStringFormat);
+        TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
 
         FormRefresh(null, null);
 
@@ -161,7 +161,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         // Subscribe to MouseEnter and MouseLeave events for each child control
         SetDraggable(this);
 
-        this.Location = new Point(Program.AppSettings.AlarmSettings.Left, Program.AppSettings.AlarmSettings.Top);
+        this.Location = new Point(Program.AppSettings.Alarm.Left, Program.AppSettings.Alarm.Top);
 
         SetBackGroundColor(Alarm.AlarmColor);
 

@@ -33,13 +33,13 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
     {
         var currentAppointment = Program.AlarmManager.GetCurrentAppointment();
         var nextAppointment = Program.AlarmManager.GetNextAppointment();
-        var backColor = Program.AppSettings.GreenColor;
-        var barColor = Program.AppSettings.GreenColor;
+        var backColor = Program.AppSettings.Color.GreenColor;
+        var barColor = Program.AppSettings.Color.GreenColor;
         var value = 3600;
 
-        if (currentAppointment != null) barColor = Program.AppSettings.RedColor;
+        if (currentAppointment != null) barColor = Program.AppSettings.Color.RedColor;
 
-        if (currentAppointment?.End >= nextAppointment?.Start) backColor =Program.AppSettings.YellowColor;
+        if (currentAppointment?.End >= nextAppointment?.Start) backColor =Program.AppSettings.Color.YellowColor;
 
         var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ??
                                        currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
@@ -47,25 +47,25 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
         if (nextAppointment is null)
         {
-            backColor = Program.AppSettings.GreenColor;
+            backColor = Program.AppSettings.Color.GreenColor;
         }
         else
         {
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Program.AppSettings.YellowColor;
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Program.AppSettings.Color.YellowColor;
 
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.AppSettings.AlarmWarningTime))
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.AppSettings.Alarm.AlarmWarningTime))
             {
-                barColor = Program.AppSettings.YellowColor;
-                backColor = Program.AppSettings.RedColor;
+                barColor = Program.AppSettings.Color.YellowColor;
+                backColor = Program.AppSettings.Color.RedColor;
             }
 
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.AppSettings.AlarmWarningTime))
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.AppSettings.Alarm.AlarmWarningTime))
             {
-                barColor = Program.AppSettings.YellowColor;
-                backColor = Program.AppSettings.RedColor;
+                barColor = Program.AppSettings.Color.YellowColor;
+                backColor = Program.AppSettings.Color.RedColor;
             }
 
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Program.AppSettings.RedColor;
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Program.AppSettings.Color.RedColor;
         }
 
         FooterProgressBar.BackgroundColor = backColor;
@@ -137,7 +137,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
                 Parent.Top = 0;
 
             if (Parent.Top < 0)
-                Parent.Top = -Parent.Height + Program.AppSettings.BarSize;
+                Parent.Top = -Parent.Height + Program.AppSettings.Main.BarSize;
 
             parentForm.CheckMouseLeaveForm();
         }

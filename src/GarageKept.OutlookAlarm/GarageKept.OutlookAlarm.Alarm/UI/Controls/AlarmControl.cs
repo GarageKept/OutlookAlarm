@@ -108,7 +108,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
         if (timeLeft.TotalMinutes < 0) timeLeft = TimeSpan.Zero;
 
-        TimeLeft.Text = string.Format(Program.AppSettings.TimeLeftStringFormat, timeLeft);
+        TimeLeft.Text = string.Format(Program.AppSettings.Main.TimeLeftStringFormat, timeLeft);
     }
 
     private void SetTimeUntilMeetingLabel()

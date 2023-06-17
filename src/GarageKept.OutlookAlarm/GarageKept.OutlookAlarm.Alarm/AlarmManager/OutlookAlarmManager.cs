@@ -33,7 +33,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
 
     public void Start()
     {
-        UpdateAlarmListTimer = new Timer(FetchAlarms, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(Program.AppSettings.FetchRate));
+        UpdateAlarmListTimer = new Timer(FetchAlarms, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(Program.AppSettings.AlarmSource.FetchRate));
     }
 
     public void Stop()
@@ -282,7 +282,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
         var alarmsToCheck = GetActiveAlarms().Select(a=>a.Id).ToList();
         
         // Grab all the alarms in the next "FetchTime" hours
-        var alarms = GetAlarmsFromSource(Program.AppSettings.FetchTime).ToList();
+        var alarms = GetAlarmsFromSource(Program.AppSettings.AlarmSource.FetchTime).ToList();
 
         // Look for orphans (Those who are in the list but are not in the current/upcoming items
         foreach (var alarm in alarms.Where(alarm => alarmsToCheck.Contains(alarm.Id)))
@@ -331,7 +331,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
         if (hours >= 24) return alarms;
 
         if (!alarms.Any())
-            alarms = GetAlarmsFromSource(hours + Program.AppSettings.FetchTime).ToList();
+            alarms = GetAlarmsFromSource(hours + Program.AppSettings.AlarmSource.FetchTime).ToList();
 
         return alarms;
     }

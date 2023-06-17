@@ -27,20 +27,12 @@ public class OutlookAlarmSettings : ISettings
     {
     }
 
-    public Color GreenColor { get; set; } = Color.Green;
-    public Color RedColor { get; set; } = Color.Red;
-    public Color YellowColor { get; set; } = Color.Yellow;
-    public int Left { get; set; }
-    public int SliderSpeed { get; set; } = 5;
-    public string TimeFormat { get; set; } = "hh:mm:ss";
-    public string TimeLeftStringFormat { get; set; } = "{0:%h}h {0:mm}m {0:ss}s";
-    public int FetchRate { get; set; } = 5000;
-    public int FetchTime { get; set; } = 1;
-    public int AlarmWarningTime { get; set; } = 15;
-    public int BarSize { get; internal set; } = 10;
-    public SoundType DefaultSound { get; set; } = SoundType.Warning0;
-    public int TurnOffAlarmAfterStart { get; set; } = 15;
-    public AlarmSettings AlarmSettings { get; set; } = new AlarmSettings();
+    
+    public AlarmSettings Alarm { get; set; } = new ();
+    public AudioSettings Audio { get; set; } = new();
+    public AlarmSourceSettings AlarmSource { get; set; } = new();
+    public ColorSettings Color { get; set; } = new();
+    public MainSettings Main { get; set; } = new ();
 
     /// <summary>
     ///     Saves the current instance of the <see cref="OutlookAlarmSettings" /> object to the settings file.
@@ -120,10 +112,16 @@ public class OutlookAlarmSettings : ISettings
 
 }
 
+public class AudioSettings
+{
+    public SoundType DefaultSound { get; set; } = SoundType.Warning0;
+    public int TurnOffAlarmAfterStart { get; set; } = 15;
+}
+
 public class AlarmSettings
 {
     private int _left = -1;
-    public Color AlarmPastStartColor { get; } = Color.Red;
+    public int AlarmWarningTime { get; set; } = 15;
     public string TimeLeftStringFormat { get; } = "{0:%h}h {0:mm}m {0:ss}s";
     public string AlarmStartStringFormat { get; } = "hh:mm tt";
 
@@ -138,4 +136,26 @@ public class AlarmSettings
     }
 
     public int Top { get; set; } = 0;
+}
+
+public class AlarmSourceSettings
+{
+    public int FetchRate { get; set; } = 5000;
+    public int FetchTime { get; set; } = 1;
+}
+
+public class ColorSettings
+{
+    public Color AlarmPastStartColor { get; } = Color.Red;
+    public Color GreenColor { get; set; } = Color.Green;
+    public Color RedColor { get; set; } = Color.Red;
+    public Color YellowColor { get; set; } = Color.Yellow;
+}
+
+public class MainSettings
+{
+    public int Left { get; set; } = 0;
+    public int BarSize { get; set; } = 10;
+    public int SliderSpeed { get; set; } = 5;
+    public string TimeLeftStringFormat { get; set; } = "{0:%h}h {0:mm}m {0:ss}s";
 }
