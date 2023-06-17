@@ -21,4 +21,6 @@ public interface IAlarmManager
     void Start();
     void Stop();
     void Reset();
+
+    bool IsRunning { get; }
 }

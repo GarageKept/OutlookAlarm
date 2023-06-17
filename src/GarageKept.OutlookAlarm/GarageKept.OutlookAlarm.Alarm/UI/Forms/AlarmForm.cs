@@ -1,4 +1,6 @@
-﻿using GarageKept.OutlookAlarm.Alarm.AlarmManager;
+﻿using System.Collections;
+using System.ComponentModel;
+using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Audio;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Timer = System.Windows.Forms.Timer;
@@ -17,7 +19,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         ShowInTaskbar = true;
 
         ActionSelector.Items.Clear();
-        ActionSelector.DataSource = Enum.GetValues(typeof(AlarmAction))
+        var dataSource = Enum.GetValues(typeof(AlarmAction))
             .Cast<AlarmAction>()
             .Select(s => new
             {
@@ -27,19 +29,43 @@ public partial class AlarmForm : BaseForm, IAlarmForm
             .ToList();
         ActionSelector.DisplayMember = "Text";
         ActionSelector.ValueMember = "Value";
+
+        ActionSelector.DataSource = dataSource;
     }
 
     private IAlarm? Alarm { get; set; }
 
     private void UpdateDropdown()
     {
-        if (DateTime.Now - Alarm?.Start > TimeSpan.FromMinutes(5))
-            ActionSelector.Items.Remove(AlarmAction.FiveMinBefore);
+        if ((Alarm?.Start -DateTime.Now)!.Value.TotalMinutes < TimeSpan.FromMinutes(5).TotalMinutes)
+            RemoveActionSelctorItem(AlarmAction.FiveMinBefore);
 
-        if (DateTime.Now - Alarm?.Start > TimeSpan.FromMinutes(0))
-            ActionSelector.Items.Remove(AlarmAction.ZeroMinBefore);
+        if (DateTime.Now > Alarm?.Start)
+            RemoveActionSelctorItem(AlarmAction.ZeroMinBefore);
 
-        if (ActionSelector.SelectedIndex <= 0) ActionSelector.SelectedIndex = 0;
+        //if (ActionSelector.SelectedIndex <= 0) ActionSelector.SelectedIndex = 1;
+    }
+
+    private void RemoveActionSelctorItem(AlarmAction action)
+    {
+        // Retrieve the current data source as a list of anonymous objects
+        var dataSource = ((IEnumerable)ActionSelector.DataSource).Cast<dynamic>()
+            .Select(item => new
+            {
+                Value = (AlarmAction)item.Value,
+                Text = item.Text
+            })
+            .ToList();
+
+        if (dataSource.All(i => i.Value != action)) return;
+
+        dataSource = dataSource.Where(i => i.Value != action).ToList();
+
+        // Set the modified data source back to the ActionSelector ComboBox
+        ActionSelector.DataSource = null; // Reset the data source
+        ActionSelector.DataSource = dataSource.ToList(); // Set the updated data source
+        ActionSelector.DisplayMember = "Text";
+        ActionSelector.ValueMember = "Value";
     }
 
     private void FormRefresh(object? sender, EventArgs? e)

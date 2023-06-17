@@ -33,7 +33,7 @@ public class OutlookAlarmManager : IAlarmManager
 
     public void Start()
     {
-        UpdateAlarmListTimer = new Timer(FetchAlarms, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(Program.AppSettings.FetchTime));
+        UpdateAlarmListTimer = new Timer(FetchAlarms, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(Program.AppSettings.FetchRate));
     }
 
     public void Stop()
@@ -331,7 +331,7 @@ public class OutlookAlarmManager : IAlarmManager
         if (hours >= 24) return alarms;
 
         if (!alarms.Any())
-            alarms = GetAlarmsFromSource(hours + Program.AppSettings.FetchRate).ToList();
+            alarms = GetAlarmsFromSource(hours + Program.AppSettings.FetchTime).ToList();
 
         return alarms;
     }
