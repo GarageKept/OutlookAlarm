@@ -112,4 +112,15 @@ public class BaseForm : Form
     {
         if (e.Button == MouseButtons.Left) _isDragging = false;
     }
+
+    public Color DetermineTextColor(Color backgroundColor)
+    {
+        double brightness = (backgroundColor.R * 299 + backgroundColor.G * 587 + backgroundColor.B * 114) / 1000;
+
+        return brightness >= 128 ?
+            // Use black text on light background
+            Color.Black :
+            // Use white text on dark background
+            Color.White;
+    }
 }

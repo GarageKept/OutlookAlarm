@@ -138,6 +138,17 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         this.Location = new Point(0, 0);
 
+        BackColor = Alarm.AlarmColor;
+        ForeColor = DetermineTextColor(BackColor);
+        // Exclude buttons from text color adjustment
+        foreach (Control control in this.Controls)
+        {
+            if (control is Button)
+            {
+                control.ForeColor = SystemColors.ControlText;
+            }
+        }
+
         base.Show();
     }
 }
