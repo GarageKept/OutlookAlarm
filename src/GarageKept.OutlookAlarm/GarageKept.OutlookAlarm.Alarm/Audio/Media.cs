@@ -1,4 +1,5 @@
-﻿using GarageKept.OutlookAlarm.Alarm.Properties;
+﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
+using GarageKept.OutlookAlarm.Alarm.Properties;
 using NAudio.Wave;
 
 namespace GarageKept.OutlookAlarm.Alarm.Audio;
@@ -6,7 +7,7 @@ namespace GarageKept.OutlookAlarm.Alarm.Audio;
 /// <summary>
 ///     Provides functionality to play media files and control system audio settings.
 /// </summary>
-public class Media
+public class Media : IMedia
 {
     private readonly WaveOutEvent _player = new();
 
@@ -34,7 +35,7 @@ public class Media
         _player.Play();
     }
 
-    public void Stop()
+    public void StopSound()
     {
         _player.Stop();
     }

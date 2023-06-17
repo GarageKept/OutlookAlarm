@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using GarageKept.OutlookAlarm.Alarm.AlarmManager;
-using GarageKept.OutlookAlarm.Alarm.Audio;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
@@ -8,13 +7,15 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
 public partial class AlarmForm : BaseForm, IAlarmForm
 {
-    private readonly Media _mediaPlayer = new();
+    private readonly IMedia _mediaPlayer;
     private Timer? _refreshTimer;
     private bool _playSound = true;
 
-    public AlarmForm() : base(false)
+    public AlarmForm(IMedia media) : base(false)
     {
         InitializeComponent();
+
+        _mediaPlayer = media;
 
         ShowInTaskbar = true;
 
@@ -32,7 +33,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         ActionSelector.DataSource = dataSource;
         
-        Move += (_, args) =>
+        Move += (_, _) =>
         {
             Program.AppSettings.Alarm.Left = Left;
             Program.AppSettings.Alarm.Top = Top;
@@ -80,7 +81,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         if (_playSound && Program.AppSettings.Audio.TurnOffAlarmAfterStart >= 0 && Alarm?.Start - DateTime.Now > TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart))
         {
-            _mediaPlayer.Stop();
+            _mediaPlayer.StopSound();
             _playSound = false;
         }
 
@@ -112,7 +113,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
-        _mediaPlayer.Stop();
+        _mediaPlayer.StopSound();
 
         base.OnFormClosing(e);
     }

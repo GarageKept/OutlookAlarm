@@ -1,5 +1,6 @@
 using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.AlarmSources.Outlook;
+using GarageKept.OutlookAlarm.Alarm.Audio;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using GarageKept.OutlookAlarm.Alarm.Settings;
 using GarageKept.OutlookAlarm.Alarm.UI.Controls;
@@ -50,6 +51,7 @@ internal static class Program
                 services.AddSingleton<IMainForm, MainForm>();
                 services.AddSingleton<ISettings, OutlookAlarmSettings>();
                 services.AddSingleton<ISettingsForm, SettingsForm>();
+                services.AddSingleton<IMedia, Media>();
 
                 services.AddTransient<IAlarmForm, AlarmForm>();
                 services.AddTransient<IAlarmControl, AlarmControl>();
