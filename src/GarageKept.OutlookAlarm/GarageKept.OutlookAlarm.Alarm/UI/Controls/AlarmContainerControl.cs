@@ -89,7 +89,21 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         FooterProgressBar.Minimum = 0;
         FooterProgressBar.Maximum = 3600; // 1 hour in seconds
 
-        FooterProgressBar.Width = Parent?.Width ?? 50;
+        FooterProgressBar.Width = Parent?.Width ?? Program.AppSettings.Main.MinimumWidth;
+    }
+
+    private void StopAllTimerInChildren(ControlCollection controls)
+    {
+        foreach (Control control in controls)
+        {
+            if (control is IAlarmControl alarmControl)
+            {
+                alarmControl.StopTimers();
+            }
+
+            StopAllTimerInChildren(control.Controls);
+        }
+
     }
 
     public void UpdateAppointmentControls(object? sender, AlarmEventArgs e)
@@ -106,6 +120,8 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
     {
         // Pause updates until we redo everything
         SuspendLayout();
+
+        StopAllTimerInChildren(Controls);
 
         // Clear the controls collection
         tableLayoutPanel.Controls.Clear();

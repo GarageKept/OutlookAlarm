@@ -1,42 +1,32 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Accessibility;
 using GarageKept.OutlookAlarm.Alarm.Audio;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 
 namespace GarageKept.OutlookAlarm.Alarm.Settings;
 
 /// <summary>
-///     Represents the application settings.
-///     Provides methods to save and load settings from a JSON file.
+/// Represents the application settings.
+/// Provides methods to save and load settings from a JSON file.
 /// </summary>
 public class OutlookAlarmSettings : ISettings
 {
     private const string SettingsFilePath = "settings.json";
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="OutlookAlarmSettings" /> class with default values.
-    /// </summary>
     public OutlookAlarmSettings()
     {
         LoadOrCreate();
     }
 
     [JsonConstructor]
-    public OutlookAlarmSettings(bool loaded)
-    {
-    }
+    public OutlookAlarmSettings(bool loaded) { }
 
-    
-    public AlarmSettings Alarm { get; set; } = new ();
-    public AudioSettings Audio { get; set; } = new();
-    public AlarmSourceSettings AlarmSource { get; set; } = new();
-    public ColorSettings Color { get; set; } = new();
-    public MainSettings Main { get; set; } = new ();
+    public AlarmSettings Alarm { get; set; } = new AlarmSettings();
+    public AlarmSourceSettings AlarmSource { get; set; } = new AlarmSourceSettings();
+    public AudioSettings Audio { get; set; } = new AudioSettings();
+    public ColorSettings Color { get; set; } = new ColorSettings();
+    public MainSettings Main { get; set; } = new MainSettings();
 
-    /// <summary>
-    ///     Saves the current instance of the <see cref="OutlookAlarmSettings" /> object to the settings file.
-    /// </summary>
     public void Save()
     {
         var options = new JsonSerializerOptions
@@ -46,36 +36,34 @@ public class OutlookAlarmSettings : ISettings
         };
 
         var settingsJson = JsonSerializer.Serialize(this, options);
-        File.WriteAllText(SettingsFilePath, settingsJson);
+        System.IO.File.WriteAllText(SettingsFilePath, settingsJson);
     }
 
-    /// <summary>
-    ///     Loads the settings from the settings file.
-    ///     If the file doesn't exist, it creates a new file with default settings.
-    /// </summary>
-    /// <returns>A <see cref="OutlookAlarmSettings" /> object representing the loaded or default settings.</returns>
     public void LoadOrCreate()
     {
-        if (!File.Exists(SettingsFilePath))
+        if (!System.IO.File.Exists(SettingsFilePath))
         {
             Save();
         }
         else
         {
-            var settingsJson = File.ReadAllText(SettingsFilePath);
+            var settingsJson = System.IO.File.ReadAllText(SettingsFilePath);
 
-            if (string.IsNullOrEmpty(settingsJson)) return;
+            if (string.IsNullOrEmpty(settingsJson))
+                return;
 
             var options = GetJsonSerializeOptions();
 
             var savedSettings = JsonSerializer.Deserialize<OutlookAlarmSettings>(settingsJson, options);
 
-            // Copy properties from savedSettings to this using reflection
-            if (savedSettings == null) return;
+            if (savedSettings == null)
+                return;
 
             foreach (var property in typeof(OutlookAlarmSettings).GetProperties())
             {
-                if (!property.CanRead || !property.CanWrite) continue;
+                if (!property.CanRead || !property.CanWrite)
+                    continue;
+
                 var savedValue = property.GetValue(savedSettings);
                 property.SetValue(this, savedValue);
             }
@@ -95,13 +83,15 @@ public class OutlookAlarmSettings : ISettings
     {
         var settings = new OutlookAlarmSettings(loaded);
 
-        // Create and configure JsonSerializerOptions
         var options = GetJsonSerializeOptions();
 
         foreach (var property in typeof(OutlookAlarmSettings).GetProperties())
         {
-            if (!property.CanRead || !property.CanWrite) continue;
-            if (!element.TryGetProperty(property.Name, out var propertyValue)) continue;
+            if (!property.CanRead || !property.CanWrite)
+                continue;
+
+            if (!element.TryGetProperty(property.Name, out var propertyValue))
+                continue;
 
             var value = JsonSerializer.Deserialize(propertyValue.GetRawText(), property.PropertyType, options);
             property.SetValue(settings, value);
@@ -109,7 +99,6 @@ public class OutlookAlarmSettings : ISettings
 
         return settings;
     }
-
 }
 
 public class AudioSettings
@@ -121,6 +110,7 @@ public class AudioSettings
 public class AlarmSettings
 {
     private int _left = -1;
+
     public int AlarmWarningTime { get; set; } = 15;
     public string TimeLeftStringFormat { get; } = "{0:%h}h {0:mm}m {0:ss}s";
     public string AlarmStartStringFormat { get; } = "hh:mm tt";
@@ -129,7 +119,9 @@ public class AlarmSettings
     {
         get
         {
-            if (_left < 0) return Screen.PrimaryScreen?.Bounds.Width/2 ?? 0;
+            if (_left < 0)
+                return Screen.PrimaryScreen?.Bounds.Width / 2 ?? 0;
+
             return _left;
         }
         set => _left = value;
@@ -157,5 +149,5 @@ public class MainSettings
     public int Left { get; set; } = 0;
     public int BarSize { get; set; } = 10;
     public int SliderSpeed { get; set; } = 5;
-    public string TimeLeftStringFormat { get; set; } = "{0:%h}h {0:mm}m {0:ss}s";
+    public int MinimumWidth { get; set; } = 256;
 }

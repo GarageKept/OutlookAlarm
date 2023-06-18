@@ -34,6 +34,12 @@ public partial class AlarmControl : UserControl, IAlarmControl
         SetBackgroundColor();
     }
 
+    public void StopTimers()
+    {
+        RefreshTimer.Stop();
+        RefreshTimer.Dispose();
+    }
+
     private void AddContextMenu()
     {
         _appointmentContextMenuStrip.Items.Clear();
@@ -74,6 +80,11 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
     private void Refresh_Tick(object? sender, EventArgs e)
     {
+        if(Alarm is null) return;
+
+        if(Alarm.End < DateTime.Now)
+            Program.AlarmManager.DeactivateAlarm(Alarm);
+
         UpdateDisplay();
     }
 
@@ -108,7 +119,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
         if (timeLeft.TotalMinutes < 0) timeLeft = TimeSpan.Zero;
 
-        TimeLeft.Text = string.Format(Program.AppSettings.Main.TimeLeftStringFormat, timeLeft);
+        TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, timeLeft);
     }
 
     private void SetTimeUntilMeetingLabel()

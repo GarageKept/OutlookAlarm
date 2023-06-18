@@ -10,11 +10,9 @@ public partial class MainForm : BaseForm, IMainForm
 
     private bool _isExpanded;
 
-    public MainForm(ISettingsForm settingsForm) : base(true)
+    public MainForm() : base(true)
     {
         InitializeComponent();
-
-        SettingsForm = settingsForm;
 
         if (DesignMode) return;
 
@@ -35,7 +33,7 @@ public partial class MainForm : BaseForm, IMainForm
         // Initialize and set up the context menu
         rightClickMenu.Items.Clear();
         rightClickMenu.Items.Add("RefreshTimer", null, RightClickMenu_RefreshClick);
-        rightClickMenu.Items.Add("OutlookAlarmSettings", null, RightClickMenu_SettingsClick);
+        rightClickMenu.Items.Add("Settings", null, RightClickMenu_SettingsClick);
         rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
         rightClickMenu.Items.Add(new ToolStripSeparator());
         rightClickMenu.Items.Add("Close", null, (_, _) => Close());
@@ -67,8 +65,6 @@ public partial class MainForm : BaseForm, IMainForm
 
         Program.AlarmManager.Start();
     }
-
-    private ISettingsForm SettingsForm { get; set; }
 
     /// <summary>
     ///     Subscribes to MouseEnter and MouseLeave events for each child control.
@@ -140,7 +136,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void MainWindow_MouseEnter(object? sender, EventArgs e)
+    public void MainWindow_MouseEnter(object? sender, EventArgs e)
     {
         _isExpanded = true;
         _slidingTimer.Start();
@@ -151,7 +147,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void MainWindow_MouseLeave(object? sender, EventArgs e)
+    public void MainWindow_MouseLeave(object? sender, EventArgs e)
     {
         if (rightClickMenu.Visible) return;
 
@@ -178,7 +174,7 @@ public partial class MainForm : BaseForm, IMainForm
     internal void RightClickMenu_SettingsClick(object? sender, EventArgs e)
     {
         var settingsForm = Program.ServiceProvider.GetRequiredService<ISettingsForm>();
-
+        settingsForm.Owner = this;
         settingsForm.ShowDialog();
     }
 

@@ -4,4 +4,5 @@ public interface IAlarmControl
 {
     IAlarm? Alarm { get; set; }
     void UpdateDisplay();
+    void StopTimers();
 }

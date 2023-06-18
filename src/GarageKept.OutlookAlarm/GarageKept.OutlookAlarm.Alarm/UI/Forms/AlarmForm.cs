@@ -7,7 +7,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
 public partial class AlarmForm : BaseForm, IAlarmForm
 {
-    private readonly IMedia _mediaPlayer;
+    private IMedia _mediaPlayer;
     private Timer? _refreshTimer;
     private bool _playSound = true;
 
@@ -79,10 +79,16 @@ public partial class AlarmForm : BaseForm, IAlarmForm
     {
         TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
 
-        if (_playSound && Program.AppSettings.Audio.TurnOffAlarmAfterStart >= 0 && Alarm?.Start - DateTime.Now > TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart))
+        if (_playSound && Program.AppSettings.Audio.TurnOffAlarmAfterStart >= 0 && DateTime.Now - Alarm?.Start > TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart))
         {
             _mediaPlayer.StopSound();
             _playSound = false;
+        }
+
+        if (DateTime.Now > Alarm?.End)
+        {
+            Program.AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+            Close();
         }
 
         if(DateTime.Now > Alarm?.Start)
@@ -166,6 +172,23 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         SetBackGroundColor(Alarm.AlarmColor);
 
-        base.Show();
+        if(!IsDisposed)
+            base.Show();
+    }
+
+    public new void Dispose()
+    {
+        _refreshTimer?.Stop();
+        _refreshTimer?.Dispose();
+        _refreshTimer = null;
+        _mediaPlayer.StopSound();
+
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    public new void Close()
+    {
+        Dispose();
     }
 }
