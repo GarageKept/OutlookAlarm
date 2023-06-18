@@ -29,7 +29,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
     public AlarmProgressBar FooterProgressBar { get; set; } = new();
 
-    private void RefreshTimer_Tick(object? sender, EventArgs e)
+    private void RefreshTimer_Tick(object? sender, EventArgs? e)
     {
         var currentAppointment = Program.AlarmManager.GetCurrentAppointment();
         var nextAppointment = Program.AlarmManager.GetNextAppointment();
@@ -192,5 +192,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         tableLayoutPanel.Controls.Add(FooterProgressBar, 0, newRow);
 
         FooterProgressBar.Dock = DockStyle.Fill; // Fill the entire row
+
+        RefreshTimer_Tick(this, null);
     }
 }
