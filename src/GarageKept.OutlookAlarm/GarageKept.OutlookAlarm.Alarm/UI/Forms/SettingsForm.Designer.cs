@@ -49,6 +49,8 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             todoPage = new TabPage();
             colorPage = new TabPage();
             audioPage = new TabPage();
+            AlarmWarningTimeLabel = new Label();
+            AlarmWarningTimeNumericUpDown = new NumericUpDown();
             settingsTabControl.SuspendLayout();
             mainPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)MinimumWidthNumericUpDown).BeginInit();
@@ -58,6 +60,8 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ((System.ComponentModel.ISupportInitialize)SliderSpeedTrackBar).BeginInit();
             ((System.ComponentModel.ISupportInitialize)BarHeightNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)LeftTrackBar).BeginInit();
+            alarmPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)AlarmWarningTimeNumericUpDown).BeginInit();
             SuspendLayout();
             // 
             // settingsTabControl
@@ -217,6 +221,8 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // alarmPage
             // 
+            alarmPage.Controls.Add(AlarmWarningTimeNumericUpDown);
+            alarmPage.Controls.Add(AlarmWarningTimeLabel);
             alarmPage.Location = new Point(4, 24);
             alarmPage.Name = "alarmPage";
             alarmPage.Padding = new Padding(3);
@@ -230,7 +236,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             todoPage.Location = new Point(4, 24);
             todoPage.Name = "todoPage";
             todoPage.Padding = new Padding(3);
-            todoPage.Size = new Size(1063, 545);
+            todoPage.Size = new Size(692, 323);
             todoPage.TabIndex = 2;
             todoPage.Text = "Alarm Source";
             todoPage.UseVisualStyleBackColor = true;
@@ -240,7 +246,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             colorPage.Location = new Point(4, 24);
             colorPage.Name = "colorPage";
             colorPage.Padding = new Padding(3);
-            colorPage.Size = new Size(1063, 545);
+            colorPage.Size = new Size(692, 323);
             colorPage.TabIndex = 3;
             colorPage.Text = "Colors";
             colorPage.UseVisualStyleBackColor = true;
@@ -250,10 +256,27 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             audioPage.Location = new Point(4, 24);
             audioPage.Name = "audioPage";
             audioPage.Padding = new Padding(3);
-            audioPage.Size = new Size(1063, 545);
+            audioPage.Size = new Size(692, 323);
             audioPage.TabIndex = 4;
             audioPage.Text = "Audio";
             audioPage.UseVisualStyleBackColor = true;
+            // 
+            // AlarmWarningTimeLabel
+            // 
+            AlarmWarningTimeLabel.AutoSize = true;
+            AlarmWarningTimeLabel.Location = new Point(3, 9);
+            AlarmWarningTimeLabel.Name = "AlarmWarningTimeLabel";
+            AlarmWarningTimeLabel.Size = new Size(116, 15);
+            AlarmWarningTimeLabel.TabIndex = 0;
+            AlarmWarningTimeLabel.Text = "Alarm Warning Time";
+            // 
+            // AlarmWarningTimeNumericUpDown
+            // 
+            AlarmWarningTimeNumericUpDown.Location = new Point(125, 6);
+            AlarmWarningTimeNumericUpDown.Name = "AlarmWarningTimeNumericUpDown";
+            AlarmWarningTimeNumericUpDown.Size = new Size(120, 23);
+            AlarmWarningTimeNumericUpDown.TabIndex = 1;
+            AlarmWarningTimeNumericUpDown.ValueChanged += AlarmWarningTimeNumericUpDown_ValueChanged;
             // 
             // SettingsForm
             // 
@@ -278,6 +301,9 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ((System.ComponentModel.ISupportInitialize)SliderSpeedTrackBar).EndInit();
             ((System.ComponentModel.ISupportInitialize)BarHeightNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)LeftTrackBar).EndInit();
+            alarmPage.ResumeLayout(false);
+            alarmPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)AlarmWarningTimeNumericUpDown).EndInit();
             ResumeLayout(false);
         }
 
@@ -302,5 +328,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
         private NumericUpDown MinimumWidthNumericUpDown;
         private TrackBar MinimumWidthTrackBar;
         private Label MinimumWidthLabel;
+        private NumericUpDown AlarmWarningTimeNumericUpDown;
+        private Label AlarmWarningTimeLabel;
     }
 }

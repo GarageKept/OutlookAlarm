@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using GarageKept.OutlookAlarm.Alarm.Interfaces;
+﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
@@ -69,6 +68,18 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         #endregion
 
+        #region Alarm
+
+        #region Alarm.AlarmWarning
+
+        AlarmWarningTimeNumericUpDown.Minimum = 0;
+        AlarmWarningTimeNumericUpDown.Maximum = 60;
+        AlarmWarningTimeNumericUpDown.Value = Program.AppSettings.Alarm.AlarmWarningTime;
+
+        #endregion
+
+        #endregion
+
         return base.ShowDialog();
     }
 
@@ -120,7 +131,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void BarHeightNumericUpDown_Leave(object sender, EventArgs e)
     {
-        if (Owner is IMainForm mainForm)
+        if (Owner is IMainForm)
         {
             Owner.Top = 0;
         }
@@ -224,6 +235,19 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         Program.AppSettings.Main.MinimumWidth = MinimumWidthTrackBar.Value;
 
         if (Owner is not null) Owner.Width = Program.AppSettings.Main.MinimumWidth;
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Alarm
+
+    #region Alarm.AlarmWarning
+    
+    private void AlarmWarningTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.Alarm.AlarmWarningTime = (int)AlarmWarningTimeNumericUpDown.Value;
     }
 
     #endregion
