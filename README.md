@@ -66,7 +66,7 @@ Report bugs using Github's [issues](https://github.com/GarageKept/OutlookAlarm/i
 
 ## Code of Conduct
 
-Please note that this project is released with a [Contributor Code of Conduct](https://www.contributor-covenant.org). By participating in this project you agree to abide by its terms.
+Please note that this project is released with a [Contributor Code of Conduct](CodeOfConduct.md). By participating in this project you agree to abide by its terms.
 
 ## License
 
