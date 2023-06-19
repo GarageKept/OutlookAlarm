@@ -8,7 +8,10 @@ public class AlarmSettings : SettingsBase
     private string _timeLeftStringFormat = "{0:%h}h {0:mm}m {0:ss}s";
     private int _top;
 
-    public AlarmSettings(Action save, bool isDeserializing) : base(save, isDeserializing) { }
+
+    // ReSharper disable once UnusedMember.Global
+    public AlarmSettings() { }
+    public AlarmSettings(Action save) : base(save) { }
 
     public int AlarmWarningTime
     {
@@ -18,7 +21,7 @@ public class AlarmSettings : SettingsBase
             if (_alarmWarningTime == value) return;
 
             _alarmWarningTime = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
         }
     }
 
@@ -30,7 +33,7 @@ public class AlarmSettings : SettingsBase
             if (_timeLeftStringFormat == value) return;
 
             _timeLeftStringFormat = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
         }
     }
 
@@ -42,7 +45,7 @@ public class AlarmSettings : SettingsBase
             if (_alarmStartStringFormat == value) return;
 
             _alarmStartStringFormat = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
         }
     }
 
@@ -54,7 +57,7 @@ public class AlarmSettings : SettingsBase
             if (_top == value) return;
 
             _top = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
         }
     }
 
@@ -72,7 +75,7 @@ public class AlarmSettings : SettingsBase
             if (_left == value) return;
 
             _left = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
         }
     }
 }

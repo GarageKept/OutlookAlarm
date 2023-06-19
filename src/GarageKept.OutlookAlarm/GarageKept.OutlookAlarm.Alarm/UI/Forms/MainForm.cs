@@ -31,10 +31,7 @@ public partial class MainForm : BaseForm, IMainForm
         MouseLeave += MainWindow_MouseLeave;
 
         // Save the form position when moved
-        Move += (_, _) =>
-        {
-            Program.AppSettings.Main.Left = Left;
-        };
+        Move += (_, _) => { Program.AppSettings.Main.Left = Left; };
 
         // Initialize and set up the context menu
         rightClickMenu.Items.Clear();
@@ -51,12 +48,12 @@ public partial class MainForm : BaseForm, IMainForm
         var reset = new ToolStripMenuItem("Reset All");
         reset.Click += RightClick_ResetAllAppointments;
         advancedDropdown.Items.Add(reset);
-        
+
         advanced.DropDown = advancedDropdown;
 
         rightClickMenu.Items.Add(new ToolStripSeparator());
         rightClickMenu.Items.Add(advanced);
-        
+
         rightClickMenu.Items.Add(new ToolStripSeparator());
         rightClickMenu.Items.Add("Close", null, (_, _) => Close());
 
@@ -84,31 +81,6 @@ public partial class MainForm : BaseForm, IMainForm
         SetDraggable(this);
     }
 
-    private void RightClick_ResetAllAppointments(object? sender, EventArgs e)
-    {
-        Program.AlarmManager.Reset();
-    }
-
-    /// <summary>
-    ///     Event handler for child control's MouseEnter event.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void ChildControl_MouseEnter(object? sender, EventArgs e)
-    {
-        MainWindow_MouseEnter(sender, e);
-    }
-
-    /// <summary>
-    ///     Event handler for child control's MouseLeave event.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void ChildControl_MouseLeave(object? sender, EventArgs e)
-    {
-        CheckMouseLeaveForm();
-    }
-
     /// <summary>
     ///     Checks if the mouse pointer is still within the form bounds.
     /// </summary>
@@ -120,17 +92,6 @@ public partial class MainForm : BaseForm, IMainForm
 
         _isExpanded = false;
         _slidingTimer.Start();
-    }
-
-    /// <summary>
-    ///     Event handler for the FormClosing event.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        // Save the current position so we can restore it back to where it was on next run
-        Program.AppSettings.Main.Left = Location.X;
     }
 
     /// <summary>
@@ -158,6 +119,33 @@ public partial class MainForm : BaseForm, IMainForm
     }
 
     /// <summary>
+    ///     Event handler for child control's MouseEnter event.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">An EventArgs that contains the event data.</param>
+    internal void ChildControl_MouseEnter(object? sender, EventArgs e) { MainWindow_MouseEnter(sender, e); }
+
+    /// <summary>
+    ///     Event handler for child control's MouseLeave event.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">An EventArgs that contains the event data.</param>
+    internal void ChildControl_MouseLeave(object? sender, EventArgs e) { CheckMouseLeaveForm(); }
+
+    /// <summary>
+    ///     Event handler for the FormClosing event.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">An EventArgs that contains the event data.</param>
+    internal void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        // Save the current position so we can restore it back to where it was on next run
+        Program.AppSettings.Main.Left = Location.X;
+    }
+
+    private void RightClick_ResetAllAppointments(object? sender, EventArgs e) { Program.AlarmManager.Reset(); }
+
+    /// <summary>
     ///     Event handler for the About menu item click event.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
@@ -169,6 +157,13 @@ public partial class MainForm : BaseForm, IMainForm
     }
 
     /// <summary>
+    ///     Event handler for the RefreshTimer menu item click event.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">An EventArgs that contains the event data.</param>
+    internal void RightClickMenu_RefreshClick(object? sender, EventArgs e) { Program.AlarmManager.ForceFetch(); }
+
+    /// <summary>
     ///     Event handler for the OutlookAlarmSettings menu item click event.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
@@ -178,16 +173,6 @@ public partial class MainForm : BaseForm, IMainForm
         var settingsForm = Program.ServiceProvider.GetRequiredService<ISettingsForm>();
         settingsForm.Owner = this;
         settingsForm.ShowDialog();
-    }
-
-    /// <summary>
-    ///     Event handler for the RefreshTimer menu item click event.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void RightClickMenu_RefreshClick(object? sender, EventArgs e)
-    {
-        Program.AlarmManager.ForceFetch();
     }
 
     /// <summary>

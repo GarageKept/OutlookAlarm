@@ -21,21 +21,48 @@ public class Appointment : IAlarm
         IsAudible = true;
         IsActive = true;
         HasCustomSound = !string.IsNullOrEmpty(CustomSound);
+        Organizer = item.Organizer;
+        Categories = item.Categories;
+        Location = item.Location;
+        TeamsMeetingUrl = ExtractTeamsMeetingUrlFromBody(item.Body);
     }
 
     public double Duration { get; set; }
     public bool IsOwnEvent { get; set; }
     public ResponseType Response { get; set; }
+    public Color AlarmColor { get; set; }
+    public string Categories { get; set; }
+    public string CustomSound { get; set; }
+    public DateTime End { get; set; }
+    public bool HasCustomSound { get; set; }
+    public string Id { get; set; }
+    public bool IsActive { get; set; }
 
     public bool IsAudible { get; set; }
-    public Color AlarmColor { get; set; }
-    public DateTime End { get; set; }
-    public string Id { get; set; }
-    public DateTime ReminderTime { get; set; }
     public bool IsReminderEnabled { get; set; }
-    public bool IsActive { get; set; }
-    public DateTime Start { get; set; }
+    public string Location { get; set; }
     public string Name { get; set; }
-    public string CustomSound { get; set; }
-    public bool HasCustomSound { get; set; }
+    public string Organizer { get; set; }
+    public DateTime ReminderTime { get; set; }
+    public DateTime Start { get; set; }
+    public string TeamsMeetingUrl { get; set; }
+
+    private static string ExtractTeamsMeetingUrlFromBody(string body)
+    {
+        // Implement your logic to extract the Teams meeting URL from the body
+        // This can be done using regular expressions, string manipulation, or any other suitable method
+        // Here's a simple example assuming the Teams meeting URL is enclosed within <TeamsMeetingURL> tags
+
+        const string startTag = "https://teams.microsoft.com";
+        const string endTag = ">";
+
+        var startIndex = body.IndexOf(startTag, StringComparison.Ordinal) - startTag.Length;
+        var endIndex = body.IndexOf(endTag, StringComparison.Ordinal);
+
+        // Return null or an empty string if the Teams meeting URL is not found
+        if (startIndex == -1 || endIndex == -1) return string.Empty;
+
+        startIndex += startTag.Length;
+        return body.Substring(startIndex, endIndex - startIndex);
+    }
 }

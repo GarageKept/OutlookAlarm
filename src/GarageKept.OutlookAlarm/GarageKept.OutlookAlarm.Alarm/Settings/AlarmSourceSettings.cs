@@ -5,7 +5,9 @@ public class AlarmSourceSettings : SettingsBase
     private int _fetchIntervalInMinutes = 2;
     private int _fetchTimeInHours = 1;
 
-    public AlarmSourceSettings(Action save, bool isDeserializing) : base(save, isDeserializing) { }
+    // ReSharper disable once UnusedMember.Global
+    public AlarmSourceSettings() { }
+    public AlarmSourceSettings(Action save) : base(save) { }
 
     public int FetchIntervalInMinutes
     {
@@ -15,7 +17,8 @@ public class AlarmSourceSettings : SettingsBase
             if (_fetchIntervalInMinutes == value) return;
 
             _fetchIntervalInMinutes = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
+            ;
         }
     }
 
@@ -27,7 +30,8 @@ public class AlarmSourceSettings : SettingsBase
             if (_fetchTimeInHours == value) return;
 
             _fetchTimeInHours = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
+            ;
         }
     }
 }

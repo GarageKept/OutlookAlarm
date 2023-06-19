@@ -25,8 +25,6 @@ public class UnmanagedMemoryStreamWaveStream : WaveStream
 
     public override WaveFormat WaveFormat => new(44100, 16, 2);
 
-    public override long Length => _length;
-
     public sealed override long Position
     {
         get => _position;
@@ -38,6 +36,8 @@ public class UnmanagedMemoryStreamWaveStream : WaveStream
             _position = value;
         }
     }
+
+    public override long Length => _length;
 
     public override int Read(byte[] buffer, int offset, int count)
     {

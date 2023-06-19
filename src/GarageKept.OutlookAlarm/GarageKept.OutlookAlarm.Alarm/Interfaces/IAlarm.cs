@@ -13,4 +13,8 @@ public interface IAlarm
     Color AlarmColor { get; set; }
     string CustomSound { get; set; }
     bool HasCustomSound { get; set; }
+    string Organizer { get; set; }
+    string Categories { get; set; }
+    string Location { get; set; }
+    string TeamsMeetingUrl { get; set; }
 }

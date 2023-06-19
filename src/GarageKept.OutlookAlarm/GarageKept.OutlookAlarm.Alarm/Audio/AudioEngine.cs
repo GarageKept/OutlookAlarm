@@ -21,8 +21,7 @@ internal static class AudioEngine
 
             var iidAudioEndpointVolume = Iid.IAudioEndpointVolume;
 
-            hr = device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero,
-                out var endpointVolumeObj);
+            hr = device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero, out var endpointVolumeObj);
             if (hr != 0) return null;
 
             if (endpointVolumeObj is not IAudioEndpointVolume endpointVolume) return null;
@@ -57,8 +56,7 @@ internal static class AudioEngine
         var iidAudioEndpointVolume = Iid.IAudioEndpointVolume;
 
 
-        device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero,
-            out var endpointVolumeObj);
+        device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero, out var endpointVolumeObj);
 
         var endpointVolume = (IAudioEndpointVolume)endpointVolumeObj;
 
@@ -82,31 +80,6 @@ internal static class AudioEngine
         var isMuted = IsSystemVolumeMuted() ?? false;
 
         if (isMuted) SetSystemVolumeMuted(false);
-    }
-
-    // Get the system volume
-    [Guid("5CDF2C82-841E-4546-9722-0CF74078229A")]
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IAudioEndpointVolume
-    {
-        int RegisterControlChangeNotify(nint pNotify);
-        int UnregisterControlChangeNotify(nint pNotify);
-        int GetChannelCount(out int pnChannelCount);
-        int SetMasterVolumeLevel(float fLevelDB, ref Guid pguidEventContext);
-        int SetMasterVolumeLevelScalar(float fLevel, ref Guid pguidEventContext);
-        int GetMasterVolumeLevel(out float pfLevelDB);
-        int GetMasterVolumeLevelScalar(out float pfLevel);
-        int SetChannelVolumeLevel(uint nChannel, float fLevelDB, ref Guid pguidEventContext);
-        int SetChannelVolumeLevelScalar(uint nChannel, float fLevel, ref Guid pguidEventContext);
-        int GetChannelVolumeLevel(uint nChannel, out float pfLevelDB);
-        int GetChannelVolumeLevelScalar(uint nChannel, out float pfLevel);
-        int SetMute([MarshalAs(UnmanagedType.Bool)] bool bMute, ref Guid pguidEventContext);
-        int GetMute(out bool pbMute);
-        int GetVolumeStepInfo(out uint pnStep, out uint pnStepCount);
-        int VolumeStepUp(ref Guid pguidEventContext);
-        int VolumeStepDown(ref Guid pguidEventContext);
-        int QueryHardwareSupport(out uint pdwHardwareSupportMask);
-        int GetVolumeRange(out float pflVolumeMindB, out float pflVolumeMaxdB, out float pflVolumeIncrementdB);
     }
 
     [Flags]
@@ -135,11 +108,7 @@ internal static class AudioEngine
         CLSCTX_ENABLE_CLOAKING = 0x100000,
         CLSCTX_PS_DLL = 0x80000000,
 
-        CLSCTX_ALL = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER | CLSCTX_LOCAL_SERVER | CLSCTX_REMOTE_SERVER |
-                     CLSCTX_NO_CODE_DOWNLOAD | CLSCTX_NO_CUSTOM_MARSHAL | CLSCTX_ENABLE_CODE_DOWNLOAD |
-                     CLSCTX_NO_FAILURE_LOG | CLSCTX_DISABLE_AAA | CLSCTX_ENABLE_AAA | CLSCTX_FROM_DEFAULT_CONTEXT |
-                     CLSCTX_ACTIVATE_32_BIT_SERVER | CLSCTX_ACTIVATE_64_BIT_SERVER | CLSCTX_ENABLE_CLOAKING |
-                     CLSCTX_PS_DLL
+        CLSCTX_ALL = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER | CLSCTX_LOCAL_SERVER | CLSCTX_REMOTE_SERVER | CLSCTX_NO_CODE_DOWNLOAD | CLSCTX_NO_CUSTOM_MARSHAL | CLSCTX_ENABLE_CODE_DOWNLOAD | CLSCTX_NO_FAILURE_LOG | CLSCTX_DISABLE_AAA | CLSCTX_ENABLE_AAA | CLSCTX_FROM_DEFAULT_CONTEXT | CLSCTX_ACTIVATE_32_BIT_SERVER | CLSCTX_ACTIVATE_64_BIT_SERVER | CLSCTX_ENABLE_CLOAKING | CLSCTX_PS_DLL
     }
 
     internal static class Clsid
@@ -147,10 +116,43 @@ internal static class AudioEngine
         public static readonly Guid MMDeviceEnumerator = new("BCDE0395-E52F-467C-8E3D-C4579291692E");
     }
 
+    // Get the system volume
+    [Guid("5CDF2C82-841E-4546-9722-0CF74078229A")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IAudioEndpointVolume
+    {
+        int RegisterControlChangeNotify(nint pNotify);
+        int UnregisterControlChangeNotify(nint pNotify);
+        int GetChannelCount(out int pnChannelCount);
+        int SetMasterVolumeLevel(float fLevelDB, ref Guid pguidEventContext);
+        int SetMasterVolumeLevelScalar(float fLevel, ref Guid pguidEventContext);
+        int GetMasterVolumeLevel(out float pfLevelDB);
+        int GetMasterVolumeLevelScalar(out float pfLevel);
+        int SetChannelVolumeLevel(uint nChannel, float fLevelDB, ref Guid pguidEventContext);
+        int SetChannelVolumeLevelScalar(uint nChannel, float fLevel, ref Guid pguidEventContext);
+        int GetChannelVolumeLevel(uint nChannel, out float pfLevelDB);
+        int GetChannelVolumeLevelScalar(uint nChannel, out float pfLevel);
+        int SetMute([MarshalAs(UnmanagedType.Bool)] bool bMute, ref Guid pguidEventContext);
+        int GetMute(out bool pbMute);
+        int GetVolumeStepInfo(out uint pnStep, out uint pnStepCount);
+        int VolumeStepUp(ref Guid pguidEventContext);
+        int VolumeStepDown(ref Guid pguidEventContext);
+        int QueryHardwareSupport(out uint pdwHardwareSupportMask);
+        int GetVolumeRange(out float pflVolumeMindB, out float pflVolumeMaxdB, out float pflVolumeIncrementdB);
+    }
+
     internal static class Iid
     {
-        public static readonly Guid IMMDeviceEnumerator = new("A95664D2-9614-4F35-A746-DE8DB63617E6");
         public static readonly Guid IAudioEndpointVolume = new("5CDF2C82-841E-4546-9722-0CF74078229A");
+        public static readonly Guid IMMDeviceEnumerator = new("A95664D2-9614-4F35-A746-DE8DB63617E6");
+    }
+
+    [Guid("D666063F-1587-4E43-81F1-B948E807363F")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IMMDevice
+    {
+        [PreserveSig]
+        int Activate(ref Guid iid, int dwClsCtx, nint pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
     }
 
     [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6")]
@@ -163,19 +165,10 @@ internal static class AudioEngine
         int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice ppDevice);
     }
 
-    [Guid("D666063F-1587-4E43-81F1-B948E807363F")]
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IMMDevice
-    {
-        [PreserveSig]
-        int Activate(ref Guid iid, int dwClsCtx, nint pActivationParams,
-            [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
-    }
-
     internal static class NativeMethods
     {
-        public const int WM_APPCOMMAND = 0x0319;
         public const int APPCOMMAND_VOLUME_MUTE = 0x80000;
+        public const int WM_APPCOMMAND = 0x0319;
 
         [DllImport("user32.dll")]
         public static extern nint SendMessageW(nint hWnd, int Msg, nint wParam, nint lParam);

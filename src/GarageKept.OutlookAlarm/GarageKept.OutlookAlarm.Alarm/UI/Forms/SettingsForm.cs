@@ -7,13 +7,12 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
 public partial class SettingsForm : BaseForm, ISettingsForm
 {
-    private readonly DateTime _exampleDateTime =
-        new(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 8, 0, 0);
+    private readonly DateTime _exampleDateTime = new(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 8, 0, 0);
 
     private readonly TimeSpan _exampleTimeSpan = new(0, 3, 2, 1);
+    private readonly IMediaPlayer _mediaPlayer;
     private bool _isExpanded;
     private Timer? _slidingTimer;
-    private readonly IMediaPlayer _mediaPlayer;
 
     public SettingsForm(IMediaPlayer mediaPlayer) : base(false)
     {
@@ -138,7 +137,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         FetchTimeNumericUpDown.Maximum = 24;
         FetchTimeNumericUpDown.Value = Program.AppSettings.AlarmSource.FetchTimeInHours;
 
-
         #endregion
 
         #endregion
@@ -148,14 +146,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         #region Audio.DefaultSound
 
         DefaultSoundComboBox.SelectedIndexChanged -= DefaultSoundComboBox_SelectedIndexChanged;
-        var dataSource = Enum.GetValues(typeof(SoundType))
-            .Cast<SoundType>()
-            .Select(s => new
-            {
-                Value = s,
-                Text = AlarmActionHelpers.GetEnumDisplayValue(s)
-            }).Where(a => a.Text != "Dismissed")
-            .ToList();
+        var dataSource = Enum.GetValues(typeof(SoundType)).Cast<SoundType>().Select(s => new { Value = s, Text = AlarmActionHelpers.GetEnumDisplayValue(s) }).Where(a => a.Text != "Dismissed").ToList();
         DefaultSoundComboBox.DisplayMember = "Text";
         DefaultSoundComboBox.ValueMember = "Value";
 
@@ -200,7 +191,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         #region Color.YellowColor
 
         ColorYellowLabel.BackColor = Program.AppSettings.Color.YellowColor;
-        ColorYellowLabel.ForeColor = DetermineTextColor( ColorYellowLabel.BackColor);
+        ColorYellowLabel.ForeColor = DetermineTextColor(ColorYellowLabel.BackColor);
 
         #endregion
 
@@ -214,6 +205,13 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         #endregion
 
         return base.ShowDialog();
+    }
+
+    private Color GetColor(Color originalColor)
+    {
+        var result = colorDialog.ShowDialog();
+
+        return result == DialogResult.OK ? colorDialog.Color : originalColor;
     }
 
     private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -285,25 +283,13 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         Program.AppSettings.Main.SliderSpeed = SliderSpeedTrackBar.Value;
     }
 
-    private void SliderSpeedNumericUpDown_Enter(object sender, EventArgs e)
-    {
-        StartSliderPreview();
-    }
+    private void SliderSpeedNumericUpDown_Enter(object sender, EventArgs e) { StartSliderPreview(); }
 
-    private void SliderSpeedNumericUpDown_Leave(object sender, EventArgs e)
-    {
-        StopSliderPreview();
-    }
+    private void SliderSpeedNumericUpDown_Leave(object sender, EventArgs e) { StopSliderPreview(); }
 
-    private void SliderSpeedTrackBar_Enter(object sender, EventArgs e)
-    {
-        StartSliderPreview();
-    }
+    private void SliderSpeedTrackBar_Enter(object sender, EventArgs e) { StartSliderPreview(); }
 
-    private void SliderSpeedTrackBar_Leave(object sender, EventArgs e)
-    {
-        StopSliderPreview();
-    }
+    private void SliderSpeedTrackBar_Leave(object sender, EventArgs e) { StopSliderPreview(); }
 
     private void StartSliderPreview()
     {
@@ -377,10 +363,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region Alarm.AlarmWarning
 
-    private void AlarmWarningTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
-    {
-        Program.AppSettings.Alarm.AlarmWarningTime = (int)AlarmWarningTimeNumericUpDown.Value;
-    }
+    private void AlarmWarningTimeNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.Alarm.AlarmWarningTime = (int)AlarmWarningTimeNumericUpDown.Value; }
 
     #endregion
 
@@ -426,19 +409,13 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region Alarm.Top
 
-    private void AlarmLocationTopNumericUpDown_ValueChanged(object sender, EventArgs e)
-    {
-        Program.AppSettings.Alarm.Top = (int)AlarmLocationTopNumericUpDown.Value;
-    }
+    private void AlarmLocationTopNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.Alarm.Top = (int)AlarmLocationTopNumericUpDown.Value; }
 
     #endregion
 
     #region Alarm.Left
 
-    private void AlarmLocationLeftNumericUpDown_ValueChanged(object sender, EventArgs e)
-    {
-        Program.AppSettings.Alarm.Left = (int)AlarmLocationLeftNumericUpDown.Value;
-    }
+    private void AlarmLocationLeftNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.Alarm.Left = (int)AlarmLocationLeftNumericUpDown.Value; }
 
     #endregion
 
@@ -448,20 +425,13 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region AlarmSource.FetchIntervalInMinutes
 
-    private void FetchIntervalNumericUpDown_ValueChanged(object sender, EventArgs e)
-    {
-        Program.AppSettings.AlarmSource.FetchIntervalInMinutes = (int)FetchIntervalNumericUpDown.Value;
-    }
+    private void FetchIntervalNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.AlarmSource.FetchIntervalInMinutes = (int)FetchIntervalNumericUpDown.Value; }
 
     #endregion
 
     #region AlarmSource.FetchTimeInHours
 
-    private void FetchTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
-    {
-        Program.AppSettings.AlarmSource.FetchTimeInHours = (int)FetchTimeNumericUpDown.Value;
-    }
-
+    private void FetchTimeNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.AlarmSource.FetchTimeInHours = (int)FetchTimeNumericUpDown.Value; }
 
     #endregion
 
@@ -471,11 +441,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region Audio.DefaultSound
 
-    private void DefaultSoundComboBox_SelectedIndexChanged(object? sender, EventArgs e)
-    {
-
-        Program.AppSettings.Audio.DefaultSound = GetDefaultSoundComboBoxSelectedSoundType();
-    }
+    private void DefaultSoundComboBox_SelectedIndexChanged(object? sender, EventArgs e) { Program.AppSettings.Audio.DefaultSound = GetDefaultSoundComboBoxSelectedSoundType(); }
 
     private void PlayTestButton_Click(object sender, EventArgs e)
     {
@@ -493,7 +459,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private SoundType GetDefaultSoundComboBoxSelectedSoundType()
     {
-
         if (DefaultSoundComboBox.SelectedItem is not { } selectedItem) return SoundType.TickTock;
 
         var selectedType = selectedItem.GetType();
@@ -509,10 +474,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region Audio.TurnOffAlarmAfterStart
 
-    private void OffAfterStartNumericUpDown_ValueChanged(object sender, EventArgs e)
-    {
-        Program.AppSettings.Audio.TurnOffAlarmAfterStart = (int)OffAfterStartNumericUpDown.Value;
-    }
+    private void OffAfterStartNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.Audio.TurnOffAlarmAfterStart = (int)OffAfterStartNumericUpDown.Value; }
 
     #endregion
 
@@ -521,10 +483,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     #region Color
 
     #region Color.AlarmPastStartColor
-    
+
     private void ColorAlarmPastStartLabel_Click(object sender, EventArgs e)
     {
-
         ColorAlarmPastStartLabel.BackColor = GetColor(ColorAlarmPastStartLabel.BackColor);
         ColorAlarmPastStartLabel.ForeColor = DetermineTextColor(ColorAlarmPastStartLabel.BackColor);
 
@@ -550,7 +511,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     #endregion
 
     #region Color.YellowColor
-
 
     private void ColorYellowLabel_Click(object sender, EventArgs e)
     {
@@ -579,11 +539,4 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     #endregion
 
     #endregion
-    
-    private Color GetColor(Color originalColor)
-    {
-        var result = colorDialog.ShowDialog();
-
-        return result == DialogResult.OK ? colorDialog.Color : originalColor;
-    }
 }

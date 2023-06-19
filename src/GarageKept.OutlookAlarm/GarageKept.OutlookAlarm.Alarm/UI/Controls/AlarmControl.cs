@@ -1,4 +1,5 @@
-﻿using GarageKept.OutlookAlarm.Alarm.AlarmManager;
+﻿using System.Diagnostics;
+using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
@@ -18,26 +19,28 @@ public partial class AlarmControl : UserControl, IAlarmControl
         AddContextMenu();
 
         UpdateDisplay();
+
+        TeamsLinkLabel.LinkClicked += OnTeamsLinkLabelOnLinkClicked;
     }
 
     private Timer RefreshTimer { get; } = new() { Interval = 1000 };
-    
+
     public IAlarm? Alarm { get; set; }
-
-    public void UpdateDisplay()
-    {
-        if (Alarm == null) return;
-
-        SetSubjectLabel();
-        SetTimeLabels();
-        SetProgressBar();
-        SetBackgroundColor();
-    }
 
     public void StopTimers()
     {
         RefreshTimer.Stop();
         RefreshTimer.Dispose();
+    }
+
+    public void UpdateDisplay()
+    {
+        if (Alarm == null) return;
+
+        SetHeaderLabels();
+        SetTimeLabels();
+        SetProgressBar();
+        SetBackgroundColor();
     }
 
     private void AddContextMenu()
@@ -59,11 +62,46 @@ public partial class AlarmControl : UserControl, IAlarmControl
         MouseDown += Control_MouseDown;
     }
 
+    private void Control_MouseDown(object? sender, MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Right) _appointmentContextMenuStrip.Show(this, e.Location);
+    }
+
     private void DismissAppointment(object? sender, EventArgs e)
     {
         if (Alarm is null) return;
 
         Program.AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+    }
+
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        base.OnPaint(e);
+
+        // Draw the bottom border
+        using Pen borderPen = new(Color.Black);
+        e.Graphics.DrawLine(borderPen, 0, Height - 1, Width, Height - 1);
+    }
+
+    private void OnTeamsLinkLabelOnLinkClicked(object? sender, LinkLabelLinkClickedEventArgs linkLabelLinkClickedEventArgs)
+    {
+        if (Alarm is null) return;
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = Alarm?.TeamsMeetingUrl, //"msteams://meetingjoin?url=" + 
+            UseShellExecute = true
+        });
+    }
+
+    private void Refresh_Tick(object? sender, EventArgs e)
+    {
+        if (Alarm is null) return;
+
+        if (Alarm.End < DateTime.Now)
+            Program.AlarmManager.DeactivateAlarm(Alarm);
+
+        UpdateDisplay();
     }
 
     private void RemoveAppointment(object? sender, EventArgs e)
@@ -72,70 +110,25 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
         Program.AlarmManager.DeactivateAlarm(Alarm);
     }
-    
-    private void Control_MouseDown(object? sender, MouseEventArgs e)
+
+    private void SetBackgroundColor()
     {
-        if (e.Button == MouseButtons.Right) _appointmentContextMenuStrip.Show(this, e.Location);
+        if (Alarm is null) return;
+
+        BackColor = Alarm.AlarmColor;
     }
 
-    private void Refresh_Tick(object? sender, EventArgs e)
-    {
-        if(Alarm is null) return;
-
-        if(Alarm.End < DateTime.Now)
-            Program.AlarmManager.DeactivateAlarm(Alarm);
-
-        UpdateDisplay();
-    }
-
-    private void SetSubjectLabel()
+    private void SetHeaderLabels()
     {
         if (Alarm is null) return;
 
         SubjectLabel.Text = Alarm.Name;
-    }
+        OrganizerLabel.Text = Alarm.Organizer;
+        CategoryLabel.Text = Alarm.Categories;
 
-    private void SetTimeLabels()
-    {
-        if (Alarm is null) return;
+        if (string.IsNullOrWhiteSpace(Alarm.TeamsMeetingUrl)) return;
 
-        if (Alarm.Start < DateTime.Now && Alarm.End > DateTime.Now)
-        {
-            SetTimeLeftInAppointment();
-            SetTimeRightLabel(Alarm.End.ToString("hh:mm tt"));
-        }
-        else if (Alarm.Start > DateTime.Now)
-        {
-            SetTimeUntilMeetingLabel();
-            SetTimeRightLabel(Alarm.Start.ToString("h:mm tt"));
-        }
-    }
-
-    private void SetTimeLeftInAppointment()
-    {
-        if (Alarm is null) return;
-
-        var timeLeft = Alarm.End - DateTime.Now;
-
-        if (timeLeft.TotalMinutes < 0) timeLeft = TimeSpan.Zero;
-
-        TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, timeLeft);
-    }
-
-    private void SetTimeUntilMeetingLabel()
-    {
-        if (Alarm is null) return;
-
-        var timeUntilMeeting = Alarm.Start - DateTime.Now;
-
-        var formatString = timeUntilMeeting.Hours > 0 ? "{0:hh}h {0:mm}m {0:ss}s" : "{0:mm}m {0:ss}s";
-
-        TimeLeft.Text = string.Format(formatString, timeUntilMeeting);
-    }
-
-    private void SetTimeRightLabel(string text)
-    {
-        TimeRight.Text = text;
+        TeamsLinkLabel.Visible = true;
     }
 
     private void SetProgressBar()
@@ -176,19 +169,43 @@ public partial class AlarmControl : UserControl, IAlarmControl
         }
     }
 
-    private void SetBackgroundColor()
+    private void SetTimeLabels()
     {
         if (Alarm is null) return;
 
-        BackColor = Alarm.AlarmColor;
+        if (Alarm.Start < DateTime.Now && Alarm.End > DateTime.Now)
+        {
+            SetTimeLeftInAppointment();
+            SetTimeRightLabel(Alarm.End.ToString("hh:mm tt"));
+        }
+        else if (Alarm.Start > DateTime.Now)
+        {
+            SetTimeUntilMeetingLabel();
+            SetTimeRightLabel(Alarm.Start.ToString("h:mm tt"));
+        }
     }
 
-    protected override void OnPaint(PaintEventArgs e)
+    private void SetTimeLeftInAppointment()
     {
-        base.OnPaint(e);
+        if (Alarm is null) return;
 
-        // Draw the bottom border
-        using Pen borderPen = new(Color.Black);
-        e.Graphics.DrawLine(borderPen, 0, Height - 1, Width, Height - 1);
+        var timeLeft = Alarm.End - DateTime.Now;
+
+        if (timeLeft.TotalMinutes < 0) timeLeft = TimeSpan.Zero;
+
+        TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, timeLeft);
+    }
+
+    private void SetTimeRightLabel(string text) { TimeRight.Text = text; }
+
+    private void SetTimeUntilMeetingLabel()
+    {
+        if (Alarm is null) return;
+
+        var timeUntilMeeting = Alarm.Start - DateTime.Now;
+
+        var formatString = timeUntilMeeting.Hours > 0 ? "{0:hh}h {0:mm}m {0:ss}s" : "{0:mm}m {0:ss}s";
+
+        TimeLeft.Text = string.Format(formatString, timeUntilMeeting);
     }
 }

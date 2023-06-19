@@ -23,7 +23,7 @@ public static class OutlookAlarmSourceExtensions
         // Retrieve the Category from the Categories collection
         var category = outlookNamespace.Categories[categoryName];
 
-        if(category is null) return Color.Empty;
+        if (category is null) return Color.Empty;
 
         // Get the Category Color
         var categoryColor = category.Color.ToColor();
@@ -41,6 +41,20 @@ public static class OutlookAlarmSourceExtensions
         var csvValues = csvString.Split(',');
 
         return csvValues.Length > 0 ? csvValues[0] : string.Empty;
+    }
+
+    public static ResponseType ResponseTypeConverter(this OlResponseStatus status)
+    {
+        return status switch
+        {
+            OlResponseStatus.olResponseAccepted => ResponseType.Accepted,
+            OlResponseStatus.olResponseDeclined => ResponseType.Declined,
+            OlResponseStatus.olResponseNone => ResponseType.None,
+            OlResponseStatus.olResponseNotResponded => ResponseType.NotResponded,
+            OlResponseStatus.olResponseOrganized => ResponseType.Organized,
+            OlResponseStatus.olResponseTentative => ResponseType.Tentative,
+            _ => ResponseType.None
+        };
     }
 
     public static Color ToColor(this OlCategoryColor olCategoryColor)
@@ -74,20 +88,6 @@ public static class OutlookAlarmSourceExtensions
             OlCategoryColor.olCategoryColorDarkPurple => Color.FromArgb(86, 38, 133),
             OlCategoryColor.olCategoryColorDarkMaroon => Color.FromArgb(128, 39, 93),
             _ => SystemColors.Control
-        };
-    }
-
-    public static ResponseType ResponseTypeConverter(this OlResponseStatus status)
-    {
-        return status switch
-        {
-            OlResponseStatus.olResponseAccepted => ResponseType.Accepted,
-            OlResponseStatus.olResponseDeclined => ResponseType.Declined,
-            OlResponseStatus.olResponseNone => ResponseType.None,
-            OlResponseStatus.olResponseNotResponded => ResponseType.NotResponded,
-            OlResponseStatus.olResponseOrganized => ResponseType.Organized,
-            OlResponseStatus.olResponseTentative => ResponseType.Tentative,
-            _ => ResponseType.None
         };
     }
 }

@@ -11,13 +11,9 @@ public class MediaPlayer : IMediaPlayer
 {
     private readonly WaveOutEvent _player = new();
 
-    private readonly Dictionary<SoundType, UnmanagedMemoryStream> _soundStreams = new()
-    {
-        { SoundType.BeepBeep, Resources.double_beep },
-        { SoundType.TickTock, Resources.tick_tock },
-        { SoundType.Guitar, Resources.guitar_notification },
-        { SoundType.Urgent, Resources.urgent_simple_tone }
-    };
+    private readonly Dictionary<SoundType, UnmanagedMemoryStream> _soundStreams = new() { { SoundType.BeepBeep, Resources.double_beep }, { SoundType.TickTock, Resources.tick_tock }, { SoundType.Guitar, Resources.guitar_notification }, { SoundType.Urgent, Resources.urgent_simple_tone } };
+
+    public bool IsPlaying => _player.PlaybackState == PlaybackState.Playing;
 
     /// <summary>
     ///     Plays the specified sound if it has not already been played for the given event.
@@ -46,13 +42,6 @@ public class MediaPlayer : IMediaPlayer
         _player.Play();
     }
 
-    public void StopSound()
-    {
-        _player.Stop();
-    }
-
-    public bool IsPlaying =>_player.PlaybackState == PlaybackState.Playing;
-
     public void PlaySound(string customSound, bool loopPlay)
     {
         if (string.IsNullOrEmpty(customSound)) return;
@@ -74,4 +63,6 @@ public class MediaPlayer : IMediaPlayer
 
         _player.Play();
     }
+
+    public void StopSound() { _player.Stop(); }
 }

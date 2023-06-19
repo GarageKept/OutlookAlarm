@@ -1,29 +1,20 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 
 namespace GarageKept.OutlookAlarm.Alarm.Settings;
 
-/// <summary>
-///     Represents the application settings.
-///     Provides methods to save and load settings from a JSON file.
-/// </summary>
 public class OutlookAlarmSettings : ISettings
 {
     private const string SettingsFilePath = "settings.json";
 
-    public OutlookAlarmSettings() : this(false) { LoadOrCreate(); }
-
-    [JsonConstructor]
-    public OutlookAlarmSettings(bool isDeserializing = true)
+    // Make the default constructor private so it can't be called externally.
+    public OutlookAlarmSettings()
     {
-        // This constructor is used by the JSON deserializer.
-
-        Alarm = new AlarmSettings(Save, isDeserializing);
-        AlarmSource = new AlarmSourceSettings(Save, isDeserializing);
-        Audio = new AudioSettings(Save, isDeserializing);
-        Color = new ColorSettings(Save, isDeserializing);
-        Main = new MainSettings(Save, isDeserializing);
+        Alarm = new AlarmSettings(Save);
+        AlarmSource = new AlarmSourceSettings(Save);
+        Audio = new AudioSettings(Save);
+        Color = new ColorSettings(Save);
+        Main = new MainSettings(Save);
     }
 
     public AlarmSettings Alarm { get; set; }
@@ -32,70 +23,43 @@ public class OutlookAlarmSettings : ISettings
     public ColorSettings Color { get; set; }
     public MainSettings Main { get; set; }
 
-    internal static OutlookAlarmSettings FromJsonElement(JsonElement element, bool loaded)
+    private static JsonSerializerOptions GetJsonSerializeOptions() { return new JsonSerializerOptions { PropertyNameCaseInsensitive = true, WriteIndented = true, Converters = { new ColorJsonConverter() } }; }
+
+    public static OutlookAlarmSettings Load()
     {
-        var settings = new OutlookAlarmSettings(loaded);
+        OutlookAlarmSettings? settings;
 
-        var options = GetJsonSerializeOptions();
-
-        foreach (var property in typeof(OutlookAlarmSettings).GetProperties())
+        if (File.Exists(SettingsFilePath))
         {
-            if (!property.CanRead || !property.CanWrite)
-                continue;
+            var settingsJson = File.ReadAllText(SettingsFilePath);
 
-            if (!element.TryGetProperty(property.Name, out var propertyValue))
-                continue;
+            if (string.IsNullOrWhiteSpace(settingsJson)) return new OutlookAlarmSettings();
 
-            var value = JsonSerializer.Deserialize(propertyValue.GetRawText(), property.PropertyType, options);
-            property.SetValue(settings, value);
+            var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new ColorJsonConverter() } };
+
+            // Use the JsonSerializer to deserialize the settings.
+            settings = JsonSerializer.Deserialize<OutlookAlarmSettings>(settingsJson, options) ?? new OutlookAlarmSettings();
+
+            settings.Alarm.Save = settings.Save;
+            settings.AlarmSource.Save = settings.Save;
+            settings.Audio.Save = settings.Save;
+            settings.Audio.Save = settings.Save;
+            settings.Color.Save = settings.Save;
+            settings.Main.Save = settings.Save;
+        }
+        else
+        {
+            // If the settings file doesn't exist, create a new settings object.
+            settings = new OutlookAlarmSettings();
+            settings.Save();
         }
 
         return settings;
     }
 
-    private static JsonSerializerOptions GetJsonSerializeOptions() { return new JsonSerializerOptions { PropertyNameCaseInsensitive = true, Converters = { new ColorJsonConverter(), new SettingsJsonConverter() } }; }
-
-    /// <summary>
-    ///     Loads the settings from a JSON file or creates a new file if it does not exist.
-    /// </summary>
-    public void LoadOrCreate()
+    public void Save()
     {
-        if (!File.Exists(SettingsFilePath))
-        {
-            Save();
-        }
-        else
-        {
-            var settingsJson = File.ReadAllText(SettingsFilePath);
-
-            if (string.IsNullOrEmpty(settingsJson))
-                return;
-
-            var options = GetJsonSerializeOptions();
-
-            var savedSettings = JsonSerializer.Deserialize<OutlookAlarmSettings>(settingsJson, options);
-
-            if (savedSettings == null)
-                return;
-
-            foreach (var property in typeof(OutlookAlarmSettings).GetProperties())
-            {
-                if (!property.CanRead || !property.CanWrite)
-                    continue;
-
-                var savedValue = property.GetValue(savedSettings);
-                property.SetValue(this, savedValue);
-            }
-        }
-    }
-
-    /// <summary>
-    ///     Saves the settings to a JSON file.
-    /// </summary>
-    protected void Save()
-    {
-        var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new ColorJsonConverter() } };
-
+        var options = GetJsonSerializeOptions();
         var settingsJson = JsonSerializer.Serialize(this, options);
         File.WriteAllText(SettingsFilePath, settingsJson);
     }

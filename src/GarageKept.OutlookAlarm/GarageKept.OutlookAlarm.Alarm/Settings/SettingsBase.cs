@@ -1,18 +1,11 @@
-﻿using System.Text.Json.Serialization;
-
-namespace GarageKept.OutlookAlarm.Alarm.Settings;
+﻿namespace GarageKept.OutlookAlarm.Alarm.Settings;
 
 public class SettingsBase
 {
-    internal readonly Action Save;
+    public Action? Save;
 
-    protected SettingsBase(Action save, bool isDeserializing)
+    protected SettingsBase(Action? save = null)
     {
-        Save = save;
-        IsDeserializing = true;
+        if (save != null) Save = save;
     }
-
-
-    [JsonIgnore] // Optional: Ignore this property during JSON serialization/deserialization
-    internal bool IsDeserializing { get; set; }
 }

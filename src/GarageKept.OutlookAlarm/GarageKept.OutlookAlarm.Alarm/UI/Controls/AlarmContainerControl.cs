@@ -13,7 +13,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
         tableLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
         AutoSizeMode = AutoSizeMode.GrowAndShrink;
-        
+
         Program.AlarmManager.AlarmAdded += UpdateAppointmentControls;
         Program.AlarmManager.AlarmChanged += UpdateAppointmentControls;
         Program.AlarmManager.AlarmRemoved += UpdateAppointmentControls;
@@ -29,6 +29,53 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
     public AlarmProgressBar FooterProgressBar { get; set; } = new();
 
+    public void AddFooterRow()
+    {
+        var newRow = tableLayoutPanel.RowCount; // Get the current row count
+        tableLayoutPanel.RowCount++; // Increment the row count by 1
+
+        // Create a new row style with a fixed height
+        var rowStyle = new RowStyle(SizeType.Absolute, 20); // Set the height to 20 pixels
+
+        // Add the row style to the TableLayoutPanel
+        tableLayoutPanel.RowStyles.Add(rowStyle);
+
+        // Add the label to the TableLayoutPanel at row 0, column 0
+        tableLayoutPanel.Controls.Add(FooterProgressBar, 0, newRow);
+
+        FooterProgressBar.Dock = DockStyle.Fill; // Fill the entire row
+
+        RefreshTimer_Tick(this, null);
+    }
+
+    public void AddRow(Control? control)
+    {
+        if (control == null) return;
+
+        var newRow = tableLayoutPanel.RowCount; // Get the current row count
+        tableLayoutPanel.RowCount++; // Increment the row count by 1
+
+        // Create a new row style with a fixed height
+        var rowStyle = new RowStyle(SizeType.AutoSize);
+
+        // Add the row style to the TableLayoutPanel
+        tableLayoutPanel.RowStyles.Add(rowStyle);
+
+        tableLayoutPanel.Controls.Add(control, 0, newRow);
+    }
+
+    private void InitializeFooterProgressBar()
+    {
+        // Create an additional label for the empty row
+        FooterProgressBar.RightToLeftLayout = false;
+        FooterProgressBar.Padding = Padding.Empty;
+        FooterProgressBar.Margin = Padding.Empty;
+        FooterProgressBar.Minimum = 0;
+        FooterProgressBar.Maximum = 3600; // 1 hour in seconds
+
+        FooterProgressBar.Width = Parent?.Width ?? Program.AppSettings.Main.MinimumWidth;
+    }
+
     private void RefreshTimer_Tick(object? sender, EventArgs? e)
     {
         var currentAppointment = Program.AlarmManager.GetCurrentAppointment();
@@ -39,10 +86,9 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
         if (currentAppointment != null) barColor = Program.AppSettings.Color.RedColor;
 
-        if (currentAppointment?.End >= nextAppointment?.Start) backColor =Program.AppSettings.Color.YellowColor;
+        if (currentAppointment?.End >= nextAppointment?.Start) backColor = Program.AppSettings.Color.YellowColor;
 
-        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ??
-                                       currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
+        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ?? currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
 
 
         if (nextAppointment is null)
@@ -80,40 +126,14 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         FooterProgressBar.Value = value;
     }
 
-    private void InitializeFooterProgressBar()
-    {
-        // Create an additional label for the empty row
-        FooterProgressBar.RightToLeftLayout = false;
-        FooterProgressBar.Padding = Padding.Empty;
-        FooterProgressBar.Margin = Padding.Empty;
-        FooterProgressBar.Minimum = 0;
-        FooterProgressBar.Maximum = 3600; // 1 hour in seconds
-
-        FooterProgressBar.Width = Parent?.Width ?? Program.AppSettings.Main.MinimumWidth;
-    }
-
     private void StopAllTimerInChildren(ControlCollection controls)
     {
         foreach (Control control in controls)
         {
-            if (control is IAlarmControl alarmControl)
-            {
-                alarmControl.StopTimers();
-            }
+            if (control is IAlarmControl alarmControl) alarmControl.StopTimers();
 
             StopAllTimerInChildren(control.Controls);
         }
-
-    }
-
-    public void UpdateAppointmentControls(object? sender, AlarmEventArgs e)
-    {
-        if (!IsHandleCreated) return;
-
-        if (InvokeRequired && IsHandleCreated)
-            Invoke((MethodInvoker)UpdateAlarmControls);
-        else
-            UpdateAlarmControls();
     }
 
     private void UpdateAlarmControls()
@@ -134,9 +154,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
         foreach (var alarm in Program.AlarmManager.GetActiveAlarms().OrderBy(a => a.Start))
         {
-            var alarmControl =
-                Program.ServiceProvider
-                    .GetRequiredService<IAlarmControl>(); //new AlarmControl { Alarm = alarm, AppSettings = AppSettings };
+            var alarmControl = Program.ServiceProvider.GetRequiredService<IAlarmControl>(); //new AlarmControl { Alarm = alarm, AppSettings = AppSettings };
             alarmControl.Alarm = alarm;
             alarmControl.UpdateDisplay();
 
@@ -161,38 +179,13 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         ResumeLayout();
     }
 
-    public void AddRow(Control? control)
+    public void UpdateAppointmentControls(object? sender, AlarmEventArgs e)
     {
-        if (control == null) return;
+        if (!IsHandleCreated) return;
 
-        var newRow = tableLayoutPanel.RowCount; // Get the current row count
-        tableLayoutPanel.RowCount++; // Increment the row count by 1
-
-        // Create a new row style with a fixed height
-        var rowStyle = new RowStyle(SizeType.AutoSize);
-
-        // Add the row style to the TableLayoutPanel
-        tableLayoutPanel.RowStyles.Add(rowStyle);
-
-        tableLayoutPanel.Controls.Add(control, 0, newRow);
-    }
-
-    public void AddFooterRow()
-    {
-        var newRow = tableLayoutPanel.RowCount; // Get the current row count
-        tableLayoutPanel.RowCount++; // Increment the row count by 1
-
-        // Create a new row style with a fixed height
-        var rowStyle = new RowStyle(SizeType.Absolute, 20); // Set the height to 20 pixels
-
-        // Add the row style to the TableLayoutPanel
-        tableLayoutPanel.RowStyles.Add(rowStyle);
-
-        // Add the label to the TableLayoutPanel at row 0, column 0
-        tableLayoutPanel.Controls.Add(FooterProgressBar, 0, newRow);
-
-        FooterProgressBar.Dock = DockStyle.Fill; // Fill the entire row
-
-        RefreshTimer_Tick(this, null);
+        if (InvokeRequired && IsHandleCreated)
+            Invoke((MethodInvoker)UpdateAlarmControls);
+        else
+            UpdateAlarmControls();
     }
 }

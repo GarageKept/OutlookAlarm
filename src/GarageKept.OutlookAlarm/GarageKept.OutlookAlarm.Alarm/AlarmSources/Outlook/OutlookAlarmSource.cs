@@ -26,9 +26,7 @@ public class OutlookAlarmSource : IAlarmSource
         var calendarItems = calendarFolder.Items;
         calendarItems.IncludeRecurrences = true;
         calendarItems.Sort("[Start]", Type.Missing);
-        calendarItems =
-            calendarItems.Restrict(
-                $"[Start] <= '{endDateTime:g}' AND [End] >= '{startDateTime:g}' AND [End] > '{DateTime.Now:g}'");
+        calendarItems = calendarItems.Restrict($"[Start] <= '{endDateTime:g}' AND [End] >= '{startDateTime:g}' AND [End] > '{DateTime.Now:g}'");
 
         var events = calendarItems.Cast<AppointmentItem>().ToList();
         var removedAllDay = events.Where(e => !e.AllDayEvent).ToList();

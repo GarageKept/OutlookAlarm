@@ -13,8 +13,5 @@ public class AlarmEventArgs : EventArgs
         Event = @event;
     }
 
-    public AlarmEventArgs(AlarmEvent @event)
-    {
-        Event = @event;
-    }
+    public AlarmEventArgs(AlarmEvent @event) { Event = @event; }
 }

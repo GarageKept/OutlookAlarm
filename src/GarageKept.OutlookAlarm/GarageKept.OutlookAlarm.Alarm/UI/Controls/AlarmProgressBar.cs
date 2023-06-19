@@ -5,10 +5,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 
 public class AlarmProgressBar : ProgressBar
 {
-    public AlarmProgressBar()
-    {
-        SetStyle(ControlStyles.UserPaint, true);
-    }
+    public AlarmProgressBar() { SetStyle(ControlStyles.UserPaint, true); }
 
     public AlarmProgressBar(Color barColor, Color backgroundColor) : this()
     {
@@ -27,6 +24,12 @@ public class AlarmProgressBar : ProgressBar
             cp.Style |= 0x20; // Set the PBS_MARQUEE style
             return cp;
         }
+    }
+
+    protected override void OnHandleCreated(EventArgs e)
+    {
+        base.OnHandleCreated(e);
+        SendMessage(Handle, 0x400 + 16, 1, IntPtr.Zero); // Set the PBM_SETMARQUEE message
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -52,15 +55,7 @@ public class AlarmProgressBar : ProgressBar
         }
     }
 
-    protected override void OnHandleCreated(EventArgs e)
-    {
-        base.OnHandleCreated(e);
-        SendMessage(Handle, 0x400 + 16, 1, IntPtr.Zero); // Set the PBM_SETMARQUEE message
-    }
-
     [DllImport("user32.dll")]
-    [SuppressMessage("Interoperability",
-        "SYSLIB1054:Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time",
-        Justification = "<Pending>")]
+    [SuppressMessage("Interoperability", "SYSLIB1054:Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time", Justification = "<Pending>")]
     private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 }

@@ -16,9 +16,7 @@ public class BaseForm : Form
     /// <summary>
     ///     Initializes a new instance of the <see cref="BaseForm" /> class with PinTop set to true.
     /// </summary>
-    internal BaseForm() : this(true)
-    {
-    }
+    internal BaseForm() : this(true) { }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BaseForm" /> class.
@@ -39,33 +37,29 @@ public class BaseForm : Form
     /// <summary>
     ///     Gets the width of the primary screen, caches the value for future use.
     /// </summary>
-    internal int ScreenWidth => _screenWidth > 0
-        ? _screenWidth
-        : _screenWidth = Screen.PrimaryScreen?.WorkingArea.Width ?? 0;
+    internal int ScreenWidth => _screenWidth > 0 ? _screenWidth : _screenWidth = Screen.PrimaryScreen?.WorkingArea.Width ?? 0;
 
     /// <summary>
     ///     Gets the height of the primary screen, caches the value for future use.
     /// </summary>
-    internal int ScreenHeight => _screenHeight > 0
-        ? _screenHeight
-        : _screenHeight = Screen.PrimaryScreen?.WorkingArea.Height ?? 0;
+    internal int ScreenHeight => _screenHeight > 0 ? _screenHeight : _screenHeight = Screen.PrimaryScreen?.WorkingArea.Height ?? 0;
 
     /// <summary>
     ///     Gets or sets a value indicating whether the form should be pinned to the top of the screen.
     /// </summary>
     internal bool PinTop { get; set; }
 
-    /// <summary>
-    ///     Adds mouse event handlers to a given control and all its children.
-    /// </summary>
-    /// <param name="control">The control to add event handlers to.</param>
-    public void SetDraggable(Control control)
+    public static Color DetermineTextColor(Color backgroundColor)
     {
-        control.MouseDown += MouseDownHandler;
-        control.MouseMove += MouseMoveHandler;
-        control.MouseUp += MouseUpHandler;
+        double brightness = (backgroundColor.R * 299 + backgroundColor.G * 587 + backgroundColor.B * 114) / 1000;
 
-        foreach (Control child in control.Controls) SetDraggable(child);
+        return brightness >= 128
+            ?
+            // Use black text on light background
+            Color.Black
+            :
+            // Use white text on dark background
+            Color.White;
     }
 
     /// <summary>
@@ -113,14 +107,16 @@ public class BaseForm : Form
         if (e.Button == MouseButtons.Left) _isDragging = false;
     }
 
-    public static Color DetermineTextColor(Color backgroundColor)
+    /// <summary>
+    ///     Adds mouse event handlers to a given control and all its children.
+    /// </summary>
+    /// <param name="control">The control to add event handlers to.</param>
+    public void SetDraggable(Control control)
     {
-        double brightness = (backgroundColor.R * 299 + backgroundColor.G * 587 + backgroundColor.B * 114) / 1000;
+        control.MouseDown += MouseDownHandler;
+        control.MouseMove += MouseMoveHandler;
+        control.MouseUp += MouseUpHandler;
 
-        return brightness >= 128 ?
-            // Use black text on light background
-            Color.Black :
-            // Use white text on dark background
-            Color.White;
+        foreach (Control child in control.Controls) SetDraggable(child);
     }
 }

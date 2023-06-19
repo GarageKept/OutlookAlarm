@@ -7,7 +7,10 @@ public class ColorSettings : SettingsBase
     private Color _redColor = Color.Red;
     private Color _yellowColor = Color.Yellow;
 
-    public ColorSettings(Action save, bool isDeserializing) : base(save, isDeserializing) { }
+    // ReSharper disable once UnusedMember.Global
+    public ColorSettings() { }
+
+    public ColorSettings(Action save) : base(save) { }
 
     public Color AlarmPastStartColor
     {
@@ -16,7 +19,8 @@ public class ColorSettings : SettingsBase
         {
             if (_alarmPastStartColor == value) return;
             _alarmPastStartColor = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
+            ;
         }
     }
 
@@ -28,7 +32,8 @@ public class ColorSettings : SettingsBase
             if (_greenColor == value) return;
 
             _greenColor = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
+            ;
         }
     }
 
@@ -40,7 +45,8 @@ public class ColorSettings : SettingsBase
             if (_redColor == value) return;
 
             _redColor = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
+            ;
         }
     }
 
@@ -52,7 +58,8 @@ public class ColorSettings : SettingsBase
             if (_yellowColor == value) return;
 
             _yellowColor = value;
-            if(!IsDeserializing) Save();;
+            Save?.Invoke();
+            ;
         }
     }
 }

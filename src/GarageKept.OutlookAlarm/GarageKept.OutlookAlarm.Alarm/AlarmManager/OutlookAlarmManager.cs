@@ -1,6 +1,6 @@
-﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
+﻿using System.Collections.Concurrent;
+using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Concurrent;
 using Timer = System.Threading.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.AlarmManager;
@@ -29,40 +29,6 @@ public sealed class OutlookAlarmManager : IAlarmManager
     public event EventHandler<AlarmEventArgs> AlarmRemoved;
     public event EventHandler<AlarmEventArgs> AlarmsUpdated;
 
-    public bool IsRunning => UpdateAlarmListTimer != null;
-
-    public void Start()
-    {
-        UpdateAlarmListTimer = new Timer(FetchAlarms, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(Program.AppSettings.AlarmSource.FetchIntervalInMinutes));
-    }
-
-    public void Stop()
-    {
-        UpdateAlarmListTimer?.Dispose();
-        UpdateAlarmListTimer = null;
-    }
-
-    public void Reset()
-    {
-        var alarmsToRemove = new List<IAlarm>(Alarms.Count);
-
-        foreach (var alarm in Alarms.Values)
-        {
-            alarmsToRemove.Add(alarm);
-
-            RemoveAlarmTimer(alarm);
-        }
-
-        foreach (var alarm in alarmsToRemove) RemoveAlarm(alarm);
-
-        FetchAlarms(this);
-    }
-
-    public IEnumerable<IAlarm> GetActiveAlarms()
-    {
-        return Alarms.Values.Where(a => a.IsActive).OrderBy(a=>a.Start);
-    }
-
     public void ChangeAlarmState(IAlarm alarm, AlarmAction action)
     {
         if (!Alarms.ContainsKey(alarm.Id)) return;
@@ -89,11 +55,30 @@ public sealed class OutlookAlarmManager : IAlarmManager
         }
     }
 
+    public void DeactivateAlarm(IAlarm alarm)
+    {
+        var updated = false;
+
+        if (Alarms.TryGetValue(alarm.Id, out var alarmToDeactivate))
+        {
+            alarmToDeactivate.IsActive = false;
+            updated = true;
+        }
+
+        if (AlarmTimers.ContainsKey(alarm.Id)) RemoveAlarmTimer(alarm);
+        if (updated)
+            OnAlarmChanged(new AlarmEventArgs(alarm, AlarmEvent.Updated));
+    }
+
+    public void ForceFetch() { FetchAlarms(this); }
+
+    public IEnumerable<IAlarm> GetActiveAlarms() { return Alarms.Values.Where(a => a.IsActive).OrderBy(a => a.Start); }
+
     public IAlarm? GetCurrentAppointment()
     {
         var now = DateTime.Now;
 
-        var current = Alarms.Values.Where(a=>a.IsActive).OrderBy(a => a.Start).FirstOrDefault(a => a.Start < now && a.End > now);
+        var current = Alarms.Values.Where(a => a.IsActive).OrderBy(a => a.Start).FirstOrDefault(a => a.Start < now && a.End > now);
 
         return current;
     }
@@ -102,9 +87,35 @@ public sealed class OutlookAlarmManager : IAlarmManager
     {
         var now = DateTime.Now;
 
-        var current = Alarms.Values.Where(a=>a.IsActive).OrderBy(a => a.Start).FirstOrDefault(a => a.Start > now);
+        var current = Alarms.Values.Where(a => a.IsActive).OrderBy(a => a.Start).FirstOrDefault(a => a.Start > now);
 
         return current;
+    }
+
+    public bool IsRunning => UpdateAlarmListTimer != null;
+
+    public void Reset()
+    {
+        var alarmsToRemove = new List<IAlarm>(Alarms.Count);
+
+        foreach (var alarm in Alarms.Values)
+        {
+            alarmsToRemove.Add(alarm);
+
+            RemoveAlarmTimer(alarm);
+        }
+
+        foreach (var alarm in alarmsToRemove) RemoveAlarm(alarm);
+
+        FetchAlarms(this);
+    }
+
+    public void Start() { UpdateAlarmListTimer = new Timer(FetchAlarms, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(Program.AppSettings.AlarmSource.FetchIntervalInMinutes)); }
+
+    public void Stop()
+    {
+        UpdateAlarmListTimer?.Dispose();
+        UpdateAlarmListTimer = null;
     }
 
     private void AddAlarm(IAlarm alarm)
@@ -119,140 +130,11 @@ public sealed class OutlookAlarmManager : IAlarmManager
         OnAlarmAdded(new AlarmEventArgs(alarm, AlarmEvent.Added));
     }
 
-    private void RemoveAlarm(IAlarm alarm)
-    {
-        Alarms.TryRemove(alarm.Id, out _);
-
-        RemoveAlarmTimer(alarm);
-
-        OnAlarmRemoved(new AlarmEventArgs(alarm, AlarmEvent.Removed));
-    }
-
-    private void UpdateAlarm(IAlarm alarm)
-    {
-        if (!Alarms.ContainsKey(alarm.Id)) return;
-
-        // If the start time didn't change we keep the current enabled state and reminder time
-        var sameStart = Alarms[alarm.Id].Start == alarm.Start;
-        if (sameStart)
-            alarm.IsActive = Alarms[alarm.Id].IsActive;
-        
-        Alarms[alarm.Id] = alarm;
-
-
-
-        if (alarm.IsReminderEnabled)
-        {
-            if (!sameStart)
-                UpdateAlarmTimer(alarm);
-        }
-        else
-            RemoveAlarmTimer(alarm);
-
-        OnAlarmChanged(new AlarmEventArgs(alarm, AlarmEvent.Updated));
-    }
-
-    public void DeactivateAlarm(IAlarm alarm)
-    {
-        var updated = false;
-
-        if (Alarms.TryGetValue(alarm.Id, out var alarmToDeactivate))
-        {
-            alarmToDeactivate.IsActive = false;
-            updated = true;
-        }
-
-        if (AlarmTimers.ContainsKey(alarm.Id))
-        {
-            RemoveAlarmTimer(alarm);
-        }
-        if(updated)
-            OnAlarmChanged(new AlarmEventArgs(alarm, AlarmEvent.Updated));
-    }
-
-    public void ForceFetch()
-    {
-        FetchAlarms(this);
-    }
-
-    private void OnAlarmChanged(AlarmEventArgs e)
-    {
-        AlarmChanged.Invoke(this, e);
-    }
-
-    private void OnAlarmAdded(AlarmEventArgs e)
-    {
-        AlarmAdded.Invoke(this, e);
-    }
-
-    private void OnAlarmRemoved(AlarmEventArgs e)
-    {
-        AlarmRemoved.Invoke(this, e);
-    }
-
-    private void OnAlarmsUpdated(AlarmEventArgs e)
-    {
-        AlarmsUpdated.Invoke(this, e);
-    }
-
     private void AddAlarmTimer(IAlarm alarm)
     {
         var timer = GenerateTimer(alarm);
 
         AlarmTimers.TryAdd(alarm.Id, timer);
-    }
-
-    private void RemoveAlarmTimer(IAlarm alarm)
-    {
-        if (!AlarmTimers.ContainsKey(alarm.Id)) return;
-
-        var timer = AlarmTimers[alarm.Id];
-        timer.Dispose();
-        AlarmTimers.Remove(alarm.Id, out _);
-    }
-
-    private void UpdateAlarmTimer(IAlarm alarm)
-    {
-        if (!AlarmTimers.ContainsKey(alarm.Id)) return;
-
-        var timer = AlarmTimers[alarm.Id];
-        timer.Dispose();
-        timer = GenerateTimer(alarm);
-        AlarmTimers[alarm.Id] = timer;
-    }
-
-    private Timer GenerateTimer(IAlarm alarm, AlarmAction? action = null)
-    {
-
-        switch (action)
-        {
-            case AlarmAction.FiveMinBefore:
-                alarm.ReminderTime = alarm.Start + TimeSpan.FromMinutes(-5);
-                break;
-            case AlarmAction.ZeroMinBefore:
-                alarm.ReminderTime = alarm.Start;
-                break;
-            case AlarmAction.SnoozeFiveMin:
-                alarm.ReminderTime = DateTime.Now + TimeSpan.FromMinutes(5);
-                break;
-            case AlarmAction.SnoozeTenMin:
-                alarm.ReminderTime = DateTime.Now + TimeSpan.FromMinutes(10);
-                break;
-            case AlarmAction.Dismiss:
-                ChangeAlarmState(alarm, AlarmAction.Dismiss);
-                break;
-            case null:
-                // We do nothing to manipulate the reminder time.
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(action), action, null);
-        }
-        
-        var timeToLaunch = alarm.ReminderTime - DateTime.Now;
-
-        if (timeToLaunch <= TimeSpan.Zero) timeToLaunch = TimeSpan.FromMicroseconds(1);
-
-        return new Timer(AlarmCallback, alarm, timeToLaunch, Timeout.InfiniteTimeSpan);
     }
 
     private void AlarmCallback(object? state)
@@ -279,21 +161,18 @@ public sealed class OutlookAlarmManager : IAlarmManager
         RemoveOldAlarms();
 
         // PUll in all alarms and hold their Id
-        var alarmsToCheck = GetActiveAlarms().Select(a=>a.Id).ToList();
-        
+        var alarmsToCheck = GetActiveAlarms().Select(a => a.Id).ToList();
+
         // Grab all the alarms in the next "FetchTimeInHours" hours
         var alarms = GetAlarmsFromSource(Program.AppSettings.AlarmSource.FetchTimeInHours).ToList();
 
         // Look for orphans (Those who are in the list but are not in the current/upcoming items
-        foreach (var alarm in alarms.Where(alarm => alarmsToCheck.Contains(alarm.Id)))
-        {
-            alarmsToCheck.Remove(alarm.Id);
-        }
-        
+        foreach (var alarm in alarms.Where(alarm => alarmsToCheck.Contains(alarm.Id))) alarmsToCheck.Remove(alarm.Id);
+
         // if we found an orphan, remove it
         if (alarmsToCheck.Any())
         {
-            var removeOrphans= Alarms.Values.Where(a => alarmsToCheck.Contains(a.Id));
+            var removeOrphans = Alarms.Values.Where(a => alarmsToCheck.Contains(a.Id));
             foreach (var alarm in removeOrphans)
             {
                 RemoveAlarm(alarm);
@@ -312,16 +191,37 @@ public sealed class OutlookAlarmManager : IAlarmManager
         OnAlarmsUpdated(new AlarmEventArgs(AlarmEvent.Updated));
     }
 
-    private void RemoveOldAlarms()
+    private Timer GenerateTimer(IAlarm alarm, AlarmAction? action = null)
     {
-        var now = DateTime.Now;
-        var alarmsToRemove = Alarms.Values.Where(a => a.End < now);
-
-        foreach (var alarm in alarmsToRemove)
+        switch (action)
         {
-            RemoveAlarm(alarm);
-            RemoveAlarmTimer(alarm);
+            case AlarmAction.FiveMinBefore:
+                alarm.ReminderTime = alarm.Start + TimeSpan.FromMinutes(-5);
+                break;
+            case AlarmAction.ZeroMinBefore:
+                alarm.ReminderTime = alarm.Start;
+                break;
+            case AlarmAction.SnoozeFiveMin:
+                alarm.ReminderTime = DateTime.Now + TimeSpan.FromMinutes(5);
+                break;
+            case AlarmAction.SnoozeTenMin:
+                alarm.ReminderTime = DateTime.Now + TimeSpan.FromMinutes(10);
+                break;
+            case AlarmAction.Dismiss:
+                ChangeAlarmState(alarm, AlarmAction.Dismiss);
+                break;
+            case null:
+                // We do nothing to manipulate the reminder time.
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(action), action, null);
         }
+
+        var timeToLaunch = alarm.ReminderTime - DateTime.Now;
+
+        if (timeToLaunch <= TimeSpan.Zero) timeToLaunch = TimeSpan.FromMicroseconds(1);
+
+        return new Timer(AlarmCallback, alarm, timeToLaunch, Timeout.InfiniteTimeSpan);
     }
 
     private IEnumerable<IAlarm> GetAlarmsFromSource(int hours)
@@ -334,5 +234,78 @@ public sealed class OutlookAlarmManager : IAlarmManager
             alarms = GetAlarmsFromSource(hours + Program.AppSettings.AlarmSource.FetchTimeInHours).ToList();
 
         return alarms;
+    }
+
+    private void OnAlarmAdded(AlarmEventArgs e) { AlarmAdded.Invoke(this, e); }
+
+    private void OnAlarmChanged(AlarmEventArgs e) { AlarmChanged.Invoke(this, e); }
+
+    private void OnAlarmRemoved(AlarmEventArgs e) { AlarmRemoved.Invoke(this, e); }
+
+    private void OnAlarmsUpdated(AlarmEventArgs e) { AlarmsUpdated.Invoke(this, e); }
+
+    private void RemoveAlarm(IAlarm alarm)
+    {
+        Alarms.TryRemove(alarm.Id, out _);
+
+        RemoveAlarmTimer(alarm);
+
+        OnAlarmRemoved(new AlarmEventArgs(alarm, AlarmEvent.Removed));
+    }
+
+    private void RemoveAlarmTimer(IAlarm alarm)
+    {
+        if (!AlarmTimers.ContainsKey(alarm.Id)) return;
+
+        var timer = AlarmTimers[alarm.Id];
+        timer.Dispose();
+        AlarmTimers.Remove(alarm.Id, out _);
+    }
+
+    private void RemoveOldAlarms()
+    {
+        var now = DateTime.Now;
+        var alarmsToRemove = Alarms.Values.Where(a => a.End < now);
+
+        foreach (var alarm in alarmsToRemove)
+        {
+            RemoveAlarm(alarm);
+            RemoveAlarmTimer(alarm);
+        }
+    }
+
+    private void UpdateAlarm(IAlarm alarm)
+    {
+        if (!Alarms.ContainsKey(alarm.Id)) return;
+
+        // If the start time didn't change we keep the current enabled state and reminder time
+        var sameStart = Alarms[alarm.Id].Start == alarm.Start;
+        if (sameStart)
+            alarm.IsActive = Alarms[alarm.Id].IsActive;
+
+        Alarms[alarm.Id] = alarm;
+
+
+        if (alarm.IsReminderEnabled)
+        {
+            if (!sameStart)
+                UpdateAlarmTimer(alarm);
+        }
+        else
+        {
+            RemoveAlarmTimer(alarm);
+        }
+
+        OnAlarmChanged(new AlarmEventArgs(alarm, AlarmEvent.Updated));
+    }
+
+    private void UpdateAlarmTimer(IAlarm alarm)
+    {
+        if (!AlarmTimers.ContainsKey(alarm.Id)) return;
+
+        var timer = AlarmTimers[alarm.Id];
+        timer.Dispose();
+        timer = GenerateTimer(alarm);
+        AlarmTimers[alarm.Id] = timer;
     }
 }
