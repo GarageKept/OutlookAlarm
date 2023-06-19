@@ -5,6 +5,17 @@ namespace GarageKept.OutlookAlarm.Alarm.AlarmSources.Outlook;
 
 public class Appointment : IAlarm
 {
+    public Appointment()
+    {
+        Categories = string.Empty;
+        CustomSound = string.Empty;
+        Id = string.Empty;
+        Location = string.Empty;
+        Name = string.Empty;
+        Organizer = string.Empty;
+        TeamsMeetingUrl = string.Empty;
+    }
+
     public Appointment(_AppointmentItem item)
     {
         AlarmColor = item.Categories.GetCategoryColor();
