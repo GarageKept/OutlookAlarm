@@ -233,7 +233,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         LeftTrackBar.Value = (int)LeftNumericUpDown.Value;
         Program.AppSettings.Main.Left = (int)LeftNumericUpDown.Value;
-        Program.AppSettings.Save();
 
         if (Owner is IMainForm mainForm)
             mainForm.Left = Program.AppSettings.Main.Left;
@@ -243,7 +242,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         LeftNumericUpDown.Value = LeftTrackBar.Value;
         Program.AppSettings.Main.Left = LeftTrackBar.Value;
-        Program.AppSettings.Save();
 
         if (Owner is IMainForm mainForm)
             mainForm.Left = Program.AppSettings.Main.Left;
@@ -259,7 +257,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         Owner.Top = (int)BarHeightNumericUpDown.Value - Owner.Height;
         Program.AppSettings.Main.BarSize = (int)BarHeightNumericUpDown.Value;
-        Program.AppSettings.Save();
     }
 
     private void BarHeightNumericUpDown_Enter(object sender, EventArgs e)
@@ -280,14 +277,12 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         SliderSpeedTrackBar.Value = (int)SliderSpeedNumericUpDown.Value;
         Program.AppSettings.Main.SliderSpeed = SliderSpeedTrackBar.Value;
-        Program.AppSettings.Save();
     }
 
     private void SliderSpeedTrackBar_ValueChanged(object? sender, EventArgs e)
     {
         SliderSpeedNumericUpDown.Value = SliderSpeedTrackBar.Value;
         Program.AppSettings.Main.SliderSpeed = SliderSpeedTrackBar.Value;
-        Program.AppSettings.Save();
     }
 
     private void SliderSpeedNumericUpDown_Enter(object sender, EventArgs e)
@@ -362,7 +357,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         MinimumWidthTrackBar.Value = (int)MinimumWidthNumericUpDown.Value;
         Program.AppSettings.Main.MinimumWidth = MinimumWidthTrackBar.Value;
-        Program.AppSettings.Save();
 
         if (Owner is not null) Owner.Width = Program.AppSettings.Main.MinimumWidth;
     }
@@ -371,7 +365,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         MinimumWidthNumericUpDown.Value = MinimumWidthTrackBar.Value;
         Program.AppSettings.Main.MinimumWidth = MinimumWidthTrackBar.Value;
-        Program.AppSettings.Save();
 
         if (Owner is not null) Owner.Width = Program.AppSettings.Main.MinimumWidth;
     }
@@ -387,7 +380,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private void AlarmWarningTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
         Program.AppSettings.Alarm.AlarmWarningTime = (int)AlarmWarningTimeNumericUpDown.Value;
-        Program.AppSettings.Save();
     }
 
     #endregion
@@ -403,7 +395,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
             if (string.IsNullOrWhiteSpace(TimeLeftFormatExampleTextBox.Text)) return;
 
             Program.AppSettings.Alarm.TimeLeftStringFormat = TimeLeftFormatExampleTextBox.Text;
-            Program.AppSettings.Save();
         }
         catch
         {
@@ -424,7 +415,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
             if (string.IsNullOrWhiteSpace(AlarmStartFormatExampleLabel.Text)) return;
 
             Program.AppSettings.Alarm.AlarmStartStringFormat = AlarmStartFormatTextBox.Text;
-            Program.AppSettings.Save();
         }
         catch
         {
@@ -439,7 +429,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private void AlarmLocationTopNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
         Program.AppSettings.Alarm.Top = (int)AlarmLocationTopNumericUpDown.Value;
-        Program.AppSettings.Save();
     }
 
     #endregion
@@ -449,7 +438,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private void AlarmLocationLeftNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
         Program.AppSettings.Alarm.Left = (int)AlarmLocationLeftNumericUpDown.Value;
-        Program.AppSettings.Save();
     }
 
     #endregion
@@ -487,7 +475,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
 
         Program.AppSettings.Audio.DefaultSound = GetDefaultSoundComboBoxSelectedSoundType();
-        Program.AppSettings.Save();
     }
 
     private void PlayTestButton_Click(object sender, EventArgs e)
@@ -525,7 +512,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private void OffAfterStartNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
         Program.AppSettings.Audio.TurnOffAlarmAfterStart = (int)OffAfterStartNumericUpDown.Value;
-        Program.AppSettings.Save();
     }
 
     #endregion
@@ -545,7 +531,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (ColorAlarmPastStartLabel.BackColor == Program.AppSettings.Color.AlarmPastStartColor) return;
 
         Program.AppSettings.Color.AlarmPastStartColor = ColorAlarmPastStartLabel.BackColor;
-        Program.AppSettings.Save();
     }
 
     #endregion
@@ -560,7 +545,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (ColorGreenLabel.BackColor == Program.AppSettings.Color.RedColor) return;
 
         Program.AppSettings.Color.GreenColor = ColorGreenLabel.BackColor;
-        Program.AppSettings.Save();
     }
 
     #endregion
@@ -576,7 +560,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (ColorYellowLabel.BackColor == Program.AppSettings.Color.RedColor) return;
 
         Program.AppSettings.Color.YellowColor = ColorYellowLabel.BackColor;
-        Program.AppSettings.Save();
     }
 
     #endregion
@@ -591,18 +574,12 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (ColorRedLabel.BackColor == Program.AppSettings.Color.RedColor) return;
 
         Program.AppSettings.Color.RedColor = ColorRedLabel.BackColor;
-        Program.AppSettings.Save();
     }
 
     #endregion
 
     #endregion
-
-    private void button1_Click(object sender, EventArgs e)
-    {
-        colorPage.BackColor = GetColor(colorPage.BackColor);
-    }
-
+    
     private Color GetColor(Color originalColor)
     {
         var result = colorDialog.ShowDialog();

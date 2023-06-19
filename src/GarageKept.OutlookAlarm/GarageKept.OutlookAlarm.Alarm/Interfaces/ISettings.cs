@@ -9,9 +9,4 @@ public interface ISettings
     AlarmSourceSettings AlarmSource { get; set; }
     ColorSettings Color { get; set; }
     MainSettings Main { get; set; }
-
-    /// <summary>
-    ///     Saves the current instance of the <see cref="Settings" /> object to the settings file.
-    /// </summary>
-    void Save();
 }

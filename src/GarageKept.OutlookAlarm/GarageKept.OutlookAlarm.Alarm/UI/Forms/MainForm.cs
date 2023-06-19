@@ -34,7 +34,6 @@ public partial class MainForm : BaseForm, IMainForm
         Move += (_, _) =>
         {
             Program.AppSettings.Main.Left = Left;
-            Program.AppSettings.Save();
         };
 
         // Initialize and set up the context menu
@@ -132,8 +131,6 @@ public partial class MainForm : BaseForm, IMainForm
     {
         // Save the current position so we can restore it back to where it was on next run
         Program.AppSettings.Main.Left = Location.X;
-
-        Program.AppSettings.Save();
     }
 
     /// <summary>

@@ -37,7 +37,6 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         {
             Program.AppSettings.Alarm.Left = Left;
             Program.AppSettings.Alarm.Top = Top;
-            Program.AppSettings.Save();
         };
     }
 
