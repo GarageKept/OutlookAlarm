@@ -19,7 +19,9 @@ public class MediaPlayer : IMediaPlayer
     ///     Plays the specified sound if it has not already been played for the given event.
     /// </summary>
     /// <param name="soundType">The type of sound to play.</param>
-    public void PlaySound(SoundType soundType, bool loopPlay)
+    /// <param name="loopPlay">true to loop forever</param>
+    /// <param name="whenStopped">callback when stopped</param>
+    public void PlaySound(SoundType soundType, bool loopPlay, EventHandler<StoppedEventArgs>? whenStopped)
     {
         if (_player.PlaybackState == PlaybackState.Playing)
             _player.Stop();
@@ -38,11 +40,13 @@ public class MediaPlayer : IMediaPlayer
         {
             _player.Init(unmanagedStream);
         }
+        
+        if (whenStopped != null) _player.PlaybackStopped += whenStopped;
 
         _player.Play();
     }
 
-    public void PlaySound(string customSound, bool loopPlay)
+    public void PlaySound(string customSound, bool loopPlay, EventHandler<StoppedEventArgs>? whenStopped)
     {
         if (string.IsNullOrEmpty(customSound)) return;
         if (!File.Exists(customSound)) return;
@@ -60,6 +64,8 @@ public class MediaPlayer : IMediaPlayer
             using var wav = new AudioFileReader(customSound);
             _player.Init(wav);
         }
+
+        if (whenStopped != null) _player.PlaybackStopped += whenStopped;
 
         _player.Play();
     }
