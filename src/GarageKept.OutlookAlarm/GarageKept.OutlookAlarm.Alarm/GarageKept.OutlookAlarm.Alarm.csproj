@@ -11,7 +11,6 @@
   <ItemGroup>
     <None Remove="Audio\Media\double-beep.wav" />
     <None Remove="Audio\Media\guitar-notification.wav" />
-    <None Remove="Audio\Media\magic-notification.wav" />
     <None Remove="Audio\Media\tick-tock.wav" />
     <None Remove="Audio\Media\urgent-simple-tone.wav" />
   </ItemGroup>
@@ -38,9 +37,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Audio\Media\guitar-notification.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Audio\Media\magic-notification.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Audio\Media\tick-tock.wav">
@@ -72,9 +68,7 @@
     <Compile Update="UI\Forms\BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="UI\Forms\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="UI\Forms\MainForm.cs" />
     <Compile Update="UI\Forms\SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>

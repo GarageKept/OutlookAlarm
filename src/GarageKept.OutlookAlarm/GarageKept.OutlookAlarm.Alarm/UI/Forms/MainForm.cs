@@ -30,31 +30,36 @@ public partial class MainForm : BaseForm, IMainForm
         MouseEnter += MainWindow_MouseEnter;
         MouseLeave += MainWindow_MouseLeave;
 
-        // Initialize and set up the context menu
-        rightClickMenu.Items.Clear();
-        rightClickMenu.Items.Add("RefreshTimer", null, RightClickMenu_RefreshClick);
-        rightClickMenu.Items.Add("Settings", null, RightClickMenu_SettingsClick);
-        rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
-        rightClickMenu.Items.Add(new ToolStripSeparator());
-        rightClickMenu.Items.Add("Close", null, (_, _) => Close());
-
+        // Save the form position when moved
         Move += (_, _) =>
         {
             Program.AppSettings.Main.Left = Left;
             Program.AppSettings.Save();
         };
 
+        // Initialize and set up the context menu
+        rightClickMenu.Items.Clear();
+        rightClickMenu.Items.Add("Settings", null, RightClickMenu_SettingsClick);
+        rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
+
         var advanced = new ToolStripMenuItem("Advanced");
         var advancedDropdown = new ToolStripDropDownMenu();
 
+        var refresh = new ToolStripMenuItem("Refresh");
+        refresh.Click += RightClickMenu_RefreshClick;
+        advancedDropdown.Items.Add(refresh);
+
         var reset = new ToolStripMenuItem("Reset All");
         reset.Click += RightClick_ResetAllAppointments;
-
         advancedDropdown.Items.Add(reset);
+        
         advanced.DropDown = advancedDropdown;
 
         rightClickMenu.Items.Add(new ToolStripSeparator());
         rightClickMenu.Items.Add(advanced);
+        
+        rightClickMenu.Items.Add(new ToolStripSeparator());
+        rightClickMenu.Items.Add("Close", null, (_, _) => Close());
 
         // Subscribe to MouseEnter and MouseLeave events for each child control
         AddMouseEvents(this);

@@ -51,7 +51,7 @@ internal static class Program
                 services.AddSingleton<IMainForm, MainForm>();
                 services.AddSingleton<ISettings, OutlookAlarmSettings>();
                 services.AddSingleton<ISettingsForm, SettingsForm>();
-                services.AddSingleton<IMedia, Media>();
+                services.AddSingleton<IMediaPlayer, MediaPlayer>();
 
                 services.AddTransient<IAlarmForm, AlarmForm>();
                 services.AddTransient<IAlarmControl, AlarmControl>();

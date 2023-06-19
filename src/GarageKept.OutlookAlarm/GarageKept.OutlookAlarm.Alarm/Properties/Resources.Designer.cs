@@ -81,15 +81,6 @@ namespace GarageKept.OutlookAlarm.Alarm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream magic_notification {
-            get {
-                return ResourceManager.GetStream("magic-notification", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
-        /// </summary>
         internal static System.IO.UnmanagedMemoryStream tick_tock {
             get {
                 return ResourceManager.GetStream("tick-tock", resourceCulture);

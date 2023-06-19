@@ -7,15 +7,15 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
 public partial class AlarmForm : BaseForm, IAlarmForm
 {
-    private IMedia _mediaPlayer;
+    private readonly IMediaPlayer _mediaPlayerPlayer;
     private Timer? _refreshTimer;
     private bool _playSound = true;
 
-    public AlarmForm(IMedia media) : base(false)
+    public AlarmForm(IMediaPlayer mediaPlayer) : base(false)
     {
         InitializeComponent();
 
-        _mediaPlayer = media;
+        _mediaPlayerPlayer = mediaPlayer;
 
         ShowInTaskbar = true;
 
@@ -81,7 +81,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         if (_playSound && Program.AppSettings.Audio.TurnOffAlarmAfterStart >= 0 && DateTime.Now - Alarm?.Start > TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart))
         {
-            _mediaPlayer.StopSound();
+            _mediaPlayerPlayer.StopSound();
             _playSound = false;
         }
 
@@ -119,7 +119,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
-        _mediaPlayer.StopSound();
+        _mediaPlayerPlayer.StopSound();
 
         base.OnFormClosing(e);
     }
@@ -145,9 +145,9 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         if (Alarm.IsAudible)
             if (Alarm.HasCustomSound)
-                _mediaPlayer.PlaySound(Alarm.CustomSound);
+                _mediaPlayerPlayer.PlaySound(Alarm.CustomSound, true);
             else
-                _mediaPlayer.PlaySound(Program.AppSettings.Audio.DefaultSound);
+                _mediaPlayerPlayer.PlaySound(Program.AppSettings.Audio.DefaultSound, true);
 
         SubjectLabel.Text = Alarm.Name;
         TimeRight.Text = Alarm.ReminderTime.ToString(Program.AppSettings.Alarm.AlarmStartStringFormat);
@@ -181,7 +181,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         _refreshTimer?.Stop();
         _refreshTimer?.Dispose();
         _refreshTimer = null;
-        _mediaPlayer.StopSound();
+        _mediaPlayerPlayer.StopSound();
 
         Dispose(true);
         GC.SuppressFinalize(this);

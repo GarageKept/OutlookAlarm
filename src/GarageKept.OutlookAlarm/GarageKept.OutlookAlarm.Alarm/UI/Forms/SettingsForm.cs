@@ -1,16 +1,25 @@
-﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
+﻿using GarageKept.OutlookAlarm.Alarm.AlarmManager;
+using GarageKept.OutlookAlarm.Alarm.Audio;
+using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
 public partial class SettingsForm : BaseForm, ISettingsForm
 {
-    private Timer? _slidingTimer;
-    private bool _isExpanded;
+    private readonly DateTime _exampleDateTime =
+        new(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 8, 0, 0);
 
-    public SettingsForm() : base(false)
+    private readonly TimeSpan _exampleTimeSpan = new(0, 3, 2, 1);
+    private bool _isExpanded;
+    private Timer? _slidingTimer;
+    private readonly IMediaPlayer _mediaPlayer;
+
+    public SettingsForm(IMediaPlayer mediaPlayer) : base(false)
     {
         InitializeComponent();
+
+        _mediaPlayer = mediaPlayer;
 
         // Show in center of screen
         Top = (ScreenHeight - Height) / 2;
@@ -44,13 +53,17 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         #region Main.SliderSpeed
 
+        SliderSpeedNumericUpDown.ValueChanged -= SliderSpeedNumericUpDown_ValueChanged;
         SliderSpeedNumericUpDown.Minimum = 1;
         SliderSpeedNumericUpDown.Maximum = 20;
         SliderSpeedNumericUpDown.Value = Program.AppSettings.Main.SliderSpeed;
+        SliderSpeedNumericUpDown.ValueChanged += SliderSpeedNumericUpDown_ValueChanged;
 
+        SliderSpeedTrackBar.ValueChanged -= SliderSpeedTrackBar_ValueChanged;
         SliderSpeedTrackBar.Minimum = 1;
         SliderSpeedTrackBar.Maximum = 20;
         SliderSpeedTrackBar.Value = Program.AppSettings.Main.SliderSpeed;
+        SliderSpeedTrackBar.ValueChanged += SliderSpeedTrackBar_ValueChanged;
 
         #endregion
 
@@ -78,9 +91,136 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         #endregion
 
+
+        #region Alarm.TimeLeftStringFormat
+
+        TimeLeftFormatExampleTextBox.Text = Program.AppSettings.Alarm.TimeLeftStringFormat;
+
+        #endregion
+
+        #region Alarm.AlarmStartingStringFormat
+
+        AlarmStartFormatTextBox.Text = Program.AppSettings.Alarm.AlarmStartStringFormat;
+
+        #endregion
+
+        #region Alarm.Top
+
+        AlarmLocationTopNumericUpDown.Minimum = 0;
+        AlarmLocationTopNumericUpDown.Maximum = ScreenHeight - 96;
+        AlarmLocationTopNumericUpDown.Value = Program.AppSettings.Alarm.Top;
+
+        #endregion
+
+        #region Alarm.Left
+
+        AlarmLocationLeftNumericUpDown.Minimum = -1;
+        AlarmLocationLeftNumericUpDown.Maximum = ScreenWidth - 330;
+        AlarmLocationLeftNumericUpDown.Value = Program.AppSettings.Alarm.Left;
+
+        #endregion
+
+        #endregion
+
+        #region AlarmSource
+
+        #region AlarmSource.FetchIntervalInMinutes
+
+        FetchIntervalNumericUpDown.Minimum = 1;
+        FetchIntervalNumericUpDown.Maximum = 60;
+        FetchIntervalNumericUpDown.Value = Program.AppSettings.AlarmSource.FetchIntervalInMinutes;
+
+        #endregion
+
+        #region AlarmSource.FetchTimeInHours
+
+        FetchTimeNumericUpDown.Minimum = 1;
+        FetchTimeNumericUpDown.Maximum = 24;
+        FetchTimeNumericUpDown.Value = Program.AppSettings.AlarmSource.FetchTimeInHours;
+
+
+        #endregion
+
+        #endregion
+
+        #region Audio
+
+        #region Audio.DefaultSound
+
+        DefaultSoundComboBox.SelectedIndexChanged -= DefaultSoundComboBox_SelectedIndexChanged;
+        var dataSource = Enum.GetValues(typeof(SoundType))
+            .Cast<SoundType>()
+            .Select(s => new
+            {
+                Value = s,
+                Text = AlarmActionHelpers.GetEnumDisplayValue(s)
+            }).Where(a => a.Text != "Dismissed")
+            .ToList();
+        DefaultSoundComboBox.DisplayMember = "Text";
+        DefaultSoundComboBox.ValueMember = "Value";
+
+        DefaultSoundComboBox.DataSource = dataSource;
+
+        // Find the item that matches the Program.AppSettings.Audio.DefaultSound value
+        var defaultSound = dataSource.FirstOrDefault(item => item.Value == Program.AppSettings.Audio.DefaultSound);
+
+        // Set the found item as the selected item
+        DefaultSoundComboBox.SelectedItem = defaultSound;
+
+        DefaultSoundComboBox.SelectedIndexChanged += DefaultSoundComboBox_SelectedIndexChanged;
+
+        #endregion
+
+        #region Audio.TurnOffAlarmAfterStart
+
+        OffAfterStartNumericUpDown.Minimum = -1;
+        OffAfterStartNumericUpDown.Maximum = 60;
+        OffAfterStartNumericUpDown.Value = Program.AppSettings.Audio.TurnOffAlarmAfterStart;
+
+        #endregion
+
+        #endregion
+
+        #region Color
+
+        #region Color.AlarmPastStartColor
+
+        ColorAlarmPastStartLabel.BackColor = Program.AppSettings.Color.AlarmPastStartColor;
+        ColorAlarmPastStartLabel.ForeColor = DetermineTextColor(ColorAlarmPastStartLabel.BackColor);
+
+        #endregion
+
+        #region Color.GreenColor
+
+        ColorGreenLabel.BackColor = Program.AppSettings.Color.GreenColor;
+        ColorGreenLabel.ForeColor = DetermineTextColor(ColorGreenLabel.BackColor);
+
+        #endregion
+
+        #region Color.YellowColor
+
+        ColorYellowLabel.BackColor = Program.AppSettings.Color.YellowColor;
+        ColorYellowLabel.ForeColor = DetermineTextColor( ColorYellowLabel.BackColor);
+
+        #endregion
+
+        #region Color.RedColor
+
+        ColorRedLabel.BackColor = Program.AppSettings.Color.RedColor;
+        ColorRedLabel.ForeColor = DetermineTextColor(ColorRedLabel.BackColor);
+
+        #endregion
+
         #endregion
 
         return base.ShowDialog();
+    }
+
+    private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        StopSliderPreview();
+
+        if (Owner is not null) Owner.Top = 0;
     }
 
     #region Main
@@ -91,8 +231,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         if (sender == LeftTrackBar) return;
 
-        Program.AppSettings.Main.Left = (int)LeftNumericUpDown.Value;
         LeftTrackBar.Value = (int)LeftNumericUpDown.Value;
+        Program.AppSettings.Main.Left = (int)LeftNumericUpDown.Value;
+        Program.AppSettings.Save();
 
         if (Owner is IMainForm mainForm)
             mainForm.Left = Program.AppSettings.Main.Left;
@@ -100,8 +241,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void LeftTrackBarScroll(object sender, EventArgs e)
     {
-        Program.AppSettings.Main.Left = LeftTrackBar.Value;
         LeftNumericUpDown.Value = LeftTrackBar.Value;
+        Program.AppSettings.Main.Left = LeftTrackBar.Value;
+        Program.AppSettings.Save();
 
         if (Owner is IMainForm mainForm)
             mainForm.Left = Program.AppSettings.Main.Left;
@@ -113,44 +255,39 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void BarHeightNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
+        if (Owner is not IMainForm) return;
 
-        if (Owner is IMainForm)
-        {
-            Program.AppSettings.Main.BarSize = (int)BarHeightNumericUpDown.Value;
-            Owner.Top = (int)BarHeightNumericUpDown.Value - Owner.Height;
-        }
+        Owner.Top = (int)BarHeightNumericUpDown.Value - Owner.Height;
+        Program.AppSettings.Main.BarSize = (int)BarHeightNumericUpDown.Value;
+        Program.AppSettings.Save();
     }
 
     private void BarHeightNumericUpDown_Enter(object sender, EventArgs e)
     {
-        if (Owner is IMainForm)
-        {
-            Owner.Top = (int)BarHeightNumericUpDown.Value - Owner.Height;
-        }
+        if (Owner is IMainForm) Owner.Top = (int)BarHeightNumericUpDown.Value - Owner.Height;
     }
 
     private void BarHeightNumericUpDown_Leave(object sender, EventArgs e)
     {
-        if (Owner is IMainForm)
-        {
-            Owner.Top = 0;
-        }
+        if (Owner is IMainForm) Owner.Top = 0;
     }
 
     #endregion
 
     #region Main.SliderSpeed
 
-    private void SliderSpeedNumericUpDown_ValueChanged(object sender, EventArgs e)
+    private void SliderSpeedNumericUpDown_ValueChanged(object? sender, EventArgs e)
     {
         SliderSpeedTrackBar.Value = (int)SliderSpeedNumericUpDown.Value;
         Program.AppSettings.Main.SliderSpeed = SliderSpeedTrackBar.Value;
+        Program.AppSettings.Save();
     }
 
-    private void SliderSpeedTrackBar_ValueChanged(object sender, EventArgs e)
+    private void SliderSpeedTrackBar_ValueChanged(object? sender, EventArgs e)
     {
         SliderSpeedNumericUpDown.Value = SliderSpeedTrackBar.Value;
         Program.AppSettings.Main.SliderSpeed = SliderSpeedTrackBar.Value;
+        Program.AppSettings.Save();
     }
 
     private void SliderSpeedNumericUpDown_Enter(object sender, EventArgs e)
@@ -225,6 +362,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         MinimumWidthTrackBar.Value = (int)MinimumWidthNumericUpDown.Value;
         Program.AppSettings.Main.MinimumWidth = MinimumWidthTrackBar.Value;
+        Program.AppSettings.Save();
 
         if (Owner is not null) Owner.Width = Program.AppSettings.Main.MinimumWidth;
     }
@@ -233,6 +371,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         MinimumWidthNumericUpDown.Value = MinimumWidthTrackBar.Value;
         Program.AppSettings.Main.MinimumWidth = MinimumWidthTrackBar.Value;
+        Program.AppSettings.Save();
 
         if (Owner is not null) Owner.Width = Program.AppSettings.Main.MinimumWidth;
     }
@@ -244,20 +383,230 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     #region Alarm
 
     #region Alarm.AlarmWarning
-    
+
     private void AlarmWarningTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
         Program.AppSettings.Alarm.AlarmWarningTime = (int)AlarmWarningTimeNumericUpDown.Value;
+        Program.AppSettings.Save();
+    }
+
+    #endregion
+
+    #region Alarm.TimeLeftStringFormat
+
+    private void TimeLeftFormatExampleTextBox_TextChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            TimeLeftFormatExampleLabel.Text = string.Format(TimeLeftFormatExampleTextBox.Text, _exampleTimeSpan);
+
+            if (string.IsNullOrWhiteSpace(TimeLeftFormatExampleTextBox.Text)) return;
+
+            Program.AppSettings.Alarm.TimeLeftStringFormat = TimeLeftFormatExampleTextBox.Text;
+            Program.AppSettings.Save();
+        }
+        catch
+        {
+            TimeLeftFormatExampleLabel.Text = @"--:--:--";
+        }
+    }
+
+    #endregion
+
+    #region Alarm.AlarmStartStringFormat
+
+    private void AlarmStartFormatTextBox_TextChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            AlarmStartFormatExampleLabel.Text = _exampleDateTime.ToString(AlarmStartFormatTextBox.Text);
+
+            if (string.IsNullOrWhiteSpace(AlarmStartFormatExampleLabel.Text)) return;
+
+            Program.AppSettings.Alarm.AlarmStartStringFormat = AlarmStartFormatTextBox.Text;
+            Program.AppSettings.Save();
+        }
+        catch
+        {
+            AlarmStartFormatExampleLabel.Text = @"--:--:--";
+        }
+    }
+
+    #endregion
+
+    #region Alarm.Top
+
+    private void AlarmLocationTopNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.Alarm.Top = (int)AlarmLocationTopNumericUpDown.Value;
+        Program.AppSettings.Save();
+    }
+
+    #endregion
+
+    #region Alarm.Left
+
+    private void AlarmLocationLeftNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.Alarm.Left = (int)AlarmLocationLeftNumericUpDown.Value;
+        Program.AppSettings.Save();
     }
 
     #endregion
 
     #endregion
 
-    private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        StopSliderPreview();
+    #region AlarmSource
 
-        if (Owner is not null) Owner.Top = 0;
+    #region AlarmSource.FetchIntervalInMinutes
+
+    private void FetchIntervalNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.AlarmSource.FetchIntervalInMinutes = (int)FetchIntervalNumericUpDown.Value;
+    }
+
+    #endregion
+
+    #region AlarmSource.FetchTimeInHours
+
+    private void FetchTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.AlarmSource.FetchTimeInHours = (int)FetchTimeNumericUpDown.Value;
+    }
+
+
+    #endregion
+
+    #endregion
+
+    #region Audio
+
+    #region Audio.DefaultSound
+
+    private void DefaultSoundComboBox_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+
+        Program.AppSettings.Audio.DefaultSound = GetDefaultSoundComboBoxSelectedSoundType();
+        Program.AppSettings.Save();
+    }
+
+    private void PlayTestButton_Click(object sender, EventArgs e)
+    {
+        if (_mediaPlayer.IsPlaying)
+        {
+            _mediaPlayer.StopSound();
+            PlayTestButton.Text = @"Test";
+        }
+        else
+        {
+            PlayTestButton.Text = @"Stop";
+            _mediaPlayer.PlaySound(GetDefaultSoundComboBoxSelectedSoundType(), false);
+        }
+    }
+
+    private SoundType GetDefaultSoundComboBoxSelectedSoundType()
+    {
+
+        if (DefaultSoundComboBox.SelectedItem is not { } selectedItem) return SoundType.TickTock;
+
+        var selectedType = selectedItem.GetType();
+        var valueProperty = selectedType.GetProperty("Value");
+        var selectedValue = valueProperty?.GetValue(selectedItem);
+
+        if (selectedValue is null) return SoundType.TickTock;
+
+        return (SoundType)selectedValue;
+    }
+
+    #endregion
+
+    #region Audio.TurnOffAlarmAfterStart
+
+    private void OffAfterStartNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.Audio.TurnOffAlarmAfterStart = (int)OffAfterStartNumericUpDown.Value;
+        Program.AppSettings.Save();
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Color
+
+    #region Color.AlarmPastStartColor
+    
+    private void ColorAlarmPastStartLabel_Click(object sender, EventArgs e)
+    {
+
+        ColorAlarmPastStartLabel.BackColor = GetColor(ColorAlarmPastStartLabel.BackColor);
+        ColorAlarmPastStartLabel.ForeColor = DetermineTextColor(ColorAlarmPastStartLabel.BackColor);
+
+        if (ColorAlarmPastStartLabel.BackColor == Program.AppSettings.Color.AlarmPastStartColor) return;
+
+        Program.AppSettings.Color.AlarmPastStartColor = ColorAlarmPastStartLabel.BackColor;
+        Program.AppSettings.Save();
+    }
+
+    #endregion
+
+    #region Color.GreenColor
+
+    private void ColorGreenLabel_Click(object sender, EventArgs e)
+    {
+        ColorGreenLabel.BackColor = GetColor(ColorGreenLabel.BackColor);
+        ColorGreenLabel.ForeColor = DetermineTextColor(ColorGreenLabel.BackColor);
+
+        if (ColorGreenLabel.BackColor == Program.AppSettings.Color.RedColor) return;
+
+        Program.AppSettings.Color.GreenColor = ColorGreenLabel.BackColor;
+        Program.AppSettings.Save();
+    }
+
+    #endregion
+
+    #region Color.YellowColor
+
+
+    private void ColorYellowLabel_Click(object sender, EventArgs e)
+    {
+        ColorYellowLabel.BackColor = GetColor(ColorYellowLabel.BackColor);
+        ColorYellowLabel.ForeColor = DetermineTextColor(ColorYellowLabel.BackColor);
+
+        if (ColorYellowLabel.BackColor == Program.AppSettings.Color.RedColor) return;
+
+        Program.AppSettings.Color.YellowColor = ColorYellowLabel.BackColor;
+        Program.AppSettings.Save();
+    }
+
+    #endregion
+
+    #region Color.RedColor
+
+    private void RedColorExampleLabel_Click(object sender, EventArgs e)
+    {
+        ColorRedLabel.BackColor = GetColor(ColorRedLabel.BackColor);
+        ColorRedLabel.ForeColor = DetermineTextColor(ColorRedLabel.BackColor);
+
+        if (ColorRedLabel.BackColor == Program.AppSettings.Color.RedColor) return;
+
+        Program.AppSettings.Color.RedColor = ColorRedLabel.BackColor;
+        Program.AppSettings.Save();
+    }
+
+    #endregion
+
+    #endregion
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        colorPage.BackColor = GetColor(colorPage.BackColor);
+    }
+
+    private Color GetColor(Color originalColor)
+    {
+        var result = colorDialog.ShowDialog();
+
+        return result == DialogResult.OK ? colorDialog.Color : originalColor;
     }
 }
