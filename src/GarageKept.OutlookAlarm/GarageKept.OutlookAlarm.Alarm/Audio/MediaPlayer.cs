@@ -40,7 +40,7 @@ public class MediaPlayer : IMediaPlayer
         {
             _player.Init(unmanagedStream);
         }
-        
+
         if (whenStopped != null) _player.PlaybackStopped += whenStopped;
 
         _player.Play();

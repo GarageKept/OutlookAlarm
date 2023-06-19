@@ -453,7 +453,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         else
         {
             PlayTestButton.Text = @"Stop";
-            _mediaPlayer.PlaySound(GetDefaultSoundComboBoxSelectedSoundType(), false, (_, _) => { PlayTestButton.Text = @"Test";});
+            _mediaPlayer.PlaySound(GetDefaultSoundComboBoxSelectedSoundType(), false, (_, _) => { PlayTestButton.Text = @"Test"; });
         }
     }
 
