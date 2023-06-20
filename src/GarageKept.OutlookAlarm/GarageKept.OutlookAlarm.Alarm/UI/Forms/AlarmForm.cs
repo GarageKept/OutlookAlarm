@@ -82,7 +82,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
     {
         if (Alarm == null) return;
 
-        Program.AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+        Program.AlarmManager?.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
 
         Close();
     }
@@ -110,7 +110,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         if (DateTime.Now > Alarm?.End)
         {
-            Program.AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+            Program.AlarmManager?.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
             Close();
         }
 
@@ -160,7 +160,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         var selectedAction = (AlarmAction)(ActionSelector.SelectedValue ?? AlarmAction.FiveMinBefore);
 
-        Program.AlarmManager.ChangeAlarmState(Alarm, selectedAction);
+        Program.AlarmManager?.ChangeAlarmState(Alarm, selectedAction);
 
         Close();
     }

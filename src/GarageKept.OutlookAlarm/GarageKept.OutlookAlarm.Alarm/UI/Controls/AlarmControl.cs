@@ -71,7 +71,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
     {
         if (Alarm is null) return;
 
-        Program.AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+        Program.AlarmManager?.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -99,7 +99,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
         if (Alarm is null) return;
 
         if (Alarm.End < DateTime.Now)
-            Program.AlarmManager.DeactivateAlarm(Alarm);
+            Program.AlarmManager?.DeactivateAlarm(Alarm);
 
         UpdateDisplay();
     }
@@ -108,7 +108,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
     {
         if (Alarm is null) return;
 
-        Program.AlarmManager.DeactivateAlarm(Alarm);
+        Program.AlarmManager?.DeactivateAlarm(Alarm);
     }
 
     private void SetBackgroundColor()

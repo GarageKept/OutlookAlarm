@@ -64,7 +64,7 @@ public partial class MainForm : BaseForm, IMainForm
         _slidingTimer.Tick += SlidingTimer_Tick;
         _slidingTimer.Start();
 
-        Program.AlarmManager.Start();
+        Program.AlarmManager?.Start();
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ public partial class MainForm : BaseForm, IMainForm
         Program.AppSettings.Main.Left = Location.X;
     }
 
-    private void RightClick_ResetAllAppointments(object? sender, EventArgs e) { Program.AlarmManager.Reset(); }
+    private void RightClick_ResetAllAppointments(object? sender, EventArgs e) { Program.AlarmManager?.Reset(); }
 
     /// <summary>
     ///     Event handler for the About menu item click event.
@@ -153,7 +153,7 @@ public partial class MainForm : BaseForm, IMainForm
     internal void RightClickMenu_AboutClick(object? sender, EventArgs e)
     {
         // Implement your About functionality here
-        MessageBox.Show("Outlook Alarm by Garage Kept");
+        MessageBox.Show(@"Outlook Alarm by Garage Kept");
     }
 
     /// <summary>
@@ -161,7 +161,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void RightClickMenu_RefreshClick(object? sender, EventArgs e) { Program.AlarmManager.ForceFetch(); }
+    internal void RightClickMenu_RefreshClick(object? sender, EventArgs e) { Program.AlarmManager?.ForceFetch(); }
 
     /// <summary>
     ///     Event handler for the OutlookAlarmSettings menu item click event.
@@ -170,6 +170,8 @@ public partial class MainForm : BaseForm, IMainForm
     /// <param name="e">An EventArgs that contains the event data.</param>
     internal void RightClickMenu_SettingsClick(object? sender, EventArgs e)
     {
+        if (Program.ServiceProvider == null) return;
+
         var settingsForm = Program.ServiceProvider.GetRequiredService<ISettingsForm>();
         settingsForm.Owner = this;
         settingsForm.ShowDialog();

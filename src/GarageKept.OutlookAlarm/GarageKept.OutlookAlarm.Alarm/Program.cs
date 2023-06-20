@@ -16,17 +16,14 @@ internal static class Program
 
     static Program()
     {
-        if (!OutlookAlarmMutex.WaitOne(TimeSpan.Zero, true))
-        {
-            // Another instance is already running, exit the application
-            MessageBox.Show(@"Another instance of the application is already running.");
-            return;
-        }
-
         var host = CreateHostBuilder().Build();
         ServiceProvider = host.Services;
 
         AlarmManager = ServiceProvider.GetRequiredService<IAlarmManager>();
+
+        if (!OutlookAlarmMutex.WaitOne(TimeSpan.Zero, true))
+            // Another instance is already running, exit the application
+            MessageBox.Show(@"Another instance of the application is already running.");
     }
 
     internal static IServiceProvider? ServiceProvider { get; }
@@ -55,11 +52,12 @@ internal static class Program
     [STAThread]
     private static void Main()
     {
-        if (!OutlookAlarmMutex.WaitOne(TimeSpan.Zero, true)) return;
 
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
+
+        if (!OutlookAlarmMutex.WaitOne(TimeSpan.Zero, true)) return;
 
         Application.Run(ServiceProvider?.GetRequiredService<IMainForm>() as Form);
 

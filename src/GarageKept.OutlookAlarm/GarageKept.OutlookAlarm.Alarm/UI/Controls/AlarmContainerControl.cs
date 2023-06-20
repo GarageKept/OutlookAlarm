@@ -14,10 +14,13 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         tableLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
         AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
-        Program.AlarmManager.AlarmAdded += UpdateAppointmentControls;
-        Program.AlarmManager.AlarmChanged += UpdateAppointmentControls;
-        Program.AlarmManager.AlarmRemoved += UpdateAppointmentControls;
-        Program.AlarmManager.AlarmsUpdated += UpdateAppointmentControls;
+        if (Program.AlarmManager != null)
+        {
+            Program.AlarmManager.AlarmAdded += UpdateAppointmentControls;
+            Program.AlarmManager.AlarmChanged += UpdateAppointmentControls;
+            Program.AlarmManager.AlarmRemoved += UpdateAppointmentControls;
+            Program.AlarmManager.AlarmsUpdated += UpdateAppointmentControls;
+        }
 
         InitializeFooterProgressBar();
 
@@ -78,8 +81,8 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
 
     private void RefreshTimer_Tick(object? sender, EventArgs? e)
     {
-        var currentAppointment = Program.AlarmManager.GetCurrentAppointment();
-        var nextAppointment = Program.AlarmManager.GetNextAppointment();
+        var currentAppointment = Program.AlarmManager?.GetCurrentAppointment();
+        var nextAppointment = Program.AlarmManager?.GetNextAppointment();
         var backColor = Program.AppSettings.Color.GreenColor;
         var barColor = Program.AppSettings.Color.GreenColor;
         var value = 3600;
@@ -152,14 +155,17 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         // Reset the row count to 0
         tableLayoutPanel.RowCount = 0;
 
-        foreach (var alarm in Program.AlarmManager.GetActiveAlarms().OrderBy(a => a.Start))
-        {
-            var alarmControl = Program.ServiceProvider.GetRequiredService<IAlarmControl>(); //new AlarmControl { Alarm = alarm, AppSettings = AppSettings };
-            alarmControl.Alarm = alarm;
-            alarmControl.UpdateDisplay();
+        if (Program.AlarmManager != null)
+            foreach (var alarm in Program.AlarmManager.GetActiveAlarms().OrderBy(a => a.Start))
+            {
+                if (Program.ServiceProvider == null) continue;
 
-            AddRow(alarmControl as Control);
-        }
+                var alarmControl = Program.ServiceProvider.GetRequiredService<IAlarmControl>(); //new AlarmControl { Alarm = alarm, AppSettings = AppSettings };
+                alarmControl.Alarm = alarm;
+                alarmControl.UpdateDisplay();
+
+                AddRow(alarmControl as Control);
+            }
 
         AddFooterRow();
 
