@@ -441,6 +441,22 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (Owner is not null) Owner.Top = 0;
     }
 
+    private static void SetStartup(bool enable)
+    {
+        using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true);
+
+        if (enable)
+            key?.SetValue(AppName, Application.ExecutablePath);
+        else
+            key?.DeleteValue(AppName, false);
+    }
+
+    private static bool GetStartupValue()
+    {
+        using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, false);
+        return key?.GetValue(AppName) != null;
+    }
+
     #endregion
 
     #endregion
@@ -542,22 +558,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (ColorRedLabel.BackColor == Program.AppSettings.Color.RedColor) return;
 
         Program.AppSettings.Color.RedColor = ColorRedLabel.BackColor;
-    }
-
-    private static void SetStartup(bool enable)
-    {
-        using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true);
-
-        if (enable)
-            key?.SetValue(AppName, Application.ExecutablePath);
-        else
-            key?.DeleteValue(AppName, false);
-    }
-
-    private static bool GetStartupValue()
-    {
-        using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, false);
-        return key?.GetValue(AppName) != null;
     }
 
     #endregion
