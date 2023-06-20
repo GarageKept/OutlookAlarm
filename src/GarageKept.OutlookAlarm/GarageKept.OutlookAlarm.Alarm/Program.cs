@@ -27,7 +27,6 @@ internal static class Program
         ServiceProvider = host.Services;
 
         AlarmManager = ServiceProvider.GetRequiredService<IAlarmManager>();
-
     }
 
     internal static IServiceProvider? ServiceProvider { get; }

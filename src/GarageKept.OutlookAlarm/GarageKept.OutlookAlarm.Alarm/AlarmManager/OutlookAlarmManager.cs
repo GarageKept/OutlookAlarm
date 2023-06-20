@@ -149,9 +149,9 @@ public sealed class OutlookAlarmManager : IAlarmManager
         else
         {
             // Launch alarm window or perform related actions
-            var alarmWindow = Program.ServiceProvider.GetRequiredService<IAlarmForm>();
+            var alarmWindow = Program.ServiceProvider?.GetRequiredService<IAlarmForm>();
 
-            Application.OpenForms[0]?.Invoke(delegate { alarmWindow.Show(alarm); });
+            Application.OpenForms[0]?.Invoke(delegate { alarmWindow?.Show(alarm); });
         }
     }
 

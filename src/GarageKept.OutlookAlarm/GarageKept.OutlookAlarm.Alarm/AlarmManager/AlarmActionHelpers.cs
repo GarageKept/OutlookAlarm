@@ -9,15 +9,13 @@ public static class AlarmActionHelpers
         var enumType = enumValue.GetType();
         var name = Enum.GetName(enumType, enumValue);
 
-        if (name != null)
-        {
-            var field = enumType.GetField(name);
+        if (name == null) return string.Empty;
 
-            var displayAttribute = field?.GetCustomAttribute<DisplayAttribute>();
+        var field = enumType.GetField(name);
 
-            return displayAttribute != null ? displayAttribute.Value : name;
-        }
+        var displayAttribute = field?.GetCustomAttribute<DisplayAttribute>();
 
-        return string.Empty;
+        return displayAttribute != null ? displayAttribute.Value : name;
+
     }
 }
