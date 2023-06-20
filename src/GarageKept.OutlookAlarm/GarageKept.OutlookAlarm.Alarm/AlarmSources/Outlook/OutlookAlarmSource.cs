@@ -38,9 +38,9 @@ public class OutlookAlarmSource : IAlarmSource
 
             return appointments;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            return new List<IAlarm>(1){new Appointment(){Name = ex.Message, Start = DateTime.Now, End = DateTime.MaxValue}};
+            return new List<IAlarm>(1) { new Appointment { Name = ex.Message, Start = DateTime.Now, End = DateTime.MaxValue } };
         }
     }
 }

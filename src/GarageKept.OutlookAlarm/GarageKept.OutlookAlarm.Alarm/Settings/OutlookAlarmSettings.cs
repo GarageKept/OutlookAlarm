@@ -20,7 +20,27 @@ public class OutlookAlarmSettings : ISettings
     public ColorSettings Color { get; set; }
     public MainSettings Main { get; set; }
 
+    private static string GetAppFolder()
+    {
+        const string appFolder = @"GarageKept\OutlookAlarm\";
+        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var settingsFilePath = Path.Combine(appDataPath, appFolder);
+
+        if (!Directory.Exists(settingsFilePath)) Directory.CreateDirectory(settingsFilePath);
+
+        return settingsFilePath;
+    }
+
     private static JsonSerializerOptions GetJsonSerializeOptions() { return new JsonSerializerOptions { PropertyNameCaseInsensitive = true, WriteIndented = true, Converters = { new ColorJsonConverter() } }; }
+
+    private static string GetSettingsFile()
+    {
+        const string settingsFilePath = @"settings.json";
+
+        var fullPath = Path.Combine(GetAppFolder(), settingsFilePath);
+
+        return fullPath;
+    }
 
     public static OutlookAlarmSettings Load()
     {
@@ -52,29 +72,6 @@ public class OutlookAlarmSettings : ISettings
         }
 
         return settings;
-    }
-
-    private static string GetAppFolder()
-    {
-        const string appFolder = @"GarageKept\OutlookAlarm\";
-        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var settingsFilePath = Path.Combine(appDataPath, appFolder);
-        
-        if (!Directory.Exists(settingsFilePath))
-        {
-            Directory.CreateDirectory(settingsFilePath);
-        }
-
-        return settingsFilePath;
-    }
-
-    private static string GetSettingsFile()
-    {
-        const string settingsFilePath = @"settings.json";
-        
-        var fullPath = Path.Combine(GetAppFolder(), settingsFilePath);
-
-        return fullPath;
     }
 
     public void Save()

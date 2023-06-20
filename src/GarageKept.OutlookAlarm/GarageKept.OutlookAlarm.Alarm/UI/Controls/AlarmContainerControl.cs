@@ -25,11 +25,11 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         RefreshTimer.Start();
     }
 
-    public Timer RefreshTimer { get; set; } = new() { Interval = 5000 };
+    private Timer RefreshTimer { get; } = new() { Interval = 5000 };
 
-    public AlarmProgressBar FooterProgressBar { get; set; } = new();
+    private AlarmProgressBar FooterProgressBar { get; } = new();
 
-    public void AddFooterRow()
+    private void AddFooterRow()
     {
         var newRow = tableLayoutPanel.RowCount; // Get the current row count
         tableLayoutPanel.RowCount++; // Increment the row count by 1
@@ -48,7 +48,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         RefreshTimer_Tick(this, null);
     }
 
-    public void AddRow(Control? control)
+    private void AddRow(Control? control)
     {
         if (control == null) return;
 
@@ -126,7 +126,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         FooterProgressBar.Value = value;
     }
 
-    private void StopAllTimerInChildren(ControlCollection controls)
+    private static void StopAllTimerInChildren(ControlCollection controls)
     {
         foreach (Control control in controls)
         {
@@ -179,7 +179,7 @@ public partial class AlarmContainerControl : UserControl, IAlarmContainerControl
         ResumeLayout();
     }
 
-    public void UpdateAppointmentControls(object? sender, AlarmEventArgs e)
+    private void UpdateAppointmentControls(object? sender, AlarmEventArgs e)
     {
         if (!IsHandleCreated) return;
 
