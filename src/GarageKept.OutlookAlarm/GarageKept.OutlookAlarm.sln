@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GarageKept.OutlookAlarm.Ala
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "GarageKept.OutlookAlarm.Alarm.MSIX", "GarageKept.OutlookAlarm.Alarm.MSIX\GarageKept.OutlookAlarm.Alarm.MSIX.wapproj", "{E215ADB4-595A-4276-B9F8-BDA9D63DB13E}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GarageKept.OutlookAlarm.Setup", "GarageKept.OutlookAlarm.Setup\GarageKept.OutlookAlarm.Setup.vdproj", "{D8EE7058-D491-412A-A17A-B8E5ADBB067B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,16 @@ Global
 		{E215ADB4-595A-4276-B9F8-BDA9D63DB13E}.Release|x86.ActiveCfg = Release|x86
 		{E215ADB4-595A-4276-B9F8-BDA9D63DB13E}.Release|x86.Build.0 = Release|x86
 		{E215ADB4-595A-4276-B9F8-BDA9D63DB13E}.Release|x86.Deploy.0 = Release|x86
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Debug|Any CPU.ActiveCfg = Debug
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Debug|ARM.ActiveCfg = Debug
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Debug|ARM64.ActiveCfg = Debug
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Debug|x64.ActiveCfg = Debug
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Debug|x86.ActiveCfg = Debug
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Release|Any CPU.ActiveCfg = Release
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Release|ARM.ActiveCfg = Release
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Release|ARM64.ActiveCfg = Release
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Release|x64.ActiveCfg = Release
+		{D8EE7058-D491-412A-A17A-B8E5ADBB067B}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

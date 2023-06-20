@@ -68,10 +68,13 @@ public class Appointment : IAlarm
         const string endTag = ">";
 
         var startIndex = body.IndexOf(startTag, StringComparison.Ordinal) - startTag.Length;
-        var endIndex = body.IndexOf(endTag, StringComparison.Ordinal);
+
+        if (startIndex < 0) return string.Empty;
+
+        var endIndex = body.IndexOf(endTag, startIndex, StringComparison.Ordinal);
 
         // Return null or an empty string if the Teams meeting URL is not found
-        if (startIndex == -1 || endIndex == -1) return string.Empty;
+        if (endIndex < 0) return string.Empty;
 
         startIndex += startTag.Length;
         return body.Substring(startIndex, endIndex - startIndex);
