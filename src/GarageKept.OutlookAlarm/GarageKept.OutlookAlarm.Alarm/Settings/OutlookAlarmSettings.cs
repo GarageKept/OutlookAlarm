@@ -5,9 +5,6 @@ namespace GarageKept.OutlookAlarm.Alarm.Settings;
 
 public class OutlookAlarmSettings : ISettings
 {
-    private const string SettingsFilePath = "settings.json";
-
-    // Make the default constructor private so it can't be called externally.
     public OutlookAlarmSettings()
     {
         Alarm = new AlarmSettings(Save);
@@ -29,9 +26,9 @@ public class OutlookAlarmSettings : ISettings
     {
         OutlookAlarmSettings? settings;
 
-        if (File.Exists(SettingsFilePath))
+        if (File.Exists(GetSettingsFile()))
         {
-            var settingsJson = File.ReadAllText(SettingsFilePath);
+            var settingsJson = File.ReadAllText(GetSettingsFile());
 
             if (string.IsNullOrWhiteSpace(settingsJson)) return new OutlookAlarmSettings();
 
@@ -57,10 +54,33 @@ public class OutlookAlarmSettings : ISettings
         return settings;
     }
 
+    private static string GetAppFolder()
+    {
+        const string appFolder = @"GarageKept\OutlookAlarm\";
+        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var settingsFilePath = Path.Combine(appDataPath, appFolder);
+        
+        if (!Directory.Exists(settingsFilePath))
+        {
+            Directory.CreateDirectory(settingsFilePath);
+        }
+
+        return settingsFilePath;
+    }
+
+    private static string GetSettingsFile()
+    {
+        const string settingsFilePath = @"settings.json";
+        
+        var fullPath = Path.Combine(GetAppFolder(), settingsFilePath);
+
+        return fullPath;
+    }
+
     public void Save()
     {
         var options = GetJsonSerializeOptions();
         var settingsJson = JsonSerializer.Serialize(this, options);
-        File.WriteAllText(SettingsFilePath, settingsJson);
+        File.WriteAllText(GetSettingsFile(), settingsJson);
     }
 }

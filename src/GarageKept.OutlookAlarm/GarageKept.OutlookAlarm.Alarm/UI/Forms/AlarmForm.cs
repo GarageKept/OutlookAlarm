@@ -17,7 +17,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         _mediaPlayerPlayer = mediaPlayer;
 
-        ShowInTaskbar = true;
+        ShowInTaskbar = false;
 
         ActionSelector.Items.Clear();
         var dataSource = Enum.GetValues(typeof(AlarmAction)).Cast<AlarmAction>().Select(s => new { Value = s, Text = AlarmActionHelpers.GetEnumDisplayValue(s) }).Where(a => a.Text != "Dismissed").ToList();

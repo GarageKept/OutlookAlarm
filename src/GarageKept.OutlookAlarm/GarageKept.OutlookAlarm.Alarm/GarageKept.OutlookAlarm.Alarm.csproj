@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <StartupObject>GarageKept.OutlookAlarm.Alarm.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -62,9 +63,7 @@
     <Compile Update="UI\Controls\AlarmContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="UI\Forms\AlarmForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="UI\Forms\AlarmForm.cs" />
     <Compile Update="UI\Forms\BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
