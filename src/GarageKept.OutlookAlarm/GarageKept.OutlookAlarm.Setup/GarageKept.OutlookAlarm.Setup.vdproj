@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_CCB380E4A03646B2B46418289A919EFA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_CD3B8227E329446B9C080AB5AEE18248"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -84,6 +90,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CCB380E4A03646B2B46418289A919EFA"
+            {
+            "SourcePath" = "8:..\\GarageKept.OutlookAlarm.Alarm\\bin\\Release\\net7.0-windows10.0.17763.0\\GarageKept.OutlookAlarm.Alarm.exe"
+            "TargetName" = "8:GarageKept.OutlookAlarm.Alarm.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_F77DADE055D5415D90B77745F58C9644"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -151,15 +177,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Outlook Alarm"
-        "ProductCode" = "8:{519E7BFB-11B0-4514-BB27-7F87D08E355C}"
-        "PackageCode" = "8:{7DB61461-F58B-4CE0-9ED6-FB32BCC97A06}"
+        "ProductCode" = "8:{78DDE8E7-1FB2-4A41-A78D-EF46B4E67F7B}"
+        "PackageCode" = "8:{8E525CD2-6B52-453B-934E-FBF95CD17162}"
         "UpgradeCode" = "8:{BDF3BA3F-997A-4B25-BEE8-5E828A1659AB}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.1"
         "Manufacturer" = "8:Garage Kept"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://github.com/GarageKept/OutlookAlarm"
@@ -272,15 +298,15 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_DA3F999F9A244F1397AA338FDAE5A1F0"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_F637A64BE1B84094B08766FD46B852C3"
             {
-            "Name" = "8:Outlook Alarm.exe"
+            "Name" = "8:Outlook Alarm"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:"
+            "Target" = "8:_CCB380E4A03646B2B46418289A919EFA"
             "Folder" = "8:_6549F4777AB447569C2BA2D7562EB2E7"
             "WorkingFolder" = "8:_F77DADE055D5415D90B77745F58C9644"
             "Icon" = "8:"

@@ -77,6 +77,6 @@ public class Appointment : IAlarm
         if (endIndex < 0) return string.Empty;
 
         startIndex += startTag.Length;
-        return body.Substring(startIndex, endIndex - startIndex);
+        return body[startIndex..endIndex];
     }
 }
