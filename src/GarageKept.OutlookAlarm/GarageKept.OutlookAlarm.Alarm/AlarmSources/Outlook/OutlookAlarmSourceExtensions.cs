@@ -18,7 +18,7 @@ public static class OutlookAlarmSourceExtensions
         var outlookApp = new Application();
 
         // Get the default namespace
-        var outlookNamespace = outlookApp.GetNamespace("MAPI");
+        var outlookNamespace = outlookApp.GetNamespace(@"MAPI");
 
         // Retrieve the Category from the Categories collection
         var category = outlookNamespace.Categories[categoryName];
@@ -36,7 +36,7 @@ public static class OutlookAlarmSourceExtensions
         return categoryColor;
     }
 
-    public static string GetFirstFromCsv(this string csvString)
+    private static string GetFirstFromCsv(this string csvString)
     {
         var csvValues = csvString.Split(',');
 
@@ -57,7 +57,7 @@ public static class OutlookAlarmSourceExtensions
         };
     }
 
-    public static Color ToColor(this OlCategoryColor olCategoryColor)
+    private static Color ToColor(this OlCategoryColor olCategoryColor)
     {
         return olCategoryColor switch
         {

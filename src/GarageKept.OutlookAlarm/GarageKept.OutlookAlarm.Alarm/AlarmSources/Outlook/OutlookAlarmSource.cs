@@ -20,7 +20,7 @@ public class OutlookAlarmSource : IAlarmSource
         try
         {
             var outlookApp = new Application();
-            var outlookNamespace = outlookApp.GetNamespace("MAPI");
+            var outlookNamespace = outlookApp.GetNamespace(@"MAPI");
             var calendarFolder = outlookNamespace.GetDefaultFolder(OlDefaultFolders.olFolderCalendar);
 
             var startDateTime = DateTime.Now;
