@@ -5,7 +5,7 @@ namespace GarageKept.OutlookAlarm.Alarm.Audio;
 internal static class AudioEngine
 {
     // Get the system volume
-    public static bool? IsSystemVolumeMuted()
+    private static bool? IsSystemVolumeMuted()
     {
         try
         {
@@ -39,7 +39,7 @@ internal static class AudioEngine
     }
 
     // Mute or un mute the system volume
-    public static void SetSystemVolumeMuted(bool mute)
+    private static void SetSystemVolumeMuted(bool mute)
     {
         var type = Type.GetTypeFromCLSID(Clsid.MMDeviceEnumerator);
 
@@ -111,7 +111,7 @@ internal static class AudioEngine
         CLSCTX_ALL = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER | CLSCTX_LOCAL_SERVER | CLSCTX_REMOTE_SERVER | CLSCTX_NO_CODE_DOWNLOAD | CLSCTX_NO_CUSTOM_MARSHAL | CLSCTX_ENABLE_CODE_DOWNLOAD | CLSCTX_NO_FAILURE_LOG | CLSCTX_DISABLE_AAA | CLSCTX_ENABLE_AAA | CLSCTX_FROM_DEFAULT_CONTEXT | CLSCTX_ACTIVATE_32_BIT_SERVER | CLSCTX_ACTIVATE_64_BIT_SERVER | CLSCTX_ENABLE_CLOAKING | CLSCTX_PS_DLL
     }
 
-    internal static class Clsid
+    private static class Clsid
     {
         public static readonly Guid MMDeviceEnumerator = new("BCDE0395-E52F-467C-8E3D-C4579291692E");
     }
@@ -119,7 +119,7 @@ internal static class AudioEngine
     // Get the system volume
     [Guid("5CDF2C82-841E-4546-9722-0CF74078229A")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IAudioEndpointVolume
+    private interface IAudioEndpointVolume
     {
         int RegisterControlChangeNotify(nint pNotify);
         int UnregisterControlChangeNotify(nint pNotify);
@@ -141,7 +141,7 @@ internal static class AudioEngine
         int GetVolumeRange(out float pflVolumeMindB, out float pflVolumeMaxdB, out float pflVolumeIncrementdB);
     }
 
-    internal static class Iid
+    private static class Iid
     {
         public static readonly Guid IAudioEndpointVolume = new("5CDF2C82-841E-4546-9722-0CF74078229A");
         public static readonly Guid IMMDeviceEnumerator = new("A95664D2-9614-4F35-A746-DE8DB63617E6");
@@ -149,7 +149,7 @@ internal static class AudioEngine
 
     [Guid("D666063F-1587-4E43-81F1-B948E807363F")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IMMDevice
+    private interface IMMDevice
     {
         [PreserveSig]
         int Activate(ref Guid iid, int dwClsCtx, nint pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
@@ -157,7 +157,7 @@ internal static class AudioEngine
 
     [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IMMDeviceEnumerator
+    private interface IMMDeviceEnumerator
     {
         int NotImpl1();
 
@@ -165,7 +165,7 @@ internal static class AudioEngine
         int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice ppDevice);
     }
 
-    internal static class NativeMethods
+    private static class NativeMethods
     {
         public const int APPCOMMAND_VOLUME_MUTE = 0x80000;
         public const int WM_APPCOMMAND = 0x0319;

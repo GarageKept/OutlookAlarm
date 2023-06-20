@@ -16,12 +16,7 @@ public class UnmanagedMemoryStreamWaveStream : WaveStream
         Position = 0;
     }
 
-    public UnmanagedMemoryStreamWaveStream(UnmanagedMemoryStream stream)
-    {
-        _stream = stream;
-        _length = stream.Length;
-        Position = 0;
-    }
+    public UnmanagedMemoryStreamWaveStream(UnmanagedMemoryStream stream) : this(stream, stream.Length) { }
 
     public override WaveFormat WaveFormat => new(44100, 16, 2);
 

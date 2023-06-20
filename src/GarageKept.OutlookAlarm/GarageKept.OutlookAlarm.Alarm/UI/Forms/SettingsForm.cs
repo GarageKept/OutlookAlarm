@@ -1,6 +1,7 @@
 ﻿using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Audio;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
+using Microsoft.Win32;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
@@ -221,7 +222,8 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (Owner is not null) Owner.Top = 0;
     }
 
-    #region Main
+
+#region Main
 
     #region Main.Left
 
@@ -534,6 +536,26 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (ColorRedLabel.BackColor == Program.AppSettings.Color.RedColor) return;
 
         Program.AppSettings.Color.RedColor = ColorRedLabel.BackColor;
+    }
+
+    private void SetStartup(bool enable)
+    {
+
+        const string AppName = "MyApplication";
+
+        const string RunKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
+
+        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true))
+        {
+            if (enable)
+            {
+                key.SetValue(AppName, Application.ExecutablePath);
+            }
+            else
+            {
+                key.DeleteValue(AppName, false);
+            }
+        }
     }
 
     #endregion
