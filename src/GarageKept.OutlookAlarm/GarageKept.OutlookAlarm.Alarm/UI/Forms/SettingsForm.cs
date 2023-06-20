@@ -8,8 +8,10 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
 public partial class SettingsForm : BaseForm, ISettingsForm
 {
-    private readonly DateTime _exampleDateTime = new(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 8, 0, 0);
+    private const string AppName = @"GarageKept.OutlookAlarm";
+    private const string RunKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
 
+    private readonly DateTime _exampleDateTime = new(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 8, 0, 0);
     private readonly TimeSpan _exampleTimeSpan = new(0, 3, 2, 1);
     private readonly IMediaPlayer _mediaPlayer;
     private bool _isExpanded;
@@ -140,6 +142,12 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         #endregion
 
+        #region AlarmSource.Startup
+
+        RunOnStartCheckBox.Checked = GetStartupValue();
+
+        #endregion
+
         #endregion
 
         #region Audio
@@ -208,22 +216,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         return base.ShowDialog();
     }
 
-    private Color GetColor(Color originalColor)
-    {
-        var result = colorDialog.ShowDialog();
-
-        return result == DialogResult.OK ? colorDialog.Color : originalColor;
-    }
-
-    private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        StopSliderPreview();
-
-        if (Owner is not null) Owner.Top = 0;
-    }
-
-
-#region Main
+    #region Main
 
     #region Main.Left
 
@@ -437,6 +430,19 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #endregion
 
+    #region AlarmSource.Startup
+
+    private void RunOnStartCheckBox_CheckedChanged(object sender, EventArgs e) { SetStartup(RunOnStartCheckBox.Checked); }
+
+    private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        StopSliderPreview();
+
+        if (Owner is not null) Owner.Top = 0;
+    }
+
+    #endregion
+
     #endregion
 
     #region Audio
@@ -538,27 +544,30 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         Program.AppSettings.Color.RedColor = ColorRedLabel.BackColor;
     }
 
-    private void SetStartup(bool enable)
+    private static void SetStartup(bool enable)
     {
+        using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true);
 
-        const string AppName = "MyApplication";
+        if (enable)
+            key?.SetValue(AppName, Application.ExecutablePath);
+        else
+            key?.DeleteValue(AppName, false);
+    }
 
-        const string RunKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
-
-        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true))
-        {
-            if (enable)
-            {
-                key.SetValue(AppName, Application.ExecutablePath);
-            }
-            else
-            {
-                key.DeleteValue(AppName, false);
-            }
-        }
+    private static bool GetStartupValue()
+    {
+        using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, false);
+        return key?.GetValue(AppName) != null;
     }
 
     #endregion
+
+    private Color GetColor(Color originalColor)
+    {
+        var result = colorDialog.ShowDialog();
+
+        return result == DialogResult.OK ? colorDialog.Color : originalColor;
+    }
 
     #endregion
 }

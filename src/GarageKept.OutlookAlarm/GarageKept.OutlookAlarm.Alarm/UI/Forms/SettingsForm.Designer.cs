@@ -63,6 +63,8 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AlarmWarningTimeNumericUpDown = new NumericUpDown();
             AlarmWarningTimeLabel = new Label();
             alarmSourcePage = new TabPage();
+            StartupGroupBox = new GroupBox();
+            RunOnStartCheckBox = new CheckBox();
             FetchGroupBox = new GroupBox();
             FetchTimeLabel = new Label();
             FetchTimeNumericUpDown = new NumericUpDown();
@@ -102,6 +104,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AlarmWarningBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)AlarmWarningTimeNumericUpDown).BeginInit();
             alarmSourcePage.SuspendLayout();
+            StartupGroupBox.SuspendLayout();
             FetchGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)FetchTimeNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)FetchIntervalNumericUpDown).BeginInit();
@@ -265,7 +268,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             locationLabel.AutoSize = true;
             locationLabel.Location = new Point(6, 24);
             locationLabel.Name = "locationLabel";
-            locationLabel.Size = new Size(88, 15);
+            locationLabel.Size = new Size(80, 15);
             locationLabel.TabIndex = 0;
             locationLabel.Text = "Start Location";
             // 
@@ -435,6 +438,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // alarmSourcePage
             // 
+            alarmSourcePage.Controls.Add(StartupGroupBox);
             alarmSourcePage.Controls.Add(FetchGroupBox);
             alarmSourcePage.Location = new Point(4, 24);
             alarmSourcePage.Name = "alarmSourcePage";
@@ -443,6 +447,27 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             alarmSourcePage.TabIndex = 2;
             alarmSourcePage.Text = "Alarm Source";
             alarmSourcePage.UseVisualStyleBackColor = true;
+            // 
+            // StartupGroupBox
+            // 
+            StartupGroupBox.Controls.Add(RunOnStartCheckBox);
+            StartupGroupBox.Location = new Point(8, 96);
+            StartupGroupBox.Name = "StartupGroupBox";
+            StartupGroupBox.Size = new Size(277, 54);
+            StartupGroupBox.TabIndex = 15;
+            StartupGroupBox.TabStop = false;
+            StartupGroupBox.Text = "Startup Options";
+            // 
+            // RunOnStartCheckBox
+            // 
+            RunOnStartCheckBox.AutoSize = true;
+            RunOnStartCheckBox.Location = new Point(6, 22);
+            RunOnStartCheckBox.Name = "RunOnStartCheckBox";
+            RunOnStartCheckBox.Size = new Size(90, 19);
+            RunOnStartCheckBox.TabIndex = 1;
+            RunOnStartCheckBox.Text = "Run on start";
+            RunOnStartCheckBox.UseVisualStyleBackColor = true;
+            RunOnStartCheckBox.CheckedChanged += RunOnStartCheckBox_CheckedChanged;
             // 
             // FetchGroupBox
             // 
@@ -672,6 +697,8 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AlarmWarningBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)AlarmWarningTimeNumericUpDown).EndInit();
             alarmSourcePage.ResumeLayout(false);
+            StartupGroupBox.ResumeLayout(false);
+            StartupGroupBox.PerformLayout();
             FetchGroupBox.ResumeLayout(false);
             FetchGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)FetchTimeNumericUpDown).EndInit();
@@ -739,5 +766,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
         private Label ColorYellowLabel;
         private Label ColorGreenLabel;
         private Label ColorAlarmPastStartLabel;
+        private GroupBox StartupGroupBox;
+        private CheckBox RunOnStartCheckBox;
     }
 }
