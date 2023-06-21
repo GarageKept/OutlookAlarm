@@ -95,7 +95,6 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         _mediaPlayerPlayer.StopSound();
 
         Dispose(true);
-        GC.SuppressFinalize(this);
     }
 
     private void FormRefresh(object? sender, EventArgs? e)
@@ -125,6 +124,8 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         _mediaPlayerPlayer.StopSound();
 
         base.OnFormClosing(e);
+
+        Dispose();
     }
 
     private void RemoveActionSelectorItem(AlarmAction action)

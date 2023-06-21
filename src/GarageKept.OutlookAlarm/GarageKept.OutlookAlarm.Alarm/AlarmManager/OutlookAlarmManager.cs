@@ -150,7 +150,6 @@ public sealed class OutlookAlarmManager : IAlarmManager
         {
             // Launch alarm window or perform related actions
             var alarmWindow = Program.ServiceProvider?.GetRequiredService<IAlarmForm>();
-
             Application.OpenForms[0]?.Invoke(delegate { alarmWindow?.Show(alarm); });
         }
     }
