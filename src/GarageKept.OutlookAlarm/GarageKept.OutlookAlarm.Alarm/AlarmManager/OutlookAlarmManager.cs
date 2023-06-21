@@ -307,4 +307,6 @@ public sealed class OutlookAlarmManager : IAlarmManager
         timer = GenerateTimer(alarm);
         AlarmTimers[alarm.Id] = timer;
     }
+
+    public void Dispose() { }
 }

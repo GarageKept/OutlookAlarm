@@ -1,5 +1,5 @@
 ﻿namespace GarageKept.OutlookAlarm.Alarm.Interfaces;
 
-public interface IAlarmContainerControl
+public interface IAlarmContainerControl : IDisposable
 {
 }

@@ -1,4 +1,5 @@
-﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
+﻿using System.Runtime.InteropServices;
+using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Microsoft.Office.Interop.Outlook;
 using Application = Microsoft.Office.Interop.Outlook.Application;
 using Exception = System.Exception;
@@ -36,11 +37,22 @@ public class OutlookAlarmSource : IAlarmSource
 
             var appointments = removedAllDay.Select(appointmentItem => new Appointment(appointmentItem));
 
-            return appointments;
+            // Release and dispose COM objects
+            Marshal.ReleaseComObject(calendarItems);
+            Marshal.ReleaseComObject(calendarFolder);
+            Marshal.ReleaseComObject(outlookNamespace);
+            Marshal.ReleaseComObject(outlookApp);
+
+            return appointments.ToList();
         }
         catch (Exception ex)
         {
             return new List<IAlarm>(1) { new Appointment { Name = ex.Message, Start = DateTime.Now, End = DateTime.MaxValue } };
         }
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
     }
 }

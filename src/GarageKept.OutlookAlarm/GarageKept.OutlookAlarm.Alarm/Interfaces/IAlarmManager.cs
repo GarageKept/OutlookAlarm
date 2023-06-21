@@ -2,7 +2,7 @@
 
 namespace GarageKept.OutlookAlarm.Alarm.Interfaces;
 
-public interface IAlarmManager
+public interface IAlarmManager : IDisposable
 {
     bool IsRunning { get; }
     event EventHandler<AlarmEventArgs> AlarmAdded;
