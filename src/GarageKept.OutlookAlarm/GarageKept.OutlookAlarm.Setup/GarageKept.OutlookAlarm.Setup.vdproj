@@ -43,6 +43,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
         "Release"
         {
@@ -59,6 +75,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -177,15 +201,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Outlook Alarm"
-        "ProductCode" = "8:{78DDE8E7-1FB2-4A41-A78D-EF46B4E67F7B}"
-        "PackageCode" = "8:{8E525CD2-6B52-453B-934E-FBF95CD17162}"
+        "ProductCode" = "8:{E6E2E756-A10B-4162-B30E-DF172E3E924D}"
+        "PackageCode" = "8:{4612C626-ED72-4A78-A17E-E33EBDB868DC}"
         "UpgradeCode" = "8:{BDF3BA3F-997A-4B25-BEE8-5E828A1659AB}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.1"
+        "ProductVersion" = "8:1.0.2"
         "Manufacturer" = "8:Garage Kept"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://github.com/GarageKept/OutlookAlarm"
@@ -713,7 +737,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_CD3B8227E329446B9C080AB5AEE18248"
             {
-            "SourcePath" = "8:..\\GarageKept.OutlookAlarm.Alarm\\obj\\Release\\net7.0-windows10.0.17763.0\\apphost.exe"
+            "SourcePath" = "8:..\\GarageKept.OutlookAlarm.Alarm\\obj\\Debug\\net7.0-windows10.0.17763.0\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_F77DADE055D5415D90B77745F58C9644"
