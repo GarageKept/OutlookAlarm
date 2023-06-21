@@ -1,6 +1,6 @@
 namespace GarageKept.OutlookAlarm.Alarm.Interfaces;
 
-public interface IMainForm
+public interface IMainForm : IDisposable
 {
     int Left { get; set; }
     void AddMouseEvents(Control control);
