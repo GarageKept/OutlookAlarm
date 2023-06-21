@@ -5,7 +5,11 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 
 public class AlarmProgressBar : ProgressBar
 {
-    public AlarmProgressBar() { SetStyle(ControlStyles.UserPaint, true); }
+    public AlarmProgressBar()
+    {
+        SetStyle(ControlStyles.UserPaint, true);
+        base.DoubleBuffered = true;
+    }
 
     public AlarmProgressBar(Color barColor, Color backgroundColor) : this()
     {
@@ -21,7 +25,7 @@ public class AlarmProgressBar : ProgressBar
         get
         {
             var cp = base.CreateParams;
-            cp.Style |= 0x20; // Set the PBS_MARQUEE style
+            cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
             return cp;
         }
     }
@@ -29,11 +33,13 @@ public class AlarmProgressBar : ProgressBar
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
-        SendMessage(Handle, 0x400 + 16, 1, IntPtr.Zero); // Set the PBM_SETMARQUEE message
+        SendMessage(Handle, 0x400 + 16, 1, IntPtr.Zero); // PBM_SETMARQUEE
     }
 
     protected override void OnPaint(PaintEventArgs e)
     {
+        SuspendLayout();
+
         var rect = ClientRectangle;
 
         // Draw the background of the progress bar
@@ -53,6 +59,8 @@ public class AlarmProgressBar : ProgressBar
         {
             e.Graphics.FillRectangle(brush, progressBarRect);
         }
+
+        ResumeLayout(true);
     }
 
     [DllImport("user32.dll")]
