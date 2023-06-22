@@ -1,8 +1,13 @@
 ﻿using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Audio;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
+using GarageKept.OutlookAlarm.Alarm.Settings;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Office.Interop.Outlook;
 using Microsoft.Win32;
+using Application = System.Windows.Forms.Application;
 using Timer = System.Windows.Forms.Timer;
+using View = System.Windows.Forms.View;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
@@ -11,7 +16,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private const string AppName = @"GarageKept.OutlookAlarm";
     private const string RunKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
 
-    private readonly DateTime _exampleDateTime = new(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 8, 0, 0);
+    private readonly DateTime _exampleDateTime =
+        new(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 8, 0, 0);
+
     private readonly TimeSpan _exampleTimeSpan = new(0, 3, 2, 1);
     private readonly IMediaPlayer _mediaPlayer;
     private bool _isExpanded;
@@ -155,7 +162,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         #region Audio.DefaultSound
 
         DefaultSoundComboBox.SelectedIndexChanged -= DefaultSoundComboBox_SelectedIndexChanged;
-        var dataSource = Enum.GetValues(typeof(SoundType)).Cast<SoundType>().Select(s => new { Value = s, Text = AlarmActionHelpers.GetEnumDisplayValue(s) }).Where(a => a.Text != "Dismissed").ToList();
+        var dataSource = Enum.GetValues(typeof(SoundType)).Cast<SoundType>()
+            .Select(s => new { Value = s, Text = AlarmActionHelpers.GetEnumDisplayValue(s) })
+            .Where(a => a.Text != "Dismissed").ToList();
         DefaultSoundComboBox.DisplayMember = "Text";
         DefaultSoundComboBox.ValueMember = "Value";
 
@@ -213,8 +222,78 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         #endregion
 
+        #region Time
+
+        #region Time.WorkingDays
+
+        WorkdayStartTimePicker.Value = Program.AppSettings.TimeManagement.WorkingStartTime;
+        WorkdayEndTimePicker.Value = Program.AppSettings.TimeManagement.WorkingEndTime;
+        SundayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Sunday);
+        MondayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Monday);
+        TuesdayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Tuesday);
+        WednesdayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Wednesday);
+        ThursdayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Thursday);
+        FridayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Friday);
+        SaturdayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Saturday);
+        WorkdayEnabledCheckBox.Checked = Program.AppSettings.TimeManagement.EnableOnlyWorkingPeriods;
+        EnableWorkingDays(Program.AppSettings.TimeManagement.EnableOnlyWorkingPeriods);
+
+        #endregion
+
+        #region Time.ExceptionCategories
+
+        CategoryExceptionListBox.Items.Clear();
+        var exceptionItems = Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>();
+        CategoryExceptionListBox.Items.AddRange(exceptionItems);
+
+        var exceptionToolStrip = new ContextMenuStrip();
+        var exceptionRemove = new ToolStripMenuItem("Remove Selected");
+        exceptionRemove.Click += ExceptionRemoveOnClick;
+        exceptionToolStrip.Items.Add(exceptionRemove);
+        CategoryExceptionListBox.ContextMenuStrip = exceptionToolStrip;
+
+        #endregion
+
+        #region Time.Holidays
+
+        HolidayListView.View = View.Details;
+        HolidayListView.Columns.Clear();
+        HolidayListView.Columns.Add("Name");
+        HolidayListView.Columns.Add("Date");
+        HolidayListView.Columns.Add("Description");
+        HolidayListView.Items.Clear();
+        foreach (var holiday in Program.AppSettings.TimeManagement.Holidays)
+        {
+            // Create a ListViewItem for the holiday
+            var item = new ListViewItem(holiday.Name);
+
+            // Add sub-items for each property to populate the columns
+            item.SubItems.Add(holiday.Date.ToShortDateString());
+            item.SubItems.Add(holiday.Description);
+            item.SubItems.Add(holiday.Id.ToString());
+
+            // Add the ListViewItem to the ListView
+            HolidayListView.Items.Add(item);
+        }
+        HolidayListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+        var holidayToolStrip = new ContextMenuStrip();
+        var holidayRemove = new ToolStripMenuItem("Remove Selected");
+        holidayRemove.Click += HolidayRemoveOnClick;
+        holidayToolStrip.Items.Add(holidayRemove);
+
+        var holidayEdit = new ToolStripMenuItem("Edit Selected");
+        holidayEdit.Click += HolidayEdit_Click;
+
+        HolidayListView.ContextMenuStrip = holidayToolStrip;
+
+        #endregion
+
+        #endregion
+
         return base.ShowDialog();
     }
+
 
     #region Main
 
@@ -358,7 +437,10 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region Alarm.AlarmWarning
 
-    private void AlarmWarningTimeNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.Alarm.AlarmWarningTime = (int)AlarmWarningTimeNumericUpDown.Value; }
+    private void AlarmWarningTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.Alarm.AlarmWarningTime = (int)AlarmWarningTimeNumericUpDown.Value;
+    }
 
     #endregion
 
@@ -404,13 +486,19 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region Alarm.Top
 
-    private void AlarmLocationTopNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.Alarm.Top = (int)AlarmLocationTopNumericUpDown.Value; }
+    private void AlarmLocationTopNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.Alarm.Top = (int)AlarmLocationTopNumericUpDown.Value;
+    }
 
     #endregion
 
     #region Alarm.Left
 
-    private void AlarmLocationLeftNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.Alarm.Left = (int)AlarmLocationLeftNumericUpDown.Value; }
+    private void AlarmLocationLeftNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.Alarm.Left = (int)AlarmLocationLeftNumericUpDown.Value;
+    }
 
     #endregion
 
@@ -420,19 +508,28 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region AlarmSource.FetchIntervalInMinutes
 
-    private void FetchIntervalNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.AlarmSource.FetchIntervalInMinutes = (int)FetchIntervalNumericUpDown.Value; }
+    private void FetchIntervalNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.AlarmSource.FetchIntervalInMinutes = (int)FetchIntervalNumericUpDown.Value;
+    }
 
     #endregion
 
     #region AlarmSource.FetchTimeInHours
 
-    private void FetchTimeNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.AlarmSource.FetchTimeInHours = (int)FetchTimeNumericUpDown.Value; }
+    private void FetchTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.AlarmSource.FetchTimeInHours = (int)FetchTimeNumericUpDown.Value;
+    }
 
     #endregion
 
     #region AlarmSource.Startup
 
-    private void RunOnStartCheckBox_CheckedChanged(object sender, EventArgs e) { SetStartup(RunOnStartCheckBox.Checked); }
+    private void RunOnStartCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        SetStartup(RunOnStartCheckBox.Checked);
+    }
 
     private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
     {
@@ -465,7 +562,10 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region Audio.DefaultSound
 
-    private void DefaultSoundComboBox_SelectedIndexChanged(object? sender, EventArgs e) { Program.AppSettings.Audio.DefaultSound = GetDefaultSoundComboBoxSelectedSoundType(); }
+    private void DefaultSoundComboBox_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        Program.AppSettings.Audio.DefaultSound = GetDefaultSoundComboBoxSelectedSoundType();
+    }
 
     private void PlayTestButton_Click(object sender, EventArgs e)
     {
@@ -477,7 +577,8 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         else
         {
             PlayTestButton.Text = @"Stop";
-            _mediaPlayer.PlaySound(GetDefaultSoundComboBoxSelectedSoundType(), false, (_, _) => { PlayTestButton.Text = @"Test"; });
+            _mediaPlayer.PlaySound(GetDefaultSoundComboBoxSelectedSoundType(), false,
+                (_, _) => { PlayTestButton.Text = @"Test"; });
         }
     }
 
@@ -498,7 +599,10 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     #region Audio.TurnOffAlarmAfterStart
 
-    private void OffAfterStartNumericUpDown_ValueChanged(object sender, EventArgs e) { Program.AppSettings.Audio.TurnOffAlarmAfterStart = (int)OffAfterStartNumericUpDown.Value; }
+    private void OffAfterStartNumericUpDown_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.Audio.TurnOffAlarmAfterStart = (int)OffAfterStartNumericUpDown.Value;
+    }
 
     #endregion
 
@@ -568,6 +672,224 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         return result == DialogResult.OK ? colorDialog.Color : originalColor;
     }
+
+    #endregion
+
+    #region Time
+
+    #region Time.WorkingDays
+
+    private void WorkdayEnabledCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.TimeManagement.EnableOnlyWorkingPeriods = WorkdayEnabledCheckBox.Checked;
+
+        EnableWorkingDays(WorkdayEnabledCheckBox.Checked);
+    }
+
+    private void EnableWorkingDays(bool enabled)
+    {
+        WorkdayStartLabel.Enabled = enabled;
+        WorkdayStartTimePicker.Enabled = enabled;
+        WorkdayEndLabel.Enabled = enabled;
+        WorkdayEndTimePicker.Enabled = enabled;
+        SundayCheckBox.Enabled = enabled;
+        MondayCheckBox.Enabled = enabled;
+        TuesdayCheckBox.Enabled = enabled;
+        WednesdayCheckBox.Enabled = enabled;
+        ThursdayCheckBox.Enabled = enabled;
+        FridayCheckBox.Enabled = enabled;
+        SaturdayCheckBox.Enabled = enabled;
+    }
+
+    private void WorkdayStartTimePicker_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.TimeManagement.WorkingStartTime = WorkdayStartTimePicker.Value;
+    }
+
+    private void WorkdayEndTimePicker_ValueChanged(object sender, EventArgs e)
+    {
+        Program.AppSettings.TimeManagement.WorkingEndTime = WorkdayEndTimePicker.Value;
+    }
+
+    private static void SaveDayOfWeekSetting(DayOfWeek dayOfWeek, bool enable)
+    {
+        if (enable)
+        {
+            Program.AppSettings.TimeManagement.WorkDays.Add(dayOfWeek);
+        }
+        else if (Program.AppSettings.TimeManagement.WorkDays.Contains(dayOfWeek))
+        {
+            var daysToRemove = Program.AppSettings.TimeManagement.WorkDays.Where(d => d == dayOfWeek).ToList();
+
+            foreach (var day in daysToRemove) Program.AppSettings.TimeManagement.WorkDays.Remove(day);
+        }
+    }
+
+    private void SundayCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        SaveDayOfWeekSetting(DayOfWeek.Sunday, SundayCheckBox.Checked);
+    }
+
+    private void MondayCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        SaveDayOfWeekSetting(DayOfWeek.Monday, MondayCheckBox.Checked);
+    }
+
+    private void TuesdayCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        SaveDayOfWeekSetting(DayOfWeek.Tuesday, TuesdayCheckBox.Checked);
+    }
+
+    private void WednesdayCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        SaveDayOfWeekSetting(DayOfWeek.Wednesday, WednesdayCheckBox.Checked);
+    }
+
+    private void ThursdayCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        SaveDayOfWeekSetting(DayOfWeek.Thursday, ThursdayCheckBox.Checked);
+    }
+
+    private void FridayCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        SaveDayOfWeekSetting(DayOfWeek.Friday, FridayCheckBox.Checked);
+    }
+
+    private void SaturdayCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        SaveDayOfWeekSetting(DayOfWeek.Saturday, SaturdayCheckBox.Checked);
+    }
+
+    #endregion
+
+    #region Time.ExceptionCategories
+
+    private void CategoryExceptionAddButton_Click(object sender, EventArgs e)
+    {
+        var category = CategoryExceptionTextBox.Text.Trim();
+        if (string.IsNullOrWhiteSpace(category)) return;
+
+        if (CategoryExceptionListBox.Items.Contains(category)) return;
+
+        // Add the category to the ExceptionCategories collection if it doesn't already exist
+        if (!Program.AppSettings.TimeManagement.ExceptionCategories.Contains(category))
+        {
+            Program.AppSettings.TimeManagement.ExceptionCategories.Add(category);
+        }
+
+        CategoryExceptionListBox.Items.Clear();
+        CategoryExceptionListBox.Items.AddRange(Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>());
+
+        CategoryExceptionTextBox.Text = string.Empty;
+    }
+
+    private void ExceptionRemoveOnClick(object? sender, EventArgs e)
+    {
+        var category = CategoryExceptionListBox.SelectedItem?.ToString();
+
+        if (category is null) return;
+
+        var exceptions = Program.AppSettings.TimeManagement.ExceptionCategories.Where(e => e == category).ToList();
+
+        foreach (var cat in exceptions)
+        {
+            Program.AppSettings.TimeManagement.ExceptionCategories.Remove(cat);
+        }
+
+        CategoryExceptionListBox.Items.Clear();
+        CategoryExceptionListBox.Items.AddRange(Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>());
+    }
+
+    #endregion
+
+    #region Time.Holidays
+
+    private void HolidayRemoveOnClick(object? sender, EventArgs e)
+    {
+        if (HolidayListView.SelectedItems.Count <= 0) return;
+
+        // Access and handle the selected items
+        foreach (ListViewItem selectedItem in HolidayListView.SelectedItems)
+        {
+            var idText = selectedItem.SubItems[3].Text;
+            var id = Guid.Parse(idText);
+            var itemsToRemove = Program.AppSettings.TimeManagement.Holidays.Where(h => h.Id == id).ToList();
+
+            foreach (var item in itemsToRemove)
+            {
+                Program.AppSettings.TimeManagement.Holidays.Remove(item);
+            }
+
+            // Handle the selected item(s)
+            HolidayListView.Items.Remove(selectedItem);
+        }
+    }
+
+    private void HolidayEdit_Click(object? sender, EventArgs e)
+    {
+        var holidayItem = HolidayListView.SelectedItems[0];
+        
+        // Retrieve the values of each sub-item
+        var name = holidayItem.SubItems[0].Text;
+        var dateText = holidayItem.SubItems[1].Text;
+        var description = holidayItem.SubItems[2].Text;
+        var idText = holidayItem.SubItems[3].Text;
+
+        var date = DateTime.Parse(dateText);
+        var id = Guid.Parse(idText);
+
+        var holiday = new Holiday(name, date, description);
+        holiday.Id = id;
+
+        var editor = Program.ServiceProvider?.GetService<IHolidayEditor>();
+
+        if(editor == null) return;
+
+        editor.Holiday = holiday;
+        var result = editor.ShowDialog();
+
+        if (result != DialogResult.OK) return;
+
+        var remove = Program.AppSettings.TimeManagement.Holidays.Where(h => h.Id == id).ToList();
+        foreach (var h in remove)
+        {
+            Program.AppSettings.TimeManagement.Holidays.Remove(h);
+        }
+
+        Program.AppSettings.TimeManagement.Holidays.Add(editor.Holiday);
+
+        holidayItem.Name = editor.Holiday.Name;
+        holidayItem.SubItems[0].Text = editor.Holiday.Name;
+        holidayItem.SubItems[1].Text = editor.Holiday.Date.ToShortDateString();
+        holidayItem.SubItems[2].Text = editor.Holiday.Description;
+        holidayItem.SubItems[3].Text = editor.Holiday.Id.ToString();
+
+        HolidayListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+    }
+
+    private void HolidayAddButton_Click(object? sender, EventArgs e)
+    {
+        var editor = Program.ServiceProvider?.GetService<IHolidayEditor>();
+
+        if(editor == null) return;
+
+        var result = editor.ShowDialog();
+
+        if (result != DialogResult.OK) return;
+
+        Program.AppSettings.TimeManagement.Holidays.Add(editor.Holiday);
+        var item = new ListViewItem(editor.Holiday.Name);
+
+        // Add sub-items for each property to populate the columns
+        item.SubItems.Add(editor.Holiday.Date.ToShortDateString());
+        item.SubItems.Add(editor.Holiday.Description);
+        item.SubItems.Add(editor.Holiday.Id.ToString());
+        HolidayListView.Items.Add(item);
+
+        HolidayListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+    }
+
+    #endregion
 
     #endregion
 }

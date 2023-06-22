@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Windows.Forms.VisualStyles;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 
 namespace GarageKept.OutlookAlarm.Alarm.Settings;
@@ -12,6 +13,7 @@ public class OutlookAlarmSettings : ISettings
         Audio = new AudioSettings(Save);
         Color = new ColorSettings(Save);
         Main = new MainSettings(Save);
+        TimeManagement = new TimeManagementSettings(Save);
     }
 
     public AlarmSettings Alarm { get; set; }
@@ -19,6 +21,7 @@ public class OutlookAlarmSettings : ISettings
     public AudioSettings Audio { get; set; }
     public ColorSettings Color { get; set; }
     public MainSettings Main { get; set; }
+    public TimeManagementSettings TimeManagement { get; set; }
 
     private static string GetAppFolder()
     {
@@ -63,6 +66,7 @@ public class OutlookAlarmSettings : ISettings
             settings.Audio.Save = settings.Save;
             settings.Color.Save = settings.Save;
             settings.Main.Save = settings.Save;
+            settings.TimeManagement.Save = settings.Save;
         }
         else
         {

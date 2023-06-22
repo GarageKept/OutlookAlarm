@@ -40,8 +40,9 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         Alarm = alarm ?? throw new ArgumentNullException(typeof(IAlarm).ToString());
 
         var tooLAteForAudio = DateTime.Now - Alarm.Start > TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart);
+        var bypassAudio = Program.AppSettings.TimeManagement.BypassAudio();
 
-        if (Alarm.IsAudible && !tooLAteForAudio)
+        if (Alarm.IsAudible && !tooLAteForAudio && !bypassAudio)
         {
             if (Alarm.HasCustomSound)
                 _mediaPlayerPlayer.PlaySound(Alarm.CustomSound, true);

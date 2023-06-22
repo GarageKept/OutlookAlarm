@@ -21,9 +21,11 @@ internal static class Program
 
         AlarmManager = ServiceProvider.GetRequiredService<IAlarmManager>();
 
+#if !DEBUG
         if (!OutlookAlarmMutex.WaitOne(TimeSpan.Zero, true))
             // Another instance is already running, exit the application
             MessageBox.Show(@"Another instance of the application is already running.");
+#endif
     }
 
     internal static IServiceProvider? ServiceProvider { get; }
@@ -43,6 +45,7 @@ internal static class Program
             services.AddTransient<IMediaPlayer, MediaPlayer>();
             services.AddTransient<IAlarmForm, AlarmForm>();
             services.AddTransient<IAlarmControl, AlarmControl>();
+            services.AddTransient<IHolidayEditor, HolidayEditor>();
         });
     }
 
@@ -52,15 +55,18 @@ internal static class Program
     [STAThread]
     private static void Main()
     {
-
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
 
+#if !DEBUG
         if (!OutlookAlarmMutex.WaitOne(TimeSpan.Zero, true)) return;
+#endif
 
         Application.Run(ServiceProvider?.GetRequiredService<IMainForm>() as Form);
 
+#if !DEBUG
         OutlookAlarmMutex.ReleaseMutex();
+#endif
     }
 }

@@ -82,6 +82,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -201,15 +209,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Outlook Alarm"
-        "ProductCode" = "8:{E6E2E756-A10B-4162-B30E-DF172E3E924D}"
-        "PackageCode" = "8:{4612C626-ED72-4A78-A17E-E33EBDB868DC}"
+        "ProductCode" = "8:{FB826D28-E6ED-4412-8B0E-00CECB499713}"
+        "PackageCode" = "8:{35D4B8DB-7798-4E4C-9D08-8CFCAC967F58}"
         "UpgradeCode" = "8:{BDF3BA3F-997A-4B25-BEE8-5E828A1659AB}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.2"
+        "ProductVersion" = "8:1.1.0"
         "Manufacturer" = "8:Garage Kept"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://github.com/GarageKept/OutlookAlarm"

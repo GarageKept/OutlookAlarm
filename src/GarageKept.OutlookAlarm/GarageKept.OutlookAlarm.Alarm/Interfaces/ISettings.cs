@@ -9,4 +9,5 @@ public interface ISettings
     AlarmSourceSettings AlarmSource { get; set; }
     ColorSettings Color { get; set; }
     MainSettings Main { get; set; }
+    TimeManagementSettings TimeManagement { get; set; }
 }

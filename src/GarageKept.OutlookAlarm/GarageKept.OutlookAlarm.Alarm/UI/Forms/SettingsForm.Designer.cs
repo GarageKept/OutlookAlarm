@@ -83,6 +83,29 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorGreenLabel = new Label();
             ColorAlarmPastStartLabel = new Label();
             ColorRedLabel = new Label();
+            TimeTabPage = new TabPage();
+            CategoryExceptionGroupBox = new GroupBox();
+            CategoryExceptionTextBox = new TextBox();
+            CategoryExceptionAddButton = new Button();
+            CategoryExceptionListBox = new ListBox();
+            WorkingHoursGroupBox = new GroupBox();
+            WorkdayEnabledCheckBox = new CheckBox();
+            WorkdayEndLabel = new Label();
+            WorkdayStartLabel = new Label();
+            WorkdayEndTimePicker = new DateTimePicker();
+            WorkdayStartTimePicker = new DateTimePicker();
+            SaturdayCheckBox = new CheckBox();
+            FridayCheckBox = new CheckBox();
+            ThursdayCheckBox = new CheckBox();
+            WednesdayCheckBox = new CheckBox();
+            TuesdayCheckBox = new CheckBox();
+            MondayCheckBox = new CheckBox();
+            SundayCheckBox = new CheckBox();
+            HolidayTabPage = new TabPage();
+            HolidaysGroupBox = new GroupBox();
+            HolidayListView = new ListView();
+            HolidayEditButton = new Button();
+            HolidayAddButton = new Button();
             colorDialog = new ColorDialog();
             settingsTabControl.SuspendLayout();
             mainPage.SuspendLayout();
@@ -113,6 +136,11 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ((System.ComponentModel.ISupportInitialize)OffAfterStartNumericUpDown).BeginInit();
             colorPage.SuspendLayout();
             ColorGroupBox.SuspendLayout();
+            TimeTabPage.SuspendLayout();
+            CategoryExceptionGroupBox.SuspendLayout();
+            WorkingHoursGroupBox.SuspendLayout();
+            HolidayTabPage.SuspendLayout();
+            HolidaysGroupBox.SuspendLayout();
             SuspendLayout();
             // 
             // settingsTabControl
@@ -122,11 +150,13 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             settingsTabControl.Controls.Add(alarmSourcePage);
             settingsTabControl.Controls.Add(audioPage);
             settingsTabControl.Controls.Add(colorPage);
+            settingsTabControl.Controls.Add(TimeTabPage);
+            settingsTabControl.Controls.Add(HolidayTabPage);
             settingsTabControl.Dock = DockStyle.Fill;
             settingsTabControl.Location = new Point(0, 0);
             settingsTabControl.Name = "settingsTabControl";
             settingsTabControl.SelectedIndex = 0;
-            settingsTabControl.Size = new Size(307, 376);
+            settingsTabControl.Size = new Size(384, 376);
             settingsTabControl.TabIndex = 0;
             // 
             // mainPage
@@ -137,7 +167,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             mainPage.Location = new Point(4, 24);
             mainPage.Name = "mainPage";
             mainPage.Padding = new Padding(3);
-            mainPage.Size = new Size(299, 348);
+            mainPage.Size = new Size(376, 348);
             mainPage.TabIndex = 0;
             mainPage.Text = "Main";
             // 
@@ -148,14 +178,14 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             MainGroupBox.Controls.Add(MinimumWidthTrackBar);
             MainGroupBox.Location = new Point(8, 244);
             MainGroupBox.Name = "MainGroupBox";
-            MainGroupBox.Size = new Size(280, 98);
+            MainGroupBox.Size = new Size(303, 98);
             MainGroupBox.TabIndex = 22;
             MainGroupBox.TabStop = false;
             MainGroupBox.Text = "Main";
             // 
             // MinimumWidthNumericUpDown
             // 
-            MinimumWidthNumericUpDown.Location = new Point(194, 22);
+            MinimumWidthNumericUpDown.Location = new Point(217, 22);
             MinimumWidthNumericUpDown.Name = "MinimumWidthNumericUpDown";
             MinimumWidthNumericUpDown.Size = new Size(80, 23);
             MinimumWidthNumericUpDown.TabIndex = 19;
@@ -175,7 +205,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             MinimumWidthTrackBar.Location = new Point(6, 51);
             MinimumWidthTrackBar.Maximum = 5120;
             MinimumWidthTrackBar.Name = "MinimumWidthTrackBar";
-            MinimumWidthTrackBar.Size = new Size(268, 45);
+            MinimumWidthTrackBar.Size = new Size(291, 45);
             MinimumWidthTrackBar.TabIndex = 18;
             MinimumWidthTrackBar.ValueChanged += MinimumWidthTrackBar_ValueChanged;
             // 
@@ -188,14 +218,14 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             SliderGroupBox.Controls.Add(SliderSpeedTrackBar);
             SliderGroupBox.Location = new Point(8, 111);
             SliderGroupBox.Name = "SliderGroupBox";
-            SliderGroupBox.Size = new Size(280, 127);
+            SliderGroupBox.Size = new Size(303, 127);
             SliderGroupBox.TabIndex = 21;
             SliderGroupBox.TabStop = false;
             SliderGroupBox.Text = "Slider";
             // 
             // BarHeightNumericUpDown
             // 
-            BarHeightNumericUpDown.Location = new Point(194, 22);
+            BarHeightNumericUpDown.Location = new Point(217, 22);
             BarHeightNumericUpDown.Name = "BarHeightNumericUpDown";
             BarHeightNumericUpDown.Size = new Size(80, 23);
             BarHeightNumericUpDown.TabIndex = 3;
@@ -214,7 +244,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // SliderSpeedNumericUpDown
             // 
-            SliderSpeedNumericUpDown.Location = new Point(194, 51);
+            SliderSpeedNumericUpDown.Location = new Point(217, 51);
             SliderSpeedNumericUpDown.Name = "SliderSpeedNumericUpDown";
             SliderSpeedNumericUpDown.Size = new Size(80, 23);
             SliderSpeedNumericUpDown.TabIndex = 11;
@@ -236,7 +266,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             SliderSpeedTrackBar.Location = new Point(8, 80);
             SliderSpeedTrackBar.Maximum = 5120;
             SliderSpeedTrackBar.Name = "SliderSpeedTrackBar";
-            SliderSpeedTrackBar.Size = new Size(266, 45);
+            SliderSpeedTrackBar.Size = new Size(289, 45);
             SliderSpeedTrackBar.TabIndex = 8;
             SliderSpeedTrackBar.ValueChanged += SliderSpeedTrackBar_ValueChanged;
             SliderSpeedTrackBar.Enter += SliderSpeedTrackBar_Enter;
@@ -249,7 +279,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             SizeGroupBox.Controls.Add(LeftTrackBar);
             SizeGroupBox.Location = new Point(8, 6);
             SizeGroupBox.Name = "SizeGroupBox";
-            SizeGroupBox.Size = new Size(280, 99);
+            SizeGroupBox.Size = new Size(303, 99);
             SizeGroupBox.TabIndex = 20;
             SizeGroupBox.TabStop = false;
             SizeGroupBox.Text = "Location";
@@ -257,7 +287,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // LeftNumericUpDown
             // 
             LeftNumericUpDown.ImeMode = ImeMode.NoControl;
-            LeftNumericUpDown.Location = new Point(194, 22);
+            LeftNumericUpDown.Location = new Point(217, 22);
             LeftNumericUpDown.Name = "LeftNumericUpDown";
             LeftNumericUpDown.Size = new Size(80, 23);
             LeftNumericUpDown.TabIndex = 10;
@@ -277,7 +307,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             LeftTrackBar.Location = new Point(8, 51);
             LeftTrackBar.Maximum = 5120;
             LeftTrackBar.Name = "LeftTrackBar";
-            LeftTrackBar.Size = new Size(266, 45);
+            LeftTrackBar.Size = new Size(289, 45);
             LeftTrackBar.TabIndex = 1;
             LeftTrackBar.Scroll += LeftTrackBarScroll;
             // 
@@ -289,7 +319,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             alarmPage.Location = new Point(4, 24);
             alarmPage.Name = "alarmPage";
             alarmPage.Padding = new Padding(3);
-            alarmPage.Size = new Size(299, 348);
+            alarmPage.Size = new Size(376, 348);
             alarmPage.TabIndex = 1;
             alarmPage.Text = "Alarm";
             alarmPage.UseVisualStyleBackColor = true;
@@ -302,7 +332,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AlarmLocationGroupBox.Controls.Add(AlarmLocationTopLabel);
             AlarmLocationGroupBox.Location = new Point(8, 203);
             AlarmLocationGroupBox.Name = "AlarmLocationGroupBox";
-            AlarmLocationGroupBox.Size = new Size(280, 100);
+            AlarmLocationGroupBox.Size = new Size(303, 86);
             AlarmLocationGroupBox.TabIndex = 13;
             AlarmLocationGroupBox.TabStop = false;
             AlarmLocationGroupBox.Text = "Location";
@@ -318,7 +348,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // AlarmLocationLeftNumericUpDown
             // 
-            AlarmLocationLeftNumericUpDown.Location = new Point(151, 51);
+            AlarmLocationLeftNumericUpDown.Location = new Point(177, 51);
             AlarmLocationLeftNumericUpDown.Name = "AlarmLocationLeftNumericUpDown";
             AlarmLocationLeftNumericUpDown.Size = new Size(120, 23);
             AlarmLocationLeftNumericUpDown.TabIndex = 15;
@@ -326,7 +356,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // AlarmLocationTopNumericUpDown
             // 
-            AlarmLocationTopNumericUpDown.Location = new Point(151, 22);
+            AlarmLocationTopNumericUpDown.Location = new Point(177, 22);
             AlarmLocationTopNumericUpDown.Name = "AlarmLocationTopNumericUpDown";
             AlarmLocationTopNumericUpDown.Size = new Size(120, 23);
             AlarmLocationTopNumericUpDown.TabIndex = 1;
@@ -351,7 +381,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             StringFormatGroupBox.Controls.Add(TimeLeftFormatExampleTextBox);
             StringFormatGroupBox.Location = new Point(8, 68);
             StringFormatGroupBox.Name = "StringFormatGroupBox";
-            StringFormatGroupBox.Size = new Size(280, 125);
+            StringFormatGroupBox.Size = new Size(303, 125);
             StringFormatGroupBox.TabIndex = 12;
             StringFormatGroupBox.TabStop = false;
             StringFormatGroupBox.Text = "Formating";
@@ -368,7 +398,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // AlarmStartFormatExampleLabel
             // 
             AlarmStartFormatExampleLabel.AutoSize = true;
-            AlarmStartFormatExampleLabel.Location = new Point(177, 74);
+            AlarmStartFormatExampleLabel.Location = new Point(226, 74);
             AlarmStartFormatExampleLabel.Name = "AlarmStartFormatExampleLabel";
             AlarmStartFormatExampleLabel.Size = new Size(71, 15);
             AlarmStartFormatExampleLabel.TabIndex = 11;
@@ -378,7 +408,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             AlarmStartFormatTextBox.Location = new Point(6, 92);
             AlarmStartFormatTextBox.Name = "AlarmStartFormatTextBox";
-            AlarmStartFormatTextBox.Size = new Size(268, 23);
+            AlarmStartFormatTextBox.Size = new Size(291, 23);
             AlarmStartFormatTextBox.TabIndex = 12;
             AlarmStartFormatTextBox.TextChanged += AlarmStartFormatTextBox_TextChanged;
             // 
@@ -394,7 +424,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // TimeLeftFormatExampleLabel
             // 
             TimeLeftFormatExampleLabel.AutoSize = true;
-            TimeLeftFormatExampleLabel.Location = new Point(177, 19);
+            TimeLeftFormatExampleLabel.Location = new Point(226, 19);
             TimeLeftFormatExampleLabel.Name = "TimeLeftFormatExampleLabel";
             TimeLeftFormatExampleLabel.Size = new Size(71, 15);
             TimeLeftFormatExampleLabel.TabIndex = 8;
@@ -404,7 +434,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             TimeLeftFormatExampleTextBox.Location = new Point(6, 37);
             TimeLeftFormatExampleTextBox.Name = "TimeLeftFormatExampleTextBox";
-            TimeLeftFormatExampleTextBox.Size = new Size(268, 23);
+            TimeLeftFormatExampleTextBox.Size = new Size(291, 23);
             TimeLeftFormatExampleTextBox.TabIndex = 9;
             TimeLeftFormatExampleTextBox.TextChanged += TimeLeftFormatExampleTextBox_TextChanged;
             // 
@@ -414,14 +444,14 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AlarmWarningBox.Controls.Add(AlarmWarningTimeLabel);
             AlarmWarningBox.Location = new Point(8, 6);
             AlarmWarningBox.Name = "AlarmWarningBox";
-            AlarmWarningBox.Size = new Size(280, 56);
+            AlarmWarningBox.Size = new Size(303, 56);
             AlarmWarningBox.TabIndex = 11;
             AlarmWarningBox.TabStop = false;
             AlarmWarningBox.Text = "Warning Options";
             // 
             // AlarmWarningTimeNumericUpDown
             // 
-            AlarmWarningTimeNumericUpDown.Location = new Point(154, 22);
+            AlarmWarningTimeNumericUpDown.Location = new Point(177, 22);
             AlarmWarningTimeNumericUpDown.Name = "AlarmWarningTimeNumericUpDown";
             AlarmWarningTimeNumericUpDown.Size = new Size(120, 23);
             AlarmWarningTimeNumericUpDown.TabIndex = 1;
@@ -443,7 +473,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             alarmSourcePage.Location = new Point(4, 24);
             alarmSourcePage.Name = "alarmSourcePage";
             alarmSourcePage.Padding = new Padding(3);
-            alarmSourcePage.Size = new Size(299, 348);
+            alarmSourcePage.Size = new Size(376, 348);
             alarmSourcePage.TabIndex = 2;
             alarmSourcePage.Text = "Alarm Source";
             alarmSourcePage.UseVisualStyleBackColor = true;
@@ -453,7 +483,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             StartupGroupBox.Controls.Add(RunOnStartCheckBox);
             StartupGroupBox.Location = new Point(8, 96);
             StartupGroupBox.Name = "StartupGroupBox";
-            StartupGroupBox.Size = new Size(277, 54);
+            StartupGroupBox.Size = new Size(303, 54);
             StartupGroupBox.TabIndex = 15;
             StartupGroupBox.TabStop = false;
             StartupGroupBox.Text = "Startup Options";
@@ -477,7 +507,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             FetchGroupBox.Controls.Add(FetchIntervalLabel);
             FetchGroupBox.Location = new Point(8, 6);
             FetchGroupBox.Name = "FetchGroupBox";
-            FetchGroupBox.Size = new Size(277, 84);
+            FetchGroupBox.Size = new Size(303, 84);
             FetchGroupBox.TabIndex = 14;
             FetchGroupBox.TabStop = false;
             FetchGroupBox.Text = "Fetch";
@@ -493,7 +523,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // FetchTimeNumericUpDown
             // 
-            FetchTimeNumericUpDown.Location = new Point(160, 51);
+            FetchTimeNumericUpDown.Location = new Point(186, 51);
             FetchTimeNumericUpDown.Name = "FetchTimeNumericUpDown";
             FetchTimeNumericUpDown.Size = new Size(111, 23);
             FetchTimeNumericUpDown.TabIndex = 15;
@@ -501,7 +531,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // FetchIntervalNumericUpDown
             // 
-            FetchIntervalNumericUpDown.Location = new Point(160, 22);
+            FetchIntervalNumericUpDown.Location = new Point(186, 22);
             FetchIntervalNumericUpDown.Name = "FetchIntervalNumericUpDown";
             FetchIntervalNumericUpDown.Size = new Size(111, 23);
             FetchIntervalNumericUpDown.TabIndex = 1;
@@ -522,7 +552,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             audioPage.Location = new Point(4, 24);
             audioPage.Name = "audioPage";
             audioPage.Padding = new Padding(3);
-            audioPage.Size = new Size(299, 348);
+            audioPage.Size = new Size(376, 348);
             audioPage.TabIndex = 4;
             audioPage.Text = "Audio";
             audioPage.UseVisualStyleBackColor = true;
@@ -536,14 +566,14 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AudioOptionsgroupBox.Controls.Add(DefaultSoundLabel);
             AudioOptionsgroupBox.Location = new Point(8, 6);
             AudioOptionsgroupBox.Name = "AudioOptionsgroupBox";
-            AudioOptionsgroupBox.Size = new Size(280, 111);
+            AudioOptionsgroupBox.Size = new Size(303, 111);
             AudioOptionsgroupBox.TabIndex = 0;
             AudioOptionsgroupBox.TabStop = false;
             AudioOptionsgroupBox.Text = "Options";
             // 
             // PlayTestButton
             // 
-            PlayTestButton.Location = new Point(199, 22);
+            PlayTestButton.Location = new Point(222, 22);
             PlayTestButton.Name = "PlayTestButton";
             PlayTestButton.Size = new Size(75, 23);
             PlayTestButton.TabIndex = 1;
@@ -562,7 +592,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // OffAfterStartNumericUpDown
             // 
-            OffAfterStartNumericUpDown.Location = new Point(177, 80);
+            OffAfterStartNumericUpDown.Location = new Point(200, 80);
             OffAfterStartNumericUpDown.Name = "OffAfterStartNumericUpDown";
             OffAfterStartNumericUpDown.Size = new Size(97, 23);
             OffAfterStartNumericUpDown.TabIndex = 3;
@@ -573,7 +603,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             DefaultSoundComboBox.FormattingEnabled = true;
             DefaultSoundComboBox.Location = new Point(6, 51);
             DefaultSoundComboBox.Name = "DefaultSoundComboBox";
-            DefaultSoundComboBox.Size = new Size(268, 23);
+            DefaultSoundComboBox.Size = new Size(291, 23);
             DefaultSoundComboBox.TabIndex = 2;
             DefaultSoundComboBox.SelectedIndexChanged += DefaultSoundComboBox_SelectedIndexChanged;
             // 
@@ -592,7 +622,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             colorPage.Location = new Point(4, 24);
             colorPage.Name = "colorPage";
             colorPage.Padding = new Padding(3);
-            colorPage.Size = new Size(299, 348);
+            colorPage.Size = new Size(376, 348);
             colorPage.TabIndex = 3;
             colorPage.Text = "Colors";
             colorPage.UseVisualStyleBackColor = true;
@@ -605,7 +635,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorGroupBox.Controls.Add(ColorRedLabel);
             ColorGroupBox.Location = new Point(8, 6);
             ColorGroupBox.Name = "ColorGroupBox";
-            ColorGroupBox.Size = new Size(280, 265);
+            ColorGroupBox.Size = new Size(303, 265);
             ColorGroupBox.TabIndex = 0;
             ColorGroupBox.TabStop = false;
             ColorGroupBox.Text = "Color";
@@ -616,7 +646,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorYellowLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             ColorYellowLabel.Location = new Point(6, 143);
             ColorYellowLabel.Name = "ColorYellowLabel";
-            ColorYellowLabel.Size = new Size(268, 49);
+            ColorYellowLabel.Size = new Size(291, 49);
             ColorYellowLabel.TabIndex = 11;
             ColorYellowLabel.Text = "Yellow";
             ColorYellowLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -628,7 +658,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorGreenLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             ColorGreenLabel.Location = new Point(6, 81);
             ColorGreenLabel.Name = "ColorGreenLabel";
-            ColorGreenLabel.Size = new Size(268, 49);
+            ColorGreenLabel.Size = new Size(291, 49);
             ColorGreenLabel.TabIndex = 10;
             ColorGreenLabel.Text = "Green";
             ColorGreenLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -640,7 +670,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorAlarmPastStartLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             ColorAlarmPastStartLabel.Location = new Point(6, 19);
             ColorAlarmPastStartLabel.Name = "ColorAlarmPastStartLabel";
-            ColorAlarmPastStartLabel.Size = new Size(268, 49);
+            ColorAlarmPastStartLabel.Size = new Size(291, 49);
             ColorAlarmPastStartLabel.TabIndex = 9;
             ColorAlarmPastStartLabel.Text = "Alarm Past Start";
             ColorAlarmPastStartLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -652,17 +682,270 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorRedLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             ColorRedLabel.Location = new Point(6, 205);
             ColorRedLabel.Name = "ColorRedLabel";
-            ColorRedLabel.Size = new Size(268, 49);
+            ColorRedLabel.Size = new Size(291, 49);
             ColorRedLabel.TabIndex = 8;
             ColorRedLabel.Text = "Red";
             ColorRedLabel.TextAlign = ContentAlignment.MiddleCenter;
             ColorRedLabel.Click += RedColorExampleLabel_Click;
             // 
+            // TimeTabPage
+            // 
+            TimeTabPage.Controls.Add(CategoryExceptionGroupBox);
+            TimeTabPage.Controls.Add(WorkingHoursGroupBox);
+            TimeTabPage.Location = new Point(4, 24);
+            TimeTabPage.Name = "TimeTabPage";
+            TimeTabPage.Padding = new Padding(3);
+            TimeTabPage.Size = new Size(376, 348);
+            TimeTabPage.TabIndex = 5;
+            TimeTabPage.Text = "Time";
+            TimeTabPage.UseVisualStyleBackColor = true;
+            // 
+            // CategoryExceptionGroupBox
+            // 
+            CategoryExceptionGroupBox.Controls.Add(CategoryExceptionTextBox);
+            CategoryExceptionGroupBox.Controls.Add(CategoryExceptionAddButton);
+            CategoryExceptionGroupBox.Controls.Add(CategoryExceptionListBox);
+            CategoryExceptionGroupBox.Location = new Point(8, 121);
+            CategoryExceptionGroupBox.Name = "CategoryExceptionGroupBox";
+            CategoryExceptionGroupBox.Size = new Size(360, 155);
+            CategoryExceptionGroupBox.TabIndex = 1;
+            CategoryExceptionGroupBox.TabStop = false;
+            CategoryExceptionGroupBox.Text = "Exception Categories";
+            // 
+            // CategoryExceptionTextBox
+            // 
+            CategoryExceptionTextBox.Location = new Point(6, 125);
+            CategoryExceptionTextBox.Name = "CategoryExceptionTextBox";
+            CategoryExceptionTextBox.Size = new Size(267, 23);
+            CategoryExceptionTextBox.TabIndex = 2;
+            // 
+            // CategoryExceptionAddButton
+            // 
+            CategoryExceptionAddButton.Location = new Point(279, 126);
+            CategoryExceptionAddButton.Name = "CategoryExceptionAddButton";
+            CategoryExceptionAddButton.Size = new Size(75, 23);
+            CategoryExceptionAddButton.TabIndex = 2;
+            CategoryExceptionAddButton.Text = "Add";
+            CategoryExceptionAddButton.UseVisualStyleBackColor = true;
+            CategoryExceptionAddButton.Click += CategoryExceptionAddButton_Click;
+            // 
+            // CategoryExceptionListBox
+            // 
+            CategoryExceptionListBox.FormattingEnabled = true;
+            CategoryExceptionListBox.ItemHeight = 15;
+            CategoryExceptionListBox.Location = new Point(6, 22);
+            CategoryExceptionListBox.Name = "CategoryExceptionListBox";
+            CategoryExceptionListBox.Size = new Size(348, 94);
+            CategoryExceptionListBox.TabIndex = 0;
+            // 
+            // WorkingHoursGroupBox
+            // 
+            WorkingHoursGroupBox.Controls.Add(WorkdayEnabledCheckBox);
+            WorkingHoursGroupBox.Controls.Add(WorkdayEndLabel);
+            WorkingHoursGroupBox.Controls.Add(WorkdayStartLabel);
+            WorkingHoursGroupBox.Controls.Add(WorkdayEndTimePicker);
+            WorkingHoursGroupBox.Controls.Add(WorkdayStartTimePicker);
+            WorkingHoursGroupBox.Controls.Add(SaturdayCheckBox);
+            WorkingHoursGroupBox.Controls.Add(FridayCheckBox);
+            WorkingHoursGroupBox.Controls.Add(ThursdayCheckBox);
+            WorkingHoursGroupBox.Controls.Add(WednesdayCheckBox);
+            WorkingHoursGroupBox.Controls.Add(TuesdayCheckBox);
+            WorkingHoursGroupBox.Controls.Add(MondayCheckBox);
+            WorkingHoursGroupBox.Controls.Add(SundayCheckBox);
+            WorkingHoursGroupBox.Location = new Point(8, 6);
+            WorkingHoursGroupBox.Name = "WorkingHoursGroupBox";
+            WorkingHoursGroupBox.Size = new Size(360, 109);
+            WorkingHoursGroupBox.TabIndex = 0;
+            WorkingHoursGroupBox.TabStop = false;
+            WorkingHoursGroupBox.Text = "Working Hours";
+            // 
+            // WorkdayEnabledCheckBox
+            // 
+            WorkdayEnabledCheckBox.AutoSize = true;
+            WorkdayEnabledCheckBox.Location = new Point(293, 22);
+            WorkdayEnabledCheckBox.Name = "WorkdayEnabledCheckBox";
+            WorkdayEnabledCheckBox.Size = new Size(61, 19);
+            WorkdayEnabledCheckBox.TabIndex = 11;
+            WorkdayEnabledCheckBox.Text = "Enable";
+            WorkdayEnabledCheckBox.UseVisualStyleBackColor = true;
+            WorkdayEnabledCheckBox.CheckedChanged += WorkdayEnabledCheckBox_CheckedChanged;
+            // 
+            // WorkdayEndLabel
+            // 
+            WorkdayEndLabel.AutoSize = true;
+            WorkdayEndLabel.Location = new Point(6, 56);
+            WorkdayEndLabel.Name = "WorkdayEndLabel";
+            WorkdayEndLabel.Size = new Size(56, 15);
+            WorkdayEndLabel.TabIndex = 10;
+            WorkdayEndLabel.Text = "End Time";
+            // 
+            // WorkdayStartLabel
+            // 
+            WorkdayStartLabel.AutoSize = true;
+            WorkdayStartLabel.Location = new Point(6, 27);
+            WorkdayStartLabel.Name = "WorkdayStartLabel";
+            WorkdayStartLabel.Size = new Size(60, 15);
+            WorkdayStartLabel.TabIndex = 9;
+            WorkdayStartLabel.Text = "Start Time";
+            // 
+            // WorkdayEndTimePicker
+            // 
+            WorkdayEndTimePicker.CustomFormat = "hh:mm tt";
+            WorkdayEndTimePicker.Format = DateTimePickerFormat.Custom;
+            WorkdayEndTimePicker.Location = new Point(70, 51);
+            WorkdayEndTimePicker.Name = "WorkdayEndTimePicker";
+            WorkdayEndTimePicker.ShowUpDown = true;
+            WorkdayEndTimePicker.Size = new Size(87, 23);
+            WorkdayEndTimePicker.TabIndex = 8;
+            WorkdayEndTimePicker.ValueChanged += WorkdayEndTimePicker_ValueChanged;
+            // 
+            // WorkdayStartTimePicker
+            // 
+            WorkdayStartTimePicker.CustomFormat = "hh:mm tt";
+            WorkdayStartTimePicker.Format = DateTimePickerFormat.Custom;
+            WorkdayStartTimePicker.Location = new Point(70, 22);
+            WorkdayStartTimePicker.Name = "WorkdayStartTimePicker";
+            WorkdayStartTimePicker.ShowUpDown = true;
+            WorkdayStartTimePicker.Size = new Size(87, 23);
+            WorkdayStartTimePicker.TabIndex = 1;
+            WorkdayStartTimePicker.ValueChanged += WorkdayStartTimePicker_ValueChanged;
+            // 
+            // SaturdayCheckBox
+            // 
+            SaturdayCheckBox.AutoSize = true;
+            SaturdayCheckBox.Location = new Point(307, 80);
+            SaturdayCheckBox.Name = "SaturdayCheckBox";
+            SaturdayCheckBox.Size = new Size(42, 19);
+            SaturdayCheckBox.TabIndex = 7;
+            SaturdayCheckBox.Text = "Sat";
+            SaturdayCheckBox.UseVisualStyleBackColor = true;
+            SaturdayCheckBox.CheckedChanged += SaturdayCheckBox_CheckedChanged;
+            // 
+            // FridayCheckBox
+            // 
+            FridayCheckBox.AutoSize = true;
+            FridayCheckBox.Location = new Point(264, 80);
+            FridayCheckBox.Name = "FridayCheckBox";
+            FridayCheckBox.Size = new Size(39, 19);
+            FridayCheckBox.TabIndex = 6;
+            FridayCheckBox.Text = "Fri";
+            FridayCheckBox.UseVisualStyleBackColor = true;
+            FridayCheckBox.CheckedChanged += FridayCheckBox_CheckedChanged;
+            // 
+            // ThursdayCheckBox
+            // 
+            ThursdayCheckBox.AutoSize = true;
+            ThursdayCheckBox.Location = new Point(214, 80);
+            ThursdayCheckBox.Name = "ThursdayCheckBox";
+            ThursdayCheckBox.Size = new Size(46, 19);
+            ThursdayCheckBox.TabIndex = 5;
+            ThursdayCheckBox.Text = "Thu";
+            ThursdayCheckBox.UseVisualStyleBackColor = true;
+            ThursdayCheckBox.CheckedChanged += ThursdayCheckBox_CheckedChanged;
+            // 
+            // WednesdayCheckBox
+            // 
+            WednesdayCheckBox.AutoSize = true;
+            WednesdayCheckBox.Location = new Point(160, 80);
+            WednesdayCheckBox.Name = "WednesdayCheckBox";
+            WednesdayCheckBox.Size = new Size(50, 19);
+            WednesdayCheckBox.TabIndex = 4;
+            WednesdayCheckBox.Text = "Wed";
+            WednesdayCheckBox.UseVisualStyleBackColor = true;
+            WednesdayCheckBox.CheckedChanged += WednesdayCheckBox_CheckedChanged;
+            // 
+            // TuesdayCheckBox
+            // 
+            TuesdayCheckBox.AutoSize = true;
+            TuesdayCheckBox.Location = new Point(111, 80);
+            TuesdayCheckBox.Name = "TuesdayCheckBox";
+            TuesdayCheckBox.Size = new Size(45, 19);
+            TuesdayCheckBox.TabIndex = 3;
+            TuesdayCheckBox.Text = "Tue";
+            TuesdayCheckBox.UseVisualStyleBackColor = true;
+            TuesdayCheckBox.CheckedChanged += TuesdayCheckBox_CheckedChanged;
+            // 
+            // MondayCheckBox
+            // 
+            MondayCheckBox.AutoSize = true;
+            MondayCheckBox.Location = new Point(56, 80);
+            MondayCheckBox.Name = "MondayCheckBox";
+            MondayCheckBox.Size = new Size(51, 19);
+            MondayCheckBox.TabIndex = 2;
+            MondayCheckBox.Text = "Mon";
+            MondayCheckBox.UseVisualStyleBackColor = true;
+            MondayCheckBox.CheckedChanged += MondayCheckBox_CheckedChanged;
+            // 
+            // SundayCheckBox
+            // 
+            SundayCheckBox.AutoSize = true;
+            SundayCheckBox.Location = new Point(6, 80);
+            SundayCheckBox.Name = "SundayCheckBox";
+            SundayCheckBox.Size = new Size(46, 19);
+            SundayCheckBox.TabIndex = 1;
+            SundayCheckBox.Text = "Sun";
+            SundayCheckBox.UseVisualStyleBackColor = true;
+            SundayCheckBox.CheckedChanged += SundayCheckBox_CheckedChanged;
+            // 
+            // HolidayTabPage
+            // 
+            HolidayTabPage.Controls.Add(HolidaysGroupBox);
+            HolidayTabPage.Location = new Point(4, 24);
+            HolidayTabPage.Name = "HolidayTabPage";
+            HolidayTabPage.Padding = new Padding(3);
+            HolidayTabPage.Size = new Size(376, 348);
+            HolidayTabPage.TabIndex = 6;
+            HolidayTabPage.Text = "Holidays";
+            HolidayTabPage.UseVisualStyleBackColor = true;
+            // 
+            // HolidaysGroupBox
+            // 
+            HolidaysGroupBox.Controls.Add(HolidayListView);
+            HolidaysGroupBox.Controls.Add(HolidayEditButton);
+            HolidaysGroupBox.Controls.Add(HolidayAddButton);
+            HolidaysGroupBox.Location = new Point(6, 6);
+            HolidaysGroupBox.Name = "HolidaysGroupBox";
+            HolidaysGroupBox.Size = new Size(362, 334);
+            HolidaysGroupBox.TabIndex = 4;
+            HolidaysGroupBox.TabStop = false;
+            HolidaysGroupBox.Text = "Holidays";
+            // 
+            // HolidayListView
+            // 
+            HolidayListView.AutoArrange = false;
+            HolidayListView.Location = new Point(6, 22);
+            HolidayListView.MultiSelect = false;
+            HolidayListView.Name = "HolidayListView";
+            HolidayListView.ShowGroups = false;
+            HolidayListView.Size = new Size(350, 277);
+            HolidayListView.TabIndex = 4;
+            HolidayListView.UseCompatibleStateImageBehavior = false;
+            // 
+            // HolidayEditButton
+            // 
+            HolidayEditButton.Location = new Point(184, 305);
+            HolidayEditButton.Name = "HolidayEditButton";
+            HolidayEditButton.Size = new Size(91, 23);
+            HolidayEditButton.TabIndex = 3;
+            HolidayEditButton.Text = "Edit Selected";
+            HolidayEditButton.UseVisualStyleBackColor = true;
+            HolidayEditButton.Click += HolidayEdit_Click;
+            // 
+            // HolidayAddButton
+            // 
+            HolidayAddButton.Location = new Point(281, 305);
+            HolidayAddButton.Name = "HolidayAddButton";
+            HolidayAddButton.Size = new Size(75, 23);
+            HolidayAddButton.TabIndex = 2;
+            HolidayAddButton.Text = "Add";
+            HolidayAddButton.UseVisualStyleBackColor = true;
+            HolidayAddButton.Click += HolidayAddButton_Click;
+            // 
             // SettingsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(307, 376);
+            ClientSize = new Size(384, 376);
             Controls.Add(settingsTabControl);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
@@ -709,6 +992,13 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ((System.ComponentModel.ISupportInitialize)OffAfterStartNumericUpDown).EndInit();
             colorPage.ResumeLayout(false);
             ColorGroupBox.ResumeLayout(false);
+            TimeTabPage.ResumeLayout(false);
+            CategoryExceptionGroupBox.ResumeLayout(false);
+            CategoryExceptionGroupBox.PerformLayout();
+            WorkingHoursGroupBox.ResumeLayout(false);
+            WorkingHoursGroupBox.PerformLayout();
+            HolidayTabPage.ResumeLayout(false);
+            HolidaysGroupBox.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -768,5 +1058,28 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
         private Label ColorAlarmPastStartLabel;
         private GroupBox StartupGroupBox;
         private CheckBox RunOnStartCheckBox;
+        private TabPage TimeTabPage;
+        private GroupBox WorkingHoursGroupBox;
+        private CheckBox SaturdayCheckBox;
+        private CheckBox FridayCheckBox;
+        private CheckBox ThursdayCheckBox;
+        private CheckBox WednesdayCheckBox;
+        private CheckBox TuesdayCheckBox;
+        private CheckBox MondayCheckBox;
+        private CheckBox SundayCheckBox;
+        private Label WorkdayEndLabel;
+        private Label WorkdayStartLabel;
+        private DateTimePicker WorkdayEndTimePicker;
+        private DateTimePicker WorkdayStartTimePicker;
+        private CheckBox WorkdayEnabledCheckBox;
+        private GroupBox CategoryExceptionGroupBox;
+        private TextBox CategoryExceptionTextBox;
+        private Button CategoryExceptionAddButton;
+        private ListBox CategoryExceptionListBox;
+        private TabPage HolidayTabPage;
+        private GroupBox HolidaysGroupBox;
+        private ListView HolidayListView;
+        private Button HolidayEditButton;
+        private Button HolidayAddButton;
     }
 }
