@@ -154,8 +154,10 @@ public partial class MainForm : BaseForm, IMainForm
     /// <param name="e">An EventArgs that contains the event data.</param>
     internal void RightClickMenu_AboutClick(object? sender, EventArgs e)
     {
+        var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+
         // Implement your About functionality here
-        MessageBox.Show(@"Outlook Alarm by Garage Kept");
+        MessageBox.Show(@"Outlook Alarm by Garage Kept " + version);
     }
 
     /// <summary>

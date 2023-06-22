@@ -178,14 +178,14 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             MainGroupBox.Controls.Add(MinimumWidthTrackBar);
             MainGroupBox.Location = new Point(8, 244);
             MainGroupBox.Name = "MainGroupBox";
-            MainGroupBox.Size = new Size(303, 98);
+            MainGroupBox.Size = new Size(360, 98);
             MainGroupBox.TabIndex = 22;
             MainGroupBox.TabStop = false;
             MainGroupBox.Text = "Main";
             // 
             // MinimumWidthNumericUpDown
             // 
-            MinimumWidthNumericUpDown.Location = new Point(217, 22);
+            MinimumWidthNumericUpDown.Location = new Point(274, 22);
             MinimumWidthNumericUpDown.Name = "MinimumWidthNumericUpDown";
             MinimumWidthNumericUpDown.Size = new Size(80, 23);
             MinimumWidthNumericUpDown.TabIndex = 19;
@@ -205,7 +205,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             MinimumWidthTrackBar.Location = new Point(6, 51);
             MinimumWidthTrackBar.Maximum = 5120;
             MinimumWidthTrackBar.Name = "MinimumWidthTrackBar";
-            MinimumWidthTrackBar.Size = new Size(291, 45);
+            MinimumWidthTrackBar.Size = new Size(348, 45);
             MinimumWidthTrackBar.TabIndex = 18;
             MinimumWidthTrackBar.ValueChanged += MinimumWidthTrackBar_ValueChanged;
             // 
@@ -218,14 +218,14 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             SliderGroupBox.Controls.Add(SliderSpeedTrackBar);
             SliderGroupBox.Location = new Point(8, 111);
             SliderGroupBox.Name = "SliderGroupBox";
-            SliderGroupBox.Size = new Size(303, 127);
+            SliderGroupBox.Size = new Size(360, 127);
             SliderGroupBox.TabIndex = 21;
             SliderGroupBox.TabStop = false;
             SliderGroupBox.Text = "Slider";
             // 
             // BarHeightNumericUpDown
             // 
-            BarHeightNumericUpDown.Location = new Point(217, 22);
+            BarHeightNumericUpDown.Location = new Point(274, 22);
             BarHeightNumericUpDown.Name = "BarHeightNumericUpDown";
             BarHeightNumericUpDown.Size = new Size(80, 23);
             BarHeightNumericUpDown.TabIndex = 3;
@@ -244,7 +244,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // SliderSpeedNumericUpDown
             // 
-            SliderSpeedNumericUpDown.Location = new Point(217, 51);
+            SliderSpeedNumericUpDown.Location = new Point(274, 51);
             SliderSpeedNumericUpDown.Name = "SliderSpeedNumericUpDown";
             SliderSpeedNumericUpDown.Size = new Size(80, 23);
             SliderSpeedNumericUpDown.TabIndex = 11;
@@ -266,7 +266,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             SliderSpeedTrackBar.Location = new Point(8, 80);
             SliderSpeedTrackBar.Maximum = 5120;
             SliderSpeedTrackBar.Name = "SliderSpeedTrackBar";
-            SliderSpeedTrackBar.Size = new Size(289, 45);
+            SliderSpeedTrackBar.Size = new Size(346, 45);
             SliderSpeedTrackBar.TabIndex = 8;
             SliderSpeedTrackBar.ValueChanged += SliderSpeedTrackBar_ValueChanged;
             SliderSpeedTrackBar.Enter += SliderSpeedTrackBar_Enter;
@@ -279,7 +279,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             SizeGroupBox.Controls.Add(LeftTrackBar);
             SizeGroupBox.Location = new Point(8, 6);
             SizeGroupBox.Name = "SizeGroupBox";
-            SizeGroupBox.Size = new Size(303, 99);
+            SizeGroupBox.Size = new Size(360, 99);
             SizeGroupBox.TabIndex = 20;
             SizeGroupBox.TabStop = false;
             SizeGroupBox.Text = "Location";
@@ -287,7 +287,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // LeftNumericUpDown
             // 
             LeftNumericUpDown.ImeMode = ImeMode.NoControl;
-            LeftNumericUpDown.Location = new Point(217, 22);
+            LeftNumericUpDown.Location = new Point(274, 22);
             LeftNumericUpDown.Name = "LeftNumericUpDown";
             LeftNumericUpDown.Size = new Size(80, 23);
             LeftNumericUpDown.TabIndex = 10;
@@ -307,7 +307,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             LeftTrackBar.Location = new Point(8, 51);
             LeftTrackBar.Maximum = 5120;
             LeftTrackBar.Name = "LeftTrackBar";
-            LeftTrackBar.Size = new Size(289, 45);
+            LeftTrackBar.Size = new Size(346, 45);
             LeftTrackBar.TabIndex = 1;
             LeftTrackBar.Scroll += LeftTrackBarScroll;
             // 
@@ -332,7 +332,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AlarmLocationGroupBox.Controls.Add(AlarmLocationTopLabel);
             AlarmLocationGroupBox.Location = new Point(8, 203);
             AlarmLocationGroupBox.Name = "AlarmLocationGroupBox";
-            AlarmLocationGroupBox.Size = new Size(303, 86);
+            AlarmLocationGroupBox.Size = new Size(360, 86);
             AlarmLocationGroupBox.TabIndex = 13;
             AlarmLocationGroupBox.TabStop = false;
             AlarmLocationGroupBox.Text = "Location";
@@ -348,7 +348,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // AlarmLocationLeftNumericUpDown
             // 
-            AlarmLocationLeftNumericUpDown.Location = new Point(177, 51);
+            AlarmLocationLeftNumericUpDown.Location = new Point(48, 51);
             AlarmLocationLeftNumericUpDown.Name = "AlarmLocationLeftNumericUpDown";
             AlarmLocationLeftNumericUpDown.Size = new Size(120, 23);
             AlarmLocationLeftNumericUpDown.TabIndex = 15;
@@ -356,7 +356,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // AlarmLocationTopNumericUpDown
             // 
-            AlarmLocationTopNumericUpDown.Location = new Point(177, 22);
+            AlarmLocationTopNumericUpDown.Location = new Point(48, 22);
             AlarmLocationTopNumericUpDown.Name = "AlarmLocationTopNumericUpDown";
             AlarmLocationTopNumericUpDown.Size = new Size(120, 23);
             AlarmLocationTopNumericUpDown.TabIndex = 1;
@@ -381,7 +381,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             StringFormatGroupBox.Controls.Add(TimeLeftFormatExampleTextBox);
             StringFormatGroupBox.Location = new Point(8, 68);
             StringFormatGroupBox.Name = "StringFormatGroupBox";
-            StringFormatGroupBox.Size = new Size(303, 125);
+            StringFormatGroupBox.Size = new Size(360, 125);
             StringFormatGroupBox.TabIndex = 12;
             StringFormatGroupBox.TabStop = false;
             StringFormatGroupBox.Text = "Formating";
@@ -398,7 +398,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // AlarmStartFormatExampleLabel
             // 
             AlarmStartFormatExampleLabel.AutoSize = true;
-            AlarmStartFormatExampleLabel.Location = new Point(226, 74);
+            AlarmStartFormatExampleLabel.Location = new Point(283, 74);
             AlarmStartFormatExampleLabel.Name = "AlarmStartFormatExampleLabel";
             AlarmStartFormatExampleLabel.Size = new Size(71, 15);
             AlarmStartFormatExampleLabel.TabIndex = 11;
@@ -408,7 +408,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             AlarmStartFormatTextBox.Location = new Point(6, 92);
             AlarmStartFormatTextBox.Name = "AlarmStartFormatTextBox";
-            AlarmStartFormatTextBox.Size = new Size(291, 23);
+            AlarmStartFormatTextBox.Size = new Size(348, 23);
             AlarmStartFormatTextBox.TabIndex = 12;
             AlarmStartFormatTextBox.TextChanged += AlarmStartFormatTextBox_TextChanged;
             // 
@@ -424,7 +424,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // TimeLeftFormatExampleLabel
             // 
             TimeLeftFormatExampleLabel.AutoSize = true;
-            TimeLeftFormatExampleLabel.Location = new Point(226, 19);
+            TimeLeftFormatExampleLabel.Location = new Point(283, 19);
             TimeLeftFormatExampleLabel.Name = "TimeLeftFormatExampleLabel";
             TimeLeftFormatExampleLabel.Size = new Size(71, 15);
             TimeLeftFormatExampleLabel.TabIndex = 8;
@@ -434,7 +434,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             TimeLeftFormatExampleTextBox.Location = new Point(6, 37);
             TimeLeftFormatExampleTextBox.Name = "TimeLeftFormatExampleTextBox";
-            TimeLeftFormatExampleTextBox.Size = new Size(291, 23);
+            TimeLeftFormatExampleTextBox.Size = new Size(348, 23);
             TimeLeftFormatExampleTextBox.TabIndex = 9;
             TimeLeftFormatExampleTextBox.TextChanged += TimeLeftFormatExampleTextBox_TextChanged;
             // 
@@ -444,14 +444,14 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AlarmWarningBox.Controls.Add(AlarmWarningTimeLabel);
             AlarmWarningBox.Location = new Point(8, 6);
             AlarmWarningBox.Name = "AlarmWarningBox";
-            AlarmWarningBox.Size = new Size(303, 56);
+            AlarmWarningBox.Size = new Size(360, 56);
             AlarmWarningBox.TabIndex = 11;
             AlarmWarningBox.TabStop = false;
             AlarmWarningBox.Text = "Warning Options";
             // 
             // AlarmWarningTimeNumericUpDown
             // 
-            AlarmWarningTimeNumericUpDown.Location = new Point(177, 22);
+            AlarmWarningTimeNumericUpDown.Location = new Point(128, 22);
             AlarmWarningTimeNumericUpDown.Name = "AlarmWarningTimeNumericUpDown";
             AlarmWarningTimeNumericUpDown.Size = new Size(120, 23);
             AlarmWarningTimeNumericUpDown.TabIndex = 1;
@@ -483,7 +483,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             StartupGroupBox.Controls.Add(RunOnStartCheckBox);
             StartupGroupBox.Location = new Point(8, 96);
             StartupGroupBox.Name = "StartupGroupBox";
-            StartupGroupBox.Size = new Size(303, 54);
+            StartupGroupBox.Size = new Size(360, 54);
             StartupGroupBox.TabIndex = 15;
             StartupGroupBox.TabStop = false;
             StartupGroupBox.Text = "Startup Options";
@@ -507,7 +507,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             FetchGroupBox.Controls.Add(FetchIntervalLabel);
             FetchGroupBox.Location = new Point(8, 6);
             FetchGroupBox.Name = "FetchGroupBox";
-            FetchGroupBox.Size = new Size(303, 84);
+            FetchGroupBox.Size = new Size(360, 84);
             FetchGroupBox.TabIndex = 14;
             FetchGroupBox.TabStop = false;
             FetchGroupBox.Text = "Fetch";
@@ -523,7 +523,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // FetchTimeNumericUpDown
             // 
-            FetchTimeNumericUpDown.Location = new Point(186, 51);
+            FetchTimeNumericUpDown.Location = new Point(243, 51);
             FetchTimeNumericUpDown.Name = "FetchTimeNumericUpDown";
             FetchTimeNumericUpDown.Size = new Size(111, 23);
             FetchTimeNumericUpDown.TabIndex = 15;
@@ -531,7 +531,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // FetchIntervalNumericUpDown
             // 
-            FetchIntervalNumericUpDown.Location = new Point(186, 22);
+            FetchIntervalNumericUpDown.Location = new Point(243, 22);
             FetchIntervalNumericUpDown.Name = "FetchIntervalNumericUpDown";
             FetchIntervalNumericUpDown.Size = new Size(111, 23);
             FetchIntervalNumericUpDown.TabIndex = 1;
@@ -566,14 +566,14 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AudioOptionsgroupBox.Controls.Add(DefaultSoundLabel);
             AudioOptionsgroupBox.Location = new Point(8, 6);
             AudioOptionsgroupBox.Name = "AudioOptionsgroupBox";
-            AudioOptionsgroupBox.Size = new Size(303, 111);
+            AudioOptionsgroupBox.Size = new Size(360, 111);
             AudioOptionsgroupBox.TabIndex = 0;
             AudioOptionsgroupBox.TabStop = false;
             AudioOptionsgroupBox.Text = "Options";
             // 
             // PlayTestButton
             // 
-            PlayTestButton.Location = new Point(222, 22);
+            PlayTestButton.Location = new Point(279, 22);
             PlayTestButton.Name = "PlayTestButton";
             PlayTestButton.Size = new Size(75, 23);
             PlayTestButton.TabIndex = 1;
@@ -592,7 +592,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             // 
             // OffAfterStartNumericUpDown
             // 
-            OffAfterStartNumericUpDown.Location = new Point(200, 80);
+            OffAfterStartNumericUpDown.Location = new Point(257, 80);
             OffAfterStartNumericUpDown.Name = "OffAfterStartNumericUpDown";
             OffAfterStartNumericUpDown.Size = new Size(97, 23);
             OffAfterStartNumericUpDown.TabIndex = 3;
@@ -603,7 +603,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             DefaultSoundComboBox.FormattingEnabled = true;
             DefaultSoundComboBox.Location = new Point(6, 51);
             DefaultSoundComboBox.Name = "DefaultSoundComboBox";
-            DefaultSoundComboBox.Size = new Size(291, 23);
+            DefaultSoundComboBox.Size = new Size(348, 23);
             DefaultSoundComboBox.TabIndex = 2;
             DefaultSoundComboBox.SelectedIndexChanged += DefaultSoundComboBox_SelectedIndexChanged;
             // 
@@ -635,7 +635,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorGroupBox.Controls.Add(ColorRedLabel);
             ColorGroupBox.Location = new Point(8, 6);
             ColorGroupBox.Name = "ColorGroupBox";
-            ColorGroupBox.Size = new Size(303, 265);
+            ColorGroupBox.Size = new Size(360, 265);
             ColorGroupBox.TabIndex = 0;
             ColorGroupBox.TabStop = false;
             ColorGroupBox.Text = "Color";
@@ -646,7 +646,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorYellowLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             ColorYellowLabel.Location = new Point(6, 143);
             ColorYellowLabel.Name = "ColorYellowLabel";
-            ColorYellowLabel.Size = new Size(291, 49);
+            ColorYellowLabel.Size = new Size(348, 49);
             ColorYellowLabel.TabIndex = 11;
             ColorYellowLabel.Text = "Yellow";
             ColorYellowLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -658,7 +658,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorGreenLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             ColorGreenLabel.Location = new Point(6, 81);
             ColorGreenLabel.Name = "ColorGreenLabel";
-            ColorGreenLabel.Size = new Size(291, 49);
+            ColorGreenLabel.Size = new Size(348, 49);
             ColorGreenLabel.TabIndex = 10;
             ColorGreenLabel.Text = "Green";
             ColorGreenLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -670,7 +670,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorAlarmPastStartLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             ColorAlarmPastStartLabel.Location = new Point(6, 19);
             ColorAlarmPastStartLabel.Name = "ColorAlarmPastStartLabel";
-            ColorAlarmPastStartLabel.Size = new Size(291, 49);
+            ColorAlarmPastStartLabel.Size = new Size(348, 49);
             ColorAlarmPastStartLabel.TabIndex = 9;
             ColorAlarmPastStartLabel.Text = "Alarm Past Start";
             ColorAlarmPastStartLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -682,7 +682,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ColorRedLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             ColorRedLabel.Location = new Point(6, 205);
             ColorRedLabel.Name = "ColorRedLabel";
-            ColorRedLabel.Size = new Size(291, 49);
+            ColorRedLabel.Size = new Size(348, 49);
             ColorRedLabel.TabIndex = 8;
             ColorRedLabel.Text = "Red";
             ColorRedLabel.TextAlign = ContentAlignment.MiddleCenter;
