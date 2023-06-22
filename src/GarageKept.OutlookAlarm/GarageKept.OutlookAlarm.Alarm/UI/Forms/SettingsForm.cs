@@ -175,7 +175,8 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         // Set the found item as the selected item
         DefaultSoundComboBox.SelectedItem = defaultSound;
-
+        
+        DefaultSoundComboBox.SelectedIndexChanged -= DefaultSoundComboBox_SelectedIndexChanged;
         DefaultSoundComboBox.SelectedIndexChanged += DefaultSoundComboBox_SelectedIndexChanged;
 
         #endregion
@@ -284,6 +285,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         var holidayEdit = new ToolStripMenuItem("Edit Selected");
         holidayEdit.Click += HolidayEdit_Click;
+        holidayToolStrip.Items.Add(holidayEdit);
 
         HolidayListView.ContextMenuStrip = holidayToolStrip;
 
@@ -373,6 +375,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         // Initialize and set up the sliding timer
         _slidingTimer = new Timer { Interval = 10 };
+        _slidingTimer.Tick -= SlidingTimer_Tick;
         _slidingTimer.Tick += SlidingTimer_Tick;
         _slidingTimer.Enabled = true;
         _slidingTimer.Start();

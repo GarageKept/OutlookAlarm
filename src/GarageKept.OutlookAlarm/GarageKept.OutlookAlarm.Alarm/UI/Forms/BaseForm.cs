@@ -47,10 +47,11 @@ public class BaseForm : Form
     /// <summary>
     ///     Gets or sets a value indicating whether the form should be pinned to the top of the screen.
     /// </summary>
-    internal bool PinTop { get; set; }
+    private bool PinTop { get; }
 
-    public static Color DetermineTextColor(Color backgroundColor)
+    protected static Color DetermineTextColor(Color backgroundColor)
     {
+        // ReSharper disable once PossibleLossOfFraction
         double brightness = (backgroundColor.R * 299 + backgroundColor.G * 587 + backgroundColor.B * 114) / 1000;
 
         return brightness >= 128
@@ -65,7 +66,7 @@ public class BaseForm : Form
     /// <summary>
     ///     Event handler for MouseDown event, begins form dragging.
     /// </summary>
-    internal void MouseDownHandler(object? sender, MouseEventArgs e)
+    private void MouseDownHandler(object? sender, MouseEventArgs e)
     {
         if (e.Button == MouseButtons.Left)
         {
@@ -78,31 +79,30 @@ public class BaseForm : Form
     /// <summary>
     ///     Event handler for MouseMove event, updates form location while dragging.
     /// </summary>
-    internal void MouseMoveHandler(object? sender, MouseEventArgs e)
+    private void MouseMoveHandler(object? sender, MouseEventArgs e)
     {
-        if (_isDragging)
+        if (!_isDragging) return;
+
+        var xDelta = Cursor.Position.X - _dragCursorPoint.X;
+        var x = _dragFormPoint.X + xDelta;
+        x = Math.Max(0, Math.Min(x, ScreenWidth - Width));
+
+        var y = 0;
+
+        if (!PinTop)
         {
-            var xDelta = Cursor.Position.X - _dragCursorPoint.X;
-            var x = _dragFormPoint.X + xDelta;
-            x = Math.Max(0, Math.Min(x, ScreenWidth - Width));
-
-            var y = 0;
-
-            if (!PinTop)
-            {
-                var yDelta = Cursor.Position.Y - _dragCursorPoint.Y;
-                y = _dragFormPoint.Y + yDelta;
-                y = Math.Max(0, Math.Min(y, ScreenHeight - Height));
-            }
-
-            Location = new Point(x, y);
+            var yDelta = Cursor.Position.Y - _dragCursorPoint.Y;
+            y = _dragFormPoint.Y + yDelta;
+            y = Math.Max(0, Math.Min(y, ScreenHeight - Height));
         }
+
+        Location = new Point(x, y);
     }
 
     /// <summary>
     ///     Event handler for MouseUp event, ends form dragging.
     /// </summary>
-    internal void MouseUpHandler(object? sender, MouseEventArgs e)
+    private void MouseUpHandler(object? sender, MouseEventArgs e)
     {
         if (e.Button == MouseButtons.Left) _isDragging = false;
     }
@@ -111,10 +111,15 @@ public class BaseForm : Form
     ///     Adds mouse event handlers to a given control and all its children.
     /// </summary>
     /// <param name="control">The control to add event handlers to.</param>
-    public void SetDraggable(Control control)
+    protected void SetDraggable(Control control)
     {
+        control.MouseDown -= MouseDownHandler;
         control.MouseDown += MouseDownHandler;
+        
+        control.MouseMove -= MouseMoveHandler;
         control.MouseMove += MouseMoveHandler;
+        
+        control.MouseUp -= MouseUpHandler;
         control.MouseUp += MouseUpHandler;
 
         foreach (Control child in control.Controls) SetDraggable(child);

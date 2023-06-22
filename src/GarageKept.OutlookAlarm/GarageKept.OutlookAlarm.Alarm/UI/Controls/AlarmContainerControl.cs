@@ -15,9 +15,13 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
 
         if (Program.AlarmManager != null)
         {
+            Program.AlarmManager.AlarmAdded -= UpdateAppointmentControls;
             Program.AlarmManager.AlarmAdded += UpdateAppointmentControls;
+            Program.AlarmManager.AlarmChanged -= UpdateAppointmentControls;
             Program.AlarmManager.AlarmChanged += UpdateAppointmentControls;
+            Program.AlarmManager.AlarmRemoved -= UpdateAppointmentControls;
             Program.AlarmManager.AlarmRemoved += UpdateAppointmentControls;
+            Program.AlarmManager.AlarmsUpdated -= UpdateAppointmentControls;
             Program.AlarmManager.AlarmsUpdated += UpdateAppointmentControls;
         }
         
@@ -160,7 +164,6 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
 
                 if (_alarmControls[i]!.Alarm is not null)
                 {
-                    //_alarmControls[i]!.Visible = true;
                     RowStyles[i] = new RowStyle(SizeType.AutoSize);
                 }
                 else

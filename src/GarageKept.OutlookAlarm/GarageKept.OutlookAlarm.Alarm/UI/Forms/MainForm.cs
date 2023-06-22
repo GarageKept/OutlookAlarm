@@ -73,7 +73,9 @@ public partial class MainForm : BaseForm, IMainForm
     /// <param name="control">The control we are adding mouse events to.</param>
     public void AddMouseEvents(Control control)
     {
+        control.MouseEnter -= ChildControl_MouseEnter;
         control.MouseEnter += ChildControl_MouseEnter;
+        control.MouseLeave -= ChildControl_MouseLeave;
         control.MouseLeave += ChildControl_MouseLeave;
 
         foreach (Control child in control.Controls) AddMouseEvents(child);

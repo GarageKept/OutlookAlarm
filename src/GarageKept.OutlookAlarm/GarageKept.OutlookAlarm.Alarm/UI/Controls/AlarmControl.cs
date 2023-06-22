@@ -8,6 +8,7 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 public partial class AlarmControl : UserControl, IAlarmControl
 {
     private readonly ContextMenuStrip _appointmentContextMenuStrip = new();
+    private IAlarm? _alarm;
 
     public AlarmControl()
     {
@@ -25,7 +26,16 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
     private Timer RefreshTimer { get; } = new() { Interval = 1000 };
 
-    public IAlarm? Alarm { get; set; }
+    public IAlarm? Alarm
+    {
+        get => _alarm;
+        set
+        {
+            _alarm = value; 
+
+            UpdateDisplay();
+        }
+    }
 
     public void StopTimers()
     {
@@ -59,6 +69,8 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
         ContextMenuStrip = _appointmentContextMenuStrip;
 
+
+        MouseDown -= Control_MouseDown;
         MouseDown += Control_MouseDown;
     }
 

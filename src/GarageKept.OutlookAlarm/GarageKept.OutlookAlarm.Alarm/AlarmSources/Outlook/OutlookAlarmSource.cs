@@ -11,6 +11,18 @@ namespace GarageKept.OutlookAlarm.Alarm.AlarmSources.Outlook;
 /// </summary>
 public class OutlookAlarmSource : IAlarmSource
 {
+
+    private Application OutlookApp { get; }
+    private NameSpace OutlookNamespace { get; }
+    private MAPIFolder CalendarFolder { get; }
+
+    public OutlookAlarmSource()
+    {
+        OutlookApp = new Application();
+        OutlookNamespace = OutlookApp.GetNamespace(@"MAPI");
+        CalendarFolder = OutlookNamespace.GetDefaultFolder(OlDefaultFolders.olFolderCalendar);
+    }
+
     /// <summary>
     ///     Retrieves a list of Outlook appointment items within the specified number of hours from now.
     /// </summary>
@@ -20,14 +32,10 @@ public class OutlookAlarmSource : IAlarmSource
     {
         try
         {
-            var outlookApp = new Application();
-            var outlookNamespace = outlookApp.GetNamespace(@"MAPI");
-            var calendarFolder = outlookNamespace.GetDefaultFolder(OlDefaultFolders.olFolderCalendar);
-
             var startDateTime = DateTime.Now;
             var endDateTime = startDateTime.AddHours(hours);
 
-            var calendarItems = calendarFolder.Items;
+            var calendarItems = CalendarFolder.Items;
             calendarItems.IncludeRecurrences = true;
             calendarItems.Sort("[Start]", Type.Missing);
             calendarItems = calendarItems.Restrict($"[Start] <= '{endDateTime:g}' AND [End] >= '{startDateTime:g}' AND [End] > '{DateTime.Now:g}'");
@@ -39,9 +47,6 @@ public class OutlookAlarmSource : IAlarmSource
 
             // Release and dispose COM objects
             Marshal.ReleaseComObject(calendarItems);
-            Marshal.ReleaseComObject(calendarFolder);
-            Marshal.ReleaseComObject(outlookNamespace);
-            Marshal.ReleaseComObject(outlookApp);
 
             return appointments.ToList();
         }
@@ -51,8 +56,10 @@ public class OutlookAlarmSource : IAlarmSource
         }
     }
 
-    public void Dispose()
+    void IDisposable.Dispose()
     {
-        GC.SuppressFinalize(this);
+        Marshal.ReleaseComObject(OutlookApp);
+        Marshal.ReleaseComObject(OutlookNamespace);
+        Marshal.ReleaseComObject(CalendarFolder);
     }
 }

@@ -62,7 +62,8 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         {
             Interval = 1000 // 1000 ms = 1 second
         };
-
+        
+        _refreshTimer.Tick -= FormRefresh;
         _refreshTimer.Tick += FormRefresh;
         _refreshTimer.Start();
 
