@@ -21,7 +21,8 @@ internal static class AudioEngine
 
             var iidAudioEndpointVolume = Iid.IAudioEndpointVolume;
 
-            hr = device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero, out var endpointVolumeObj);
+            hr = device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero,
+                out var endpointVolumeObj);
             if (hr != 0) return null;
 
             if (endpointVolumeObj is not IAudioEndpointVolume endpointVolume) return null;
@@ -56,7 +57,8 @@ internal static class AudioEngine
         var iidAudioEndpointVolume = Iid.IAudioEndpointVolume;
 
 
-        device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero, out var endpointVolumeObj);
+        device.Activate(ref iidAudioEndpointVolume, unchecked((int)CLSCTX.CLSCTX_ALL), nint.Zero,
+            out var endpointVolumeObj);
 
         var endpointVolume = (IAudioEndpointVolume)endpointVolumeObj;
 
@@ -108,7 +110,11 @@ internal static class AudioEngine
         CLSCTX_ENABLE_CLOAKING = 0x100000,
         CLSCTX_PS_DLL = 0x80000000,
 
-        CLSCTX_ALL = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER | CLSCTX_LOCAL_SERVER | CLSCTX_REMOTE_SERVER | CLSCTX_NO_CODE_DOWNLOAD | CLSCTX_NO_CUSTOM_MARSHAL | CLSCTX_ENABLE_CODE_DOWNLOAD | CLSCTX_NO_FAILURE_LOG | CLSCTX_DISABLE_AAA | CLSCTX_ENABLE_AAA | CLSCTX_FROM_DEFAULT_CONTEXT | CLSCTX_ACTIVATE_32_BIT_SERVER | CLSCTX_ACTIVATE_64_BIT_SERVER | CLSCTX_ENABLE_CLOAKING | CLSCTX_PS_DLL
+        CLSCTX_ALL = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER | CLSCTX_LOCAL_SERVER | CLSCTX_REMOTE_SERVER |
+                     CLSCTX_NO_CODE_DOWNLOAD | CLSCTX_NO_CUSTOM_MARSHAL | CLSCTX_ENABLE_CODE_DOWNLOAD |
+                     CLSCTX_NO_FAILURE_LOG | CLSCTX_DISABLE_AAA | CLSCTX_ENABLE_AAA | CLSCTX_FROM_DEFAULT_CONTEXT |
+                     CLSCTX_ACTIVATE_32_BIT_SERVER | CLSCTX_ACTIVATE_64_BIT_SERVER | CLSCTX_ENABLE_CLOAKING |
+                     CLSCTX_PS_DLL
     }
 
     private static class Clsid
@@ -152,7 +158,8 @@ internal static class AudioEngine
     private interface IMMDevice
     {
         [PreserveSig]
-        int Activate(ref Guid iid, int dwClsCtx, nint pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
+        int Activate(ref Guid iid, int dwClsCtx, nint pActivationParams,
+            [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
     }
 
     [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6")]

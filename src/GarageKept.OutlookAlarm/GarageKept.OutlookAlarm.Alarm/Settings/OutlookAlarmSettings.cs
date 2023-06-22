@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Windows.Forms.VisualStyles;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 
 namespace GarageKept.OutlookAlarm.Alarm.Settings;
@@ -34,7 +33,13 @@ public class OutlookAlarmSettings : ISettings
         return settingsFilePath;
     }
 
-    private static JsonSerializerOptions GetJsonSerializeOptions() { return new JsonSerializerOptions { PropertyNameCaseInsensitive = true, WriteIndented = true, Converters = { new ColorJsonConverter() } }; }
+    private static JsonSerializerOptions GetJsonSerializeOptions()
+    {
+        return new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true, WriteIndented = true, Converters = { new ColorJsonConverter() }
+        };
+    }
 
     private static string GetSettingsFile()
     {
@@ -58,7 +63,8 @@ public class OutlookAlarmSettings : ISettings
             var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new ColorJsonConverter() } };
 
             // Use the JsonSerializer to deserialize the settings.
-            settings = JsonSerializer.Deserialize<OutlookAlarmSettings>(settingsJson, options) ?? new OutlookAlarmSettings();
+            settings = JsonSerializer.Deserialize<OutlookAlarmSettings>(settingsJson, options) ??
+                       new OutlookAlarmSettings();
 
             settings.Alarm.Save = settings.Save;
             settings.AlarmSource.Save = settings.Save;

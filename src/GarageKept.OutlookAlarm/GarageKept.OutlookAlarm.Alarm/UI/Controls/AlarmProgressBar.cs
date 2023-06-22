@@ -64,6 +64,8 @@ public class AlarmProgressBar : ProgressBar
     }
 
     [DllImport("user32.dll")]
-    [SuppressMessage("Interoperability", "SYSLIB1054:Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time", Justification = "<Pending>")]
+    [SuppressMessage("Interoperability",
+        "SYSLIB1054:Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time",
+        Justification = "<Pending>")]
     private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 }

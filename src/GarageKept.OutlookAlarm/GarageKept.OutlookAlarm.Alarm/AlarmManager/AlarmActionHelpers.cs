@@ -16,6 +16,5 @@ public static class AlarmActionHelpers
         var displayAttribute = field?.GetCustomAttribute<DisplayAttribute>();
 
         return displayAttribute != null ? displayAttribute.Value : name;
-
     }
 }

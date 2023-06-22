@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using GarageKept.OutlookAlarm.Alarm.Interfaces;
 
 namespace GarageKept.OutlookAlarm.Alarm.Settings;
 
@@ -28,7 +27,11 @@ public class TimeManagementSettings : SettingsBase
 
     private ObservableCollection<DayOfWeek> _workDays = new()
     {
-        DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday
+        DayOfWeek.Monday,
+        DayOfWeek.Tuesday,
+        DayOfWeek.Wednesday,
+        DayOfWeek.Thursday,
+        DayOfWeek.Friday
     };
 
     private DateTime _workingEndTime = DateTime.Today.AddHours(17);
@@ -90,24 +93,15 @@ public class TimeManagementSettings : SettingsBase
                 return;
 
             if (_workDays is INotifyCollectionChanged oldCollection)
-            {
                 oldCollection.CollectionChanged -= WorkDays_CollectionChanged;
-            }
 
             _workDays = value;
 
             if (_workDays is INotifyCollectionChanged newCollection)
-            {
                 newCollection.CollectionChanged += WorkDays_CollectionChanged;
-            }
 
             Save?.Invoke();
         }
-    }
-
-    private void WorkDays_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        Save?.Invoke();
     }
 
     /// <summary>
@@ -143,17 +137,10 @@ public class TimeManagementSettings : SettingsBase
             _exceptionCategories = value;
 
             if (_exceptionCategories is INotifyCollectionChanged newCollection)
-            {
                 newCollection.CollectionChanged += ExceptionCategories_Changed;
-            }
 
             Save?.Invoke();
         }
-    }
-
-    private void ExceptionCategories_Changed(object? sender, NotifyCollectionChangedEventArgs e)
-    { 
-        Save?.Invoke();
     }
 
     /// <summary>
@@ -168,25 +155,20 @@ public class TimeManagementSettings : SettingsBase
                 return;
 
             if (_holidays is INotifyCollectionChanged oldCollection)
-            {
                 oldCollection.CollectionChanged -= Holidays_Changed;
-            }
-            
+
             _holidays = value;
 
             if (_holidays is INotifyCollectionChanged newCollection)
-            {
                 newCollection.CollectionChanged += Holidays_Changed;
-            }
 
             Save?.Invoke();
         }
     }
 
-    private void Holidays_Changed(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        Save?.Invoke();
-    }
+    public bool BypassAudio() { return IsDuringWorkingHours(DateTime.Now) || IsHoliday(DateTime.Now); }
+
+    private void ExceptionCategories_Changed(object? sender, NotifyCollectionChangedEventArgs e) { Save?.Invoke(); }
 
     /// <summary>
     ///     Helper method to get the last occurrence of a specific day of the week in a month.
@@ -209,10 +191,7 @@ public class TimeManagementSettings : SettingsBase
         return date;
     }
 
-    public bool BypassAudio()
-    {
-        return IsDuringWorkingHours(DateTime.Now) || IsHoliday(DateTime.Now);
-    }
+    private void Holidays_Changed(object? sender, NotifyCollectionChangedEventArgs e) { Save?.Invoke(); }
 
     /// <summary>
     ///     Checks if the given time falls within the working period.
@@ -236,4 +215,6 @@ public class TimeManagementSettings : SettingsBase
     /// <param name="date">The date to check.</param>
     /// <returns><c>true</c> if the date is a holiday; otherwise, <c>false</c>.</returns>
     public bool IsHoliday(DateTime date) { return Holidays.Any(holiday => holiday.Date.Date == date.Date); }
+
+    private void WorkDays_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) { Save?.Invoke(); }
 }

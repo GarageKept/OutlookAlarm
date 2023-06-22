@@ -31,7 +31,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
         get => _alarm;
         set
         {
-            _alarm = value; 
+            _alarm = value;
 
             UpdateDisplay();
         }
@@ -95,7 +95,8 @@ public partial class AlarmControl : UserControl, IAlarmControl
         e.Graphics.DrawLine(borderPen, 0, Height - 1, Width, Height - 1);
     }
 
-    private void OnTeamsLinkLabelOnLinkClicked(object? sender, LinkLabelLinkClickedEventArgs linkLabelLinkClickedEventArgs)
+    private void OnTeamsLinkLabelOnLinkClicked(object? sender,
+        LinkLabelLinkClickedEventArgs linkLabelLinkClickedEventArgs)
     {
         if (Alarm is null) return;
 

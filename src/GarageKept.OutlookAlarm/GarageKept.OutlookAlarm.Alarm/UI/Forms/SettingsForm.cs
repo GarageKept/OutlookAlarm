@@ -3,11 +3,8 @@ using GarageKept.OutlookAlarm.Alarm.Audio;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using GarageKept.OutlookAlarm.Alarm.Settings;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Office.Interop.Outlook;
 using Microsoft.Win32;
-using Application = System.Windows.Forms.Application;
 using Timer = System.Windows.Forms.Timer;
-using View = System.Windows.Forms.View;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
@@ -175,7 +172,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         // Set the found item as the selected item
         DefaultSoundComboBox.SelectedItem = defaultSound;
-        
+
         DefaultSoundComboBox.SelectedIndexChanged -= DefaultSoundComboBox_SelectedIndexChanged;
         DefaultSoundComboBox.SelectedIndexChanged += DefaultSoundComboBox_SelectedIndexChanged;
 
@@ -276,6 +273,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
             // Add the ListViewItem to the ListView
             HolidayListView.Items.Add(item);
         }
+
         HolidayListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
         var holidayToolStrip = new ContextMenuStrip();
@@ -776,12 +774,11 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         // Add the category to the ExceptionCategories collection if it doesn't already exist
         if (!Program.AppSettings.TimeManagement.ExceptionCategories.Contains(category))
-        {
             Program.AppSettings.TimeManagement.ExceptionCategories.Add(category);
-        }
 
         CategoryExceptionListBox.Items.Clear();
-        CategoryExceptionListBox.Items.AddRange(Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>());
+        CategoryExceptionListBox.Items.AddRange(
+            Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>());
 
         CategoryExceptionTextBox.Text = string.Empty;
     }
@@ -794,13 +791,11 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         var exceptions = Program.AppSettings.TimeManagement.ExceptionCategories.Where(e => e == category).ToList();
 
-        foreach (var cat in exceptions)
-        {
-            Program.AppSettings.TimeManagement.ExceptionCategories.Remove(cat);
-        }
+        foreach (var cat in exceptions) Program.AppSettings.TimeManagement.ExceptionCategories.Remove(cat);
 
         CategoryExceptionListBox.Items.Clear();
-        CategoryExceptionListBox.Items.AddRange(Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>());
+        CategoryExceptionListBox.Items.AddRange(
+            Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>());
     }
 
     #endregion
@@ -818,10 +813,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
             var id = Guid.Parse(idText);
             var itemsToRemove = Program.AppSettings.TimeManagement.Holidays.Where(h => h.Id == id).ToList();
 
-            foreach (var item in itemsToRemove)
-            {
-                Program.AppSettings.TimeManagement.Holidays.Remove(item);
-            }
+            foreach (var item in itemsToRemove) Program.AppSettings.TimeManagement.Holidays.Remove(item);
 
             // Handle the selected item(s)
             HolidayListView.Items.Remove(selectedItem);
@@ -831,7 +823,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private void HolidayEdit_Click(object? sender, EventArgs e)
     {
         var holidayItem = HolidayListView.SelectedItems[0];
-        
+
         // Retrieve the values of each sub-item
         var name = holidayItem.SubItems[0].Text;
         var dateText = holidayItem.SubItems[1].Text;
@@ -846,7 +838,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         var editor = Program.ServiceProvider?.GetService<IHolidayEditor>();
 
-        if(editor == null) return;
+        if (editor == null) return;
 
         editor.Holiday = holiday;
         var result = editor.ShowDialog();
@@ -854,10 +846,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (result != DialogResult.OK) return;
 
         var remove = Program.AppSettings.TimeManagement.Holidays.Where(h => h.Id == id).ToList();
-        foreach (var h in remove)
-        {
-            Program.AppSettings.TimeManagement.Holidays.Remove(h);
-        }
+        foreach (var h in remove) Program.AppSettings.TimeManagement.Holidays.Remove(h);
 
         Program.AppSettings.TimeManagement.Holidays.Add(editor.Holiday);
 
@@ -874,7 +863,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         var editor = Program.ServiceProvider?.GetService<IHolidayEditor>();
 
-        if(editor == null) return;
+        if (editor == null) return;
 
         var result = editor.ShowDialog();
 

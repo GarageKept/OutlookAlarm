@@ -11,17 +11,16 @@ namespace GarageKept.OutlookAlarm.Alarm.AlarmSources.Outlook;
 /// </summary>
 public class OutlookAlarmSource : IAlarmSource
 {
-
-    private Application OutlookApp { get; }
-    private NameSpace OutlookNamespace { get; }
-    private MAPIFolder CalendarFolder { get; }
-
     public OutlookAlarmSource()
     {
         OutlookApp = new Application();
         OutlookNamespace = OutlookApp.GetNamespace(@"MAPI");
         CalendarFolder = OutlookNamespace.GetDefaultFolder(OlDefaultFolders.olFolderCalendar);
     }
+
+    private Application OutlookApp { get; }
+    private NameSpace OutlookNamespace { get; }
+    private MAPIFolder CalendarFolder { get; }
 
     /// <summary>
     ///     Retrieves a list of Outlook appointment items within the specified number of hours from now.
@@ -38,7 +37,9 @@ public class OutlookAlarmSource : IAlarmSource
             var calendarItems = CalendarFolder.Items;
             calendarItems.IncludeRecurrences = true;
             calendarItems.Sort("[Start]", Type.Missing);
-            calendarItems = calendarItems.Restrict($"[Start] <= '{endDateTime:g}' AND [End] >= '{startDateTime:g}' AND [End] > '{DateTime.Now:g}'");
+            calendarItems =
+                calendarItems.Restrict(
+                    $"[Start] <= '{endDateTime:g}' AND [End] >= '{startDateTime:g}' AND [End] > '{DateTime.Now:g}'");
 
             var events = calendarItems.Cast<AppointmentItem>().ToList();
             var removedAllDay = events.Where(e => !e.AllDayEvent).ToList();
@@ -52,7 +53,10 @@ public class OutlookAlarmSource : IAlarmSource
         }
         catch (Exception ex)
         {
-            return new List<IAlarm>(1) { new Appointment { Name = ex.Message, Start = DateTime.Now, End = DateTime.MaxValue } };
+            return new List<IAlarm>(1)
+            {
+                new Appointment { Name = ex.Message, Start = DateTime.Now, End = DateTime.MaxValue }
+            };
         }
     }
 

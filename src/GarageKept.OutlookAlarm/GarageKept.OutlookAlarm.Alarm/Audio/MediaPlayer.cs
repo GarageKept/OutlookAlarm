@@ -11,7 +11,13 @@ public class MediaPlayer : IMediaPlayer
 {
     private readonly WaveOutEvent _player = new();
 
-    private readonly Dictionary<SoundType, UnmanagedMemoryStream> _soundStreams = new() { { SoundType.BeepBeep, Resources.double_beep }, { SoundType.TickTock, Resources.tick_tock }, { SoundType.Guitar, Resources.guitar_notification }, { SoundType.Urgent, Resources.urgent_simple_tone } };
+    private readonly Dictionary<SoundType, UnmanagedMemoryStream> _soundStreams = new()
+    {
+        { SoundType.BeepBeep, Resources.double_beep },
+        { SoundType.TickTock, Resources.tick_tock },
+        { SoundType.Guitar, Resources.guitar_notification },
+        { SoundType.Urgent, Resources.urgent_simple_tone }
+    };
 
     public bool IsPlaying => _player.PlaybackState == PlaybackState.Playing;
 

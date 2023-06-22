@@ -37,12 +37,14 @@ public class BaseForm : Form
     /// <summary>
     ///     Gets the width of the primary screen, caches the value for future use.
     /// </summary>
-    internal int ScreenWidth => _screenWidth > 0 ? _screenWidth : _screenWidth = Screen.PrimaryScreen?.WorkingArea.Width ?? 0;
+    internal int ScreenWidth =>
+        _screenWidth > 0 ? _screenWidth : _screenWidth = Screen.PrimaryScreen?.WorkingArea.Width ?? 0;
 
     /// <summary>
     ///     Gets the height of the primary screen, caches the value for future use.
     /// </summary>
-    internal int ScreenHeight => _screenHeight > 0 ? _screenHeight : _screenHeight = Screen.PrimaryScreen?.WorkingArea.Height ?? 0;
+    internal int ScreenHeight =>
+        _screenHeight > 0 ? _screenHeight : _screenHeight = Screen.PrimaryScreen?.WorkingArea.Height ?? 0;
 
     /// <summary>
     ///     Gets or sets a value indicating whether the form should be pinned to the top of the screen.
@@ -115,10 +117,10 @@ public class BaseForm : Form
     {
         control.MouseDown -= MouseDownHandler;
         control.MouseDown += MouseDownHandler;
-        
+
         control.MouseMove -= MouseMoveHandler;
         control.MouseMove += MouseMoveHandler;
-        
+
         control.MouseUp -= MouseUpHandler;
         control.MouseUp += MouseUpHandler;
 

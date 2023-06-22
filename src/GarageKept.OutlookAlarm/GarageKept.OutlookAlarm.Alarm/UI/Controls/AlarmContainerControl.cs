@@ -24,7 +24,7 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
             Program.AlarmManager.AlarmsUpdated -= UpdateAppointmentControls;
             Program.AlarmManager.AlarmsUpdated += UpdateAppointmentControls;
         }
-        
+
         SuspendLayout();
 
         InitializeAlarmControls();
@@ -57,11 +57,11 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
 
         RefreshTimer_Tick(this, null);
     }
-    
+
     private void InitializeAlarmControls()
     {
         RowCount = Program.AppSettings.Alarm.MaxAlarmsToShow + 1;
-        
+
         for (var i = 0; i < _alarmControls.Length; i++)
         {
             var alarmControl = Program.ServiceProvider?.GetRequiredService<IAlarmControl>();
@@ -111,7 +111,8 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
 
         if (currentAppointment?.End >= nextAppointment?.Start) backColor = Program.AppSettings.Color.YellowColor;
 
-        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ?? currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
+        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ??
+                                       currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
 
 
         if (nextAppointment is null)
@@ -163,13 +164,9 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
                 _alarmControls[i]!.Alarm = i < activeAlarms.Length ? activeAlarms[i] : null;
 
                 if (_alarmControls[i]!.Alarm is not null)
-                {
                     RowStyles[i] = new RowStyle(SizeType.AutoSize);
-                }
                 else
-                {
                     RowStyles[i] = new RowStyle(SizeType.Absolute, 0);
-                }
             }
         }
 
@@ -187,12 +184,8 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
         if (!IsHandleCreated) return;
 
         if (InvokeRequired && IsHandleCreated)
-        {
             Invoke((MethodInvoker)UpdateAlarmControls);
-        }
         else
-        {
             UpdateAlarmControls();
-        }
     }
 }

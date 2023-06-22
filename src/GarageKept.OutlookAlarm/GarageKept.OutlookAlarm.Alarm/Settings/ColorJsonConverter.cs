@@ -12,5 +12,9 @@ public class ColorJsonConverter : JsonConverter<Color>
         return ColorTranslator.FromHtml(value);
     }
 
-    public override void Write(Utf8JsonWriter writer, Color value, JsonSerializerOptions options) { writer.WriteStringValue("#" + value.R.ToString("X2") + value.G.ToString("X2") + value.B.ToString("X2").ToLower()); }
+    public override void Write(Utf8JsonWriter writer, Color value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(
+            "#" + value.R.ToString("X2") + value.G.ToString("X2") + value.B.ToString("X2").ToLower());
+    }
 }

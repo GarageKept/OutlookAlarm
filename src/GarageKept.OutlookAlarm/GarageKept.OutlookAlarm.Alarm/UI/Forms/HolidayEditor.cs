@@ -21,6 +21,12 @@ public partial class HolidayEditor : BaseForm, IHolidayEditor
         }
     }
 
+    private void CancelButton_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Cancel;
+        Close();
+    }
+
     private void SaveButton_Click(object sender, EventArgs e)
     {
         Holiday.Date = DatePicker.Value;
@@ -32,7 +38,7 @@ public partial class HolidayEditor : BaseForm, IHolidayEditor
         if (result)
         {
             DialogResult = DialogResult.OK;
-            base.Close();
+            Close();
         }
         else
         {
@@ -42,14 +48,5 @@ public partial class HolidayEditor : BaseForm, IHolidayEditor
     }
 
 
-    private bool ValidateHoliday()
-    {
-        return !string.IsNullOrEmpty(Holiday.Name);
-    }
-
-    private void CancelButton_Click(object sender, EventArgs e)
-    {
-        DialogResult = DialogResult.Cancel;
-        Close();
-    }
+    private bool ValidateHoliday() { return !string.IsNullOrEmpty(Holiday.Name); }
 }

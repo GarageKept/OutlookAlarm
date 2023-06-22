@@ -78,7 +78,8 @@ public sealed class OutlookAlarmManager : IAlarmManager
     {
         var now = DateTime.Now;
 
-        var current = Alarms.Values.Where(a => a.IsActive).OrderBy(a => a.Start).FirstOrDefault(a => a.Start < now && a.End > now);
+        var current = Alarms.Values.Where(a => a.IsActive).OrderBy(a => a.Start)
+            .FirstOrDefault(a => a.Start < now && a.End > now);
 
         return current;
     }
@@ -110,13 +111,19 @@ public sealed class OutlookAlarmManager : IAlarmManager
         FetchAlarms(this);
     }
 
-    public void Start() { UpdateAlarmListTimer = new Timer(FetchAlarms, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(Program.AppSettings.AlarmSource.FetchIntervalInMinutes)); }
+    public void Start()
+    {
+        UpdateAlarmListTimer = new Timer(FetchAlarms, null, TimeSpan.FromSeconds(1),
+            TimeSpan.FromMinutes(Program.AppSettings.AlarmSource.FetchIntervalInMinutes));
+    }
 
     public void Stop()
     {
         UpdateAlarmListTimer?.Dispose();
         UpdateAlarmListTimer = null;
     }
+
+    public void Dispose() { }
 
     private void AddAlarm(IAlarm alarm)
     {
@@ -307,6 +314,4 @@ public sealed class OutlookAlarmManager : IAlarmManager
         timer = GenerateTimer(alarm);
         AlarmTimers[alarm.Id] = timer;
     }
-
-    public void Dispose() { }
 }

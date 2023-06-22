@@ -5,9 +5,9 @@ public class AlarmSettings : SettingsBase
     private string _alarmStartStringFormat = "hh:mm tt";
     private int _alarmWarningTime = 15;
     private int _left = -1;
+    private int _maxAlarmsToShow = 5;
     private string _timeLeftStringFormat = "{0:%h}h {0:mm}m {0:ss}s";
     private int _top;
-    private int _maxAlarmsToShow = 5;
 
 
     // ReSharper disable once UnusedMember.Global
@@ -85,7 +85,7 @@ public class AlarmSettings : SettingsBase
         get => _maxAlarmsToShow;
         set
         {
-            if(_maxAlarmsToShow == value) return;
+            if (_maxAlarmsToShow == value) return;
 
             _maxAlarmsToShow = value;
             Save?.Invoke();

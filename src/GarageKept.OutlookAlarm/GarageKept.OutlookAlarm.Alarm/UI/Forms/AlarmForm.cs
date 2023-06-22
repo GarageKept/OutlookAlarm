@@ -20,7 +20,9 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         ShowInTaskbar = false;
 
         ActionSelector.Items.Clear();
-        var dataSource = Enum.GetValues(typeof(AlarmAction)).Cast<AlarmAction>().Select(s => new { Value = s, Text = AlarmActionHelpers.GetEnumDisplayValue(s) }).Where(a => a.Text != "Dismissed").ToList();
+        var dataSource = Enum.GetValues(typeof(AlarmAction)).Cast<AlarmAction>()
+            .Select(s => new { Value = s, Text = AlarmActionHelpers.GetEnumDisplayValue(s) })
+            .Where(a => a.Text != "Dismissed").ToList();
         ActionSelector.DisplayMember = "Text";
         ActionSelector.ValueMember = "Value";
 
@@ -39,7 +41,8 @@ public partial class AlarmForm : BaseForm, IAlarmForm
     {
         Alarm = alarm ?? throw new ArgumentNullException(typeof(IAlarm).ToString());
 
-        var tooLAteForAudio = DateTime.Now - Alarm.Start > TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart);
+        var tooLAteForAudio = DateTime.Now - Alarm.Start >
+                              TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart);
         var bypassAudio = Program.AppSettings.TimeManagement.BypassAudio();
 
         if (Alarm.IsAudible && !tooLAteForAudio && !bypassAudio)
@@ -62,7 +65,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         {
             Interval = 1000 // 1000 ms = 1 second
         };
-        
+
         _refreshTimer.Tick -= FormRefresh;
         _refreshTimer.Tick += FormRefresh;
         _refreshTimer.Start();
@@ -78,6 +81,16 @@ public partial class AlarmForm : BaseForm, IAlarmForm
             base.Show();
     }
 
+    public new void Dispose()
+    {
+        _refreshTimer?.Stop();
+        _refreshTimer?.Dispose();
+        _refreshTimer = null;
+        _mediaPlayerPlayer.StopSound();
+
+        Dispose(true);
+    }
+
     public new void Close() { Dispose(); }
 
     private void DismissButton_Click(object sender, EventArgs e)
@@ -89,21 +102,12 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         Close();
     }
 
-    public new void Dispose()
-    {
-        _refreshTimer?.Stop();
-        _refreshTimer?.Dispose();
-        _refreshTimer = null;
-        _mediaPlayerPlayer.StopSound();
-
-        Dispose(true);
-    }
-
     private void FormRefresh(object? sender, EventArgs? e)
     {
         TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
 
-        if (_playSound && Program.AppSettings.Audio.TurnOffAlarmAfterStart >= 0 && DateTime.Now - Alarm?.Start > TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart))
+        if (_playSound && Program.AppSettings.Audio.TurnOffAlarmAfterStart >= 0 && DateTime.Now - Alarm?.Start >
+            TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart))
         {
             _mediaPlayerPlayer.StopSound();
             _playSound = false;
@@ -133,7 +137,8 @@ public partial class AlarmForm : BaseForm, IAlarmForm
     private void RemoveActionSelectorItem(AlarmAction action)
     {
         // Retrieve the current data source as a list of anonymous objects
-        var dataSource = ((IEnumerable)ActionSelector.DataSource).Cast<dynamic>().Select(item => new { Value = (AlarmAction)item.Value, item.Text }).ToList();
+        var dataSource = ((IEnumerable)ActionSelector.DataSource).Cast<dynamic>()
+            .Select(item => new { Value = (AlarmAction)item.Value, item.Text }).ToList();
 
         if (dataSource.All(i => i.Value != action)) return;
 
