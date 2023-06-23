@@ -792,7 +792,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         if (category is null) return;
 
-        var exceptions = Program.AppSettings.TimeManagement.ExceptionCategories.Where(e => e == category).ToList();
+        var exceptions = Program.AppSettings.TimeManagement.ExceptionCategories.Where(exc => exc == category).ToList();
 
         foreach (var cat in exceptions) Program.AppSettings.TimeManagement.ExceptionCategories.Remove(cat);
 
@@ -836,8 +836,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         var date = DateTime.Parse(dateText);
         var id = Guid.Parse(idText);
 
-        var holiday = new Holiday(name, date, description);
-        holiday.Id = id;
+        var holiday = new Holiday(name, date, description) { Id = id };
 
         var editor = Program.ServiceProvider?.GetService<IHolidayEditor>();
 
