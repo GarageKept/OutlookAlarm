@@ -166,7 +166,12 @@ public class TimeManagementSettings : SettingsBase
         }
     }
 
-    public bool BypassAudio() { return IsDuringWorkingHours(DateTime.Now) || IsHoliday(DateTime.Now); }
+    public bool BypassAudio()
+    {
+        if(!EnableOnlyWorkingPeriods) return false;
+        
+        return !IsDuringWorkingHours(DateTime.Now) || IsHoliday(DateTime.Now);
+    }
 
     private void ExceptionCategories_Changed(object? sender, NotifyCollectionChangedEventArgs e) { Save?.Invoke(); }
 
