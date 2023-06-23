@@ -716,7 +716,10 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         if (enable)
         {
-            Program.AppSettings.TimeManagement.WorkDays.Add(dayOfWeek);
+            var exists = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == dayOfWeek);
+
+            if(!exists)
+                Program.AppSettings.TimeManagement.WorkDays.Add(dayOfWeek);
         }
         else if (Program.AppSettings.TimeManagement.WorkDays.Contains(dayOfWeek))
         {
