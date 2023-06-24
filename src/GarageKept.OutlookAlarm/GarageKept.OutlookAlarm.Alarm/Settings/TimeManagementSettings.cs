@@ -166,6 +166,10 @@ public class TimeManagementSettings : SettingsBase
         }
     }
 
+    /// <summary>
+    /// Checks to see if we should bypass playing audio. Checks if we are outside of work hours or it is a holiday
+    /// </summary>
+    /// <returns>true if we are outside of work hours or it is a holiday</returns>
     public bool BypassAudio()
     {
         if(!EnableOnlyWorkingPeriods) return false;

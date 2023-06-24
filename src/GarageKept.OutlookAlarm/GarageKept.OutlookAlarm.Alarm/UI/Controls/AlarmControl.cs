@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Timer = System.Windows.Forms.Timer;
@@ -137,7 +138,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
         SubjectLabel.Text = Alarm.Name;
         OrganizerLabel.Text = Alarm.Organizer;
-        CategoryLabel.Text = Alarm.Categories;
+        CategoryLabel.Text = string.Join(", ", Alarm.Categories);
 
         if (string.IsNullOrWhiteSpace(Alarm.TeamsMeetingUrl)) return;
 

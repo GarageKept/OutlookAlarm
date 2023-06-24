@@ -14,7 +14,7 @@ public interface IAlarm
     string CustomSound { get; set; }
     bool HasCustomSound { get; set; }
     string Organizer { get; set; }
-    string Categories { get; set; }
+    List<string> Categories { get; set; }
     string Location { get; set; }
     string TeamsMeetingUrl { get; set; }
 }

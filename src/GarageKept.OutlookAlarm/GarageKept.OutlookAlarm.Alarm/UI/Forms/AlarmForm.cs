@@ -41,16 +41,23 @@ public partial class AlarmForm : BaseForm, IAlarmForm
     {
         Alarm = alarm ?? throw new ArgumentNullException(typeof(IAlarm).ToString());
 
-        var tooLAteForAudio = DateTime.Now - Alarm.Start >
+        var tooLateForAudio = DateTime.Now - Alarm.Start >
                               TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart);
         var bypassAudio = Program.AppSettings.TimeManagement.BypassAudio();
 
-        if (Alarm.IsAudible && !tooLAteForAudio && !bypassAudio)
+        if (!Alarm.IsAudible && !tooLateForAudio)
         {
-            if (Alarm.HasCustomSound)
-                _mediaPlayerPlayer.PlaySound(Alarm.CustomSound, true);
+            if (bypassAudio)
+            {
+                if (Program.AppSettings.TimeManagement.ExceptionCategories.Intersect(Alarm.Categories).Any())
+                {
+                    PlayAudio();
+                }
+            }
             else
-                _mediaPlayerPlayer.PlaySound(Program.AppSettings.Audio.DefaultSound, true);
+            {
+                PlayAudio();
+            }
         }
 
         SubjectLabel.Text = Alarm.Name;
@@ -79,6 +86,14 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         if (!IsDisposed)
             base.Show();
+    }
+
+    private void PlayAudio()
+    {
+        if (Alarm.HasCustomSound)
+            _mediaPlayerPlayer.PlaySound(Alarm.CustomSound, true);
+        else
+            _mediaPlayerPlayer.PlaySound(Program.AppSettings.Audio.DefaultSound, true);
     }
 
     public new void Dispose()
