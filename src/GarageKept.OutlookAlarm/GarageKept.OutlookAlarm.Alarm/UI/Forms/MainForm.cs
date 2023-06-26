@@ -7,56 +7,30 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 public partial class MainForm : BaseForm, IMainForm
 {
     private readonly Timer _slidingTimer = new() { Interval = 10 };
-
+    
     private bool _isExpanded;
 
-    public MainForm() : base(true)
+    private ISettings Settings { get; }
+    private IAlarmManager AlarmManager { get; }
+    private IAlarmContainerControl ContainerControl { get; set; }
+
+    public MainForm(ISettings settings, IAlarmManager alarmManager, IAlarmContainerControl containerControl) : base(true)
     {
+        Settings = settings;
+        AlarmManager = alarmManager;
+        alarmManager.AlarmsUpdated += UpdateAlarms;
+        
         InitializeComponent();
-
-        if (DesignMode) return;
-
-        // Set the form's start position to manual
-        StartPosition = FormStartPosition.Manual;
-
-        // Calculate the form's initial x and y positions
-        var xPos = Program.AppSettings.Main.Left;
-        var yPos = 0;
-
-        // Set the form's location
-        Location = new Point(xPos, yPos);
-
+        FormClosing += OnFormClosing;
+        ContainerControl = containerControl;
+        Controls.Add(ContainerControl as Control);
+        
+        SetupPosition();
+        SetupContextMenu();
+        
         // Subscribe to form's mouse enter and leave events
         MouseEnter += MainWindow_MouseEnter;
         MouseLeave += MainWindow_MouseLeave;
-
-        // Save the form position when moved
-        Move += (_, _) => { Program.AppSettings.Main.Left = Left; };
-
-        // Initialize and set up the context menu
-        rightClickMenu.Items.Clear();
-        rightClickMenu.Items.Add("Settings", null, RightClickMenu_SettingsClick);
-        rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
-
-        var advanced = new ToolStripMenuItem("Advanced");
-        var advancedDropdown = new ToolStripDropDownMenu();
-
-        var refresh = new ToolStripMenuItem("Refresh");
-        refresh.Click += RightClickMenu_RefreshClick;
-        advancedDropdown.Items.Add(refresh);
-
-        var reset = new ToolStripMenuItem("Reset All");
-        reset.Click += RightClick_ResetAllAppointments;
-        advancedDropdown.Items.Add(reset);
-
-        advanced.DropDown = advancedDropdown;
-
-        rightClickMenu.Items.Add(new ToolStripSeparator());
-        rightClickMenu.Items.Add(advanced);
-
-        rightClickMenu.Items.Add(new ToolStripSeparator());
-        rightClickMenu.Items.Add("Close", null, (_, _) => Close());
-
         // Subscribe to MouseEnter and MouseLeave events for each child control
         AddMouseEvents(this);
 
@@ -64,7 +38,51 @@ public partial class MainForm : BaseForm, IMainForm
         _slidingTimer.Tick += SlidingTimer_Tick;
         _slidingTimer.Start();
 
-        Program.AlarmManager?.Start();
+        AlarmManager = alarmManager;
+        AlarmManager.Start();
+    }
+
+    private void OnFormClosing(object? sender, FormClosingEventArgs e)
+    {
+        AlarmManager.Stop();
+        AlarmManager.Dispose();
+        ContainerControl.Dispose();
+    }
+
+    private void SetupPosition()
+    {
+        // Set the form's start position to manual
+        StartPosition = FormStartPosition.Manual;
+        // Set the form's location
+        Location = new Point(Settings.Main.Left, 0);
+        // Save the form position when moved
+        Move += (_, _) => { Settings.Main.Left = Left; };
+    }
+
+    private void SetupContextMenu()
+    {
+        // Initialize and set up the context menu
+        rightClickMenu.Items.Clear();
+        rightClickMenu.Items.Add("Settings", null, RightClickMenu_SettingsClick);
+        rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
+        var advanced = new ToolStripMenuItem("Advanced");
+        var advancedDropdown = new ToolStripDropDownMenu();
+        var refresh = new ToolStripMenuItem("Refresh");
+        refresh.Click += RightClickMenu_RefreshClick;
+        advancedDropdown.Items.Add(refresh);
+        var reset = new ToolStripMenuItem("Reset All");
+        reset.Click += RightClick_ResetAllAppointments;
+        advancedDropdown.Items.Add(reset);
+        advanced.DropDown = advancedDropdown;
+        rightClickMenu.Items.Add(new ToolStripSeparator());
+        rightClickMenu.Items.Add(advanced);
+        rightClickMenu.Items.Add(new ToolStripSeparator());
+        rightClickMenu.Items.Add("Close", null, (_, _) => Close());
+    }
+
+    public void UpdateAlarms(IEnumerable<IAlarm> alarms)
+    {
+        ContainerControl.Alarms = alarms;
     }
 
     /// <summary>
@@ -125,34 +143,34 @@ public partial class MainForm : BaseForm, IMainForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void ChildControl_MouseEnter(object? sender, EventArgs e) { MainWindow_MouseEnter(sender, e); }
+    private void ChildControl_MouseEnter(object? sender, EventArgs e) { MainWindow_MouseEnter(sender, e); }
 
     /// <summary>
     ///     Event handler for child control's MouseLeave event.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void ChildControl_MouseLeave(object? sender, EventArgs e) { CheckMouseLeaveForm(); }
+    private void ChildControl_MouseLeave(object? sender, EventArgs e) { CheckMouseLeaveForm(); }
 
     /// <summary>
     ///     Event handler for the FormClosing event.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+    private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
         // Save the current position so we can restore it back to where it was on next run
-        Program.AppSettings.Main.Left = Location.X;
+        Settings.Main.Left = Location.X;
     }
 
-    private void RightClick_ResetAllAppointments(object? sender, EventArgs e) { Program.AlarmManager?.Reset(); }
+    private void RightClick_ResetAllAppointments(object? sender, EventArgs e) { AlarmManager.Reset(); }
 
     /// <summary>
     ///     Event handler for the About menu item click event.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void RightClickMenu_AboutClick(object? sender, EventArgs e)
+    private static void RightClickMenu_AboutClick(object? sender, EventArgs e)
     {
         var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
@@ -165,14 +183,14 @@ public partial class MainForm : BaseForm, IMainForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void RightClickMenu_RefreshClick(object? sender, EventArgs e) { Program.AlarmManager?.ForceFetch(); }
+    private void RightClickMenu_RefreshClick(object? sender, EventArgs e) { AlarmManager.ForceFetch(); }
 
     /// <summary>
     ///     Event handler for the OutlookAlarmSettings menu item click event.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void RightClickMenu_SettingsClick(object? sender, EventArgs e)
+    private void RightClickMenu_SettingsClick(object? sender, EventArgs e)
     {
         if (Program.ServiceProvider == null) return;
 
@@ -186,9 +204,9 @@ public partial class MainForm : BaseForm, IMainForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    internal void SlidingTimer_Tick(object? sender, EventArgs e)
+    private void SlidingTimer_Tick(object? sender, EventArgs e)
     {
-        var targetY = _isExpanded ? 0 : -Height + Program.AppSettings.Main.BarSize;
+        var targetY = _isExpanded ? 0 : -Height + Settings.Main.BarSize;
 
         if (Math.Abs(Location.Y - targetY) <= 1)
         {
@@ -197,7 +215,7 @@ public partial class MainForm : BaseForm, IMainForm
         }
         else
         {
-            var step = (targetY - Location.Y) / Program.AppSettings.Main.SliderSpeed;
+            var step = (targetY - Location.Y) / Settings.Main.SliderSpeed;
 
             if (step == 0) step = targetY > Location.Y ? 1 : -1;
 

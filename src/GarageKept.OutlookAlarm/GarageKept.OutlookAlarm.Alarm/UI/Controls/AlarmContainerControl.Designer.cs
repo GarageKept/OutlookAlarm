@@ -1,4 +1,7 @@
-﻿namespace GarageKept.OutlookAlarm.Alarm.UI.Controls
+﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
+using Timer = System.Threading.Timer;
+
+namespace GarageKept.OutlookAlarm.Alarm.UI.Controls
 {
     partial class AlarmContainerControl
     {
@@ -15,6 +18,7 @@
         {
             if (disposing && (components != null))
             {
+                this.RefreshTimer.Dispose();
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -28,32 +32,36 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            RefreshTimer = new System.Windows.Forms.Timer(components);
+            FooterProgressBar = new AlarmProgressBar();
             SuspendLayout();
             // 
-            // tableLayoutPanel
+            // RefreshTimer
             // 
-            AutoSize = false;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ColumnCount = 1;
-            ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            Dock = DockStyle.Fill;
-            Location = new Point(0, 0);
-            Margin = new Padding(0, 0, 0, 10);
-            Name = "tableLayoutPanel";
-            Size = new Size(256, 15);
+            RefreshTimer.Tick += RefreshTimer_Tick;
+            // 
+            // FooterProgressBar
+            // 
+            FooterProgressBar.Name = "FooterProgressBar";
+            FooterProgressBar.Size = new Size(100, 23);
+            FooterProgressBar.TabIndex = 0;
             // 
             // AlarmContainerControl
             // 
             AutoSize = true;
-            DoubleBuffered = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            ColumnCount = 1;
+            ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            Dock = DockStyle.Fill;
             Margin = new Padding(0);
-            Name = "AlarmContainerControl";
             Size = new Size(256, 15);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-        
+
+        private System.Windows.Forms.Timer RefreshTimer;
+        private AlarmProgressBar FooterProgressBar;
     }
 }

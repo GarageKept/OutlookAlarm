@@ -1,29 +1,38 @@
-﻿using GarageKept.OutlookAlarm.Alarm.AlarmManager;
-using GarageKept.OutlookAlarm.Alarm.Interfaces;
+﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 
 public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerControl
 {
-    private readonly IAlarmControl?[] _alarmControls = new IAlarmControl?[Program.AppSettings.Alarm.MaxAlarmsToShow];
+    private IAlarm[] _alarms;
+    private IAlarmControl[] AlarmControls { get; set; }
 
-    public AlarmContainerControl()
+    public IEnumerable<IAlarm> Alarms
     {
-        InitializeComponent();
-
-        if (Program.AlarmManager != null)
+        get => _alarms;
+        set
         {
-            Program.AlarmManager.AlarmAdded -= UpdateAppointmentControls;
-            Program.AlarmManager.AlarmAdded += UpdateAppointmentControls;
-            Program.AlarmManager.AlarmChanged -= UpdateAppointmentControls;
-            Program.AlarmManager.AlarmChanged += UpdateAppointmentControls;
-            Program.AlarmManager.AlarmRemoved -= UpdateAppointmentControls;
-            Program.AlarmManager.AlarmRemoved += UpdateAppointmentControls;
-            Program.AlarmManager.AlarmsUpdated -= UpdateAppointmentControls;
-            Program.AlarmManager.AlarmsUpdated += UpdateAppointmentControls;
+            _alarms = value.OrderBy(s => s.Start).ToArray();
+
+            for (var i = 0; i < AlarmControls.Length && i < _alarms.Length; i++)
+            {
+                AlarmControls[i].Alarm = _alarms[i];
+            }
         }
+    }
+
+    private ISettings Settings { get; }
+
+    public AlarmContainerControl(ISettings settings)
+    {
+        Settings = settings;
+
+        _alarms = Array.Empty<IAlarm>();
+
+        AlarmControls = new IAlarmControl[Settings.Alarm.MaxAlarmsToShow];
+
+        InitializeComponent();
 
         SuspendLayout();
 
@@ -32,12 +41,7 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
 
         ResumeLayout();
 
-        RefreshTimer.Tick += RefreshTimer_Tick;
-        RefreshTimer.Start();
     }
-
-    private AlarmProgressBar FooterProgressBar { get; } = new();
-    private Timer RefreshTimer { get; } = new() { Interval = 5000 };
 
     private void AddFooterRow()
     {
@@ -60,26 +64,27 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
 
     private void InitializeAlarmControls()
     {
-        RowCount = Program.AppSettings.Alarm.MaxAlarmsToShow + 1;
+        if (Program.ServiceProvider is null) return;
 
-        for (var i = 0; i < _alarmControls.Length; i++)
+        RowCount = Settings.Alarm.MaxAlarmsToShow + 1;
+
+        for (var i = 0; i < AlarmControls.Length; i++)
         {
-            var alarmControl = Program.ServiceProvider?.GetRequiredService<IAlarmControl>();
-            _alarmControls[i] = alarmControl;
+            var alarmControl = Program.ServiceProvider.GetRequiredService<IAlarmControl>();
+            AlarmControls[i] = alarmControl;
 
-            if (alarmControl is Control control)
-            {
-                alarmControl.Visible = true;
+            if (alarmControl is not Control control) continue;
 
-                // Add the control to the TableLayoutPanel
-                Controls.Add(control, 0, i);
+            control.Visible = false;
 
-                // Create a new row style with a fixed height
-                var rowStyle = new RowStyle(SizeType.Absolute, 0);
+            // Add the control to the TableLayoutPanel
+            Controls.Add(control, 0, i);
 
-                // Add the row style to the TableLayoutPanel
-                RowStyles.Add(rowStyle);
-            }
+            // Create a new row style with a fixed height
+            var rowStyle = new RowStyle(SizeType.Absolute, 0);
+
+            // Add the row style to the TableLayoutPanel
+            RowStyles.Add(rowStyle);
         }
     }
 
@@ -92,24 +97,24 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
         FooterProgressBar.Minimum = 0;
         FooterProgressBar.Maximum = 3600; // 1 hour in seconds
 
-        FooterProgressBar.Width = Parent?.Width ?? Program.AppSettings.Main.MinimumWidth;
+        FooterProgressBar.Width = Parent?.Width ?? Settings.Main.MinimumWidth;
 
-        FooterProgressBar.Width = Program.AppSettings.Main.MinimumWidth;
+        FooterProgressBar.Width = Settings.Main.MinimumWidth;
 
         AddFooterRow();
     }
 
     private void RefreshTimer_Tick(object? sender, EventArgs? e)
     {
-        var currentAppointment = Program.AlarmManager?.GetCurrentAppointment();
-        var nextAppointment = Program.AlarmManager?.GetNextAppointment();
-        var backColor = Program.AppSettings.Color.GreenColor;
-        var barColor = Program.AppSettings.Color.GreenColor;
+        var currentAppointment = GetCurrentAppointment();
+        var nextAppointment = GetNextAppointment();
+        var backColor = Settings.Color.GreenColor;
+        var barColor = Settings.Color.GreenColor;
         var value = 3600;
 
-        if (currentAppointment != null) barColor = Program.AppSettings.Color.RedColor;
+        if (currentAppointment != null) barColor = Settings.Color.RedColor;
 
-        if (currentAppointment?.End >= nextAppointment?.Start) backColor = Program.AppSettings.Color.YellowColor;
+        if (currentAppointment?.End >= nextAppointment?.Start) backColor = Settings.Color.YellowColor;
 
         var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ??
                                        currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
@@ -117,25 +122,25 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
 
         if (nextAppointment is null)
         {
-            backColor = Program.AppSettings.Color.GreenColor;
+            backColor = Settings.Color.GreenColor;
         }
         else
         {
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Program.AppSettings.Color.YellowColor;
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Settings.Color.YellowColor;
 
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.AppSettings.Alarm.AlarmWarningTime))
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Settings.Alarm.AlarmWarningTime))
             {
-                barColor = Program.AppSettings.Color.YellowColor;
-                backColor = Program.AppSettings.Color.RedColor;
+                barColor = Settings.Color.YellowColor;
+                backColor = Settings.Color.RedColor;
             }
 
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Program.AppSettings.Alarm.AlarmWarningTime))
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Settings.Alarm.AlarmWarningTime))
             {
-                barColor = Program.AppSettings.Color.YellowColor;
-                backColor = Program.AppSettings.Color.RedColor;
+                barColor = Settings.Color.YellowColor;
+                backColor = Settings.Color.RedColor;
             }
 
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Program.AppSettings.Color.RedColor;
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Settings.Color.RedColor;
         }
 
         FooterProgressBar.BackgroundColor = backColor;
@@ -150,42 +155,15 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
         FooterProgressBar.Value = value;
     }
 
-    private void UpdateAlarmControls()
+    private IAlarm? GetNextAppointment()
     {
-        // Pause updates until we redo everything
-        SuspendLayout();
-
-        if (Program.AlarmManager != null)
-        {
-            var activeAlarms = Program.AlarmManager.GetActiveAlarms().OrderBy(a => a.Start).ToArray();
-
-            for (var i = 0; i < _alarmControls.Length; i++)
-            {
-                _alarmControls[i]!.Alarm = i < activeAlarms.Length ? activeAlarms[i] : null;
-
-                if (_alarmControls[i]!.Alarm is not null)
-                    RowStyles[i] = new RowStyle(SizeType.AutoSize);
-                else
-                    RowStyles[i] = new RowStyle(SizeType.Absolute, 0);
-            }
-        }
-
-        if (Parent is IMainForm parentForm)
-        {
-            parentForm.AddMouseEvents((Form)parentForm);
-            parentForm.CheckMouseLeaveForm();
-        }
-
-        ResumeLayout(true);
+        return Alarms.FirstOrDefault(a => a.Start > DateTime.Now);
     }
 
-    private void UpdateAppointmentControls(object? sender, AlarmEventArgs e)
+    private IAlarm? GetCurrentAppointment()
     {
-        if (!IsHandleCreated) return;
+        var now = DateTime.Now;
 
-        if (InvokeRequired && IsHandleCreated)
-            Invoke((MethodInvoker)UpdateAlarmControls);
-        else
-            UpdateAlarmControls();
+        return Alarms.FirstOrDefault(a => a.Start < now && a.End > now);
     }
 }

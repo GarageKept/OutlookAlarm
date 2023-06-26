@@ -30,12 +30,14 @@ partial class AlarmForm
     /// </summary>
     private void InitializeComponent()
     {
+        components = new System.ComponentModel.Container();
         TimeRight = new Label();
         TimeLeft = new Label();
         ActionSelector = new ComboBox();
         SubjectLabel = new Label();
         DismissButton = new Button();
         SnoozeButton = new Button();
+        RefreshTimer = new System.Windows.Forms.Timer(components);
         SuspendLayout();
         // 
         // TimeRight
@@ -96,6 +98,10 @@ partial class AlarmForm
         SnoozeButton.UseVisualStyleBackColor = true;
         SnoozeButton.Click += SnoozeButton_Click;
         // 
+        // RefreshTimer
+        // 
+        RefreshTimer.Tick += FormRefresh;
+        // 
         // AlarmForm
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
@@ -112,6 +118,7 @@ partial class AlarmForm
         Name = "AlarmForm";
         StartPosition = FormStartPosition.Manual;
         Text = "AlarmWindowForm";
+        FormClosing += AlarmForm_FormClosing;
         ResumeLayout(false);
         PerformLayout();
     }
@@ -124,4 +131,5 @@ partial class AlarmForm
     private Label SubjectLabel;
     private Button DismissButton;
     private Button SnoozeButton;
+    private System.Windows.Forms.Timer RefreshTimer;
 }

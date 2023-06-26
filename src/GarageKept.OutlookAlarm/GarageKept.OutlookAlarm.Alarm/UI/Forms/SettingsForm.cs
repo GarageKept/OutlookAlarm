@@ -20,9 +20,12 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private readonly IMediaPlayer _mediaPlayer;
     private bool _isExpanded;
     private Timer? _slidingTimer;
+    private ISettings Settings { get; }
 
-    public SettingsForm(IMediaPlayer mediaPlayer) : base(false)
+    public SettingsForm(IMediaPlayer mediaPlayer, ISettings settings) : base(false)
     {
+        Settings = settings;
+
         InitializeComponent();
 
         _mediaPlayer = mediaPlayer;
@@ -30,7 +33,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         // Show in center of screen
         Top = (ScreenHeight - Height) / 2;
         Left = (ScreenWidth - Width) / 2;
-        BarHeightNumericUpDown.Value = Program.AppSettings.Main.BarSize;
+        BarHeightNumericUpDown.Value = Settings.Main.BarSize;
     }
 
     public new DialogResult ShowDialog()
@@ -41,11 +44,11 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         LeftNumericUpDown.Minimum = 0;
         LeftNumericUpDown.Maximum = ScreenWidth - Owner?.Width ?? 0;
-        LeftNumericUpDown.Value = Program.AppSettings.Main.Left;
+        LeftNumericUpDown.Value = Settings.Main.Left;
 
         LeftTrackBar.Minimum = 0;
         LeftTrackBar.Maximum = (int)LeftNumericUpDown.Maximum;
-        LeftTrackBar.Value = Program.AppSettings.Main.Left;
+        LeftTrackBar.Value = Settings.Main.Left;
 
         #endregion
 
@@ -53,7 +56,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         BarHeightNumericUpDown.Minimum = 1;
         BarHeightNumericUpDown.Maximum = 20;
-        BarHeightNumericUpDown.Value = Program.AppSettings.Main.BarSize;
+        BarHeightNumericUpDown.Value = Settings.Main.BarSize;
 
         #endregion
 
@@ -62,13 +65,13 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         SliderSpeedNumericUpDown.ValueChanged -= SliderSpeedNumericUpDown_ValueChanged;
         SliderSpeedNumericUpDown.Minimum = 1;
         SliderSpeedNumericUpDown.Maximum = 20;
-        SliderSpeedNumericUpDown.Value = Program.AppSettings.Main.SliderSpeed;
+        SliderSpeedNumericUpDown.Value = Settings.Main.SliderSpeed;
         SliderSpeedNumericUpDown.ValueChanged += SliderSpeedNumericUpDown_ValueChanged;
 
         SliderSpeedTrackBar.ValueChanged -= SliderSpeedTrackBar_ValueChanged;
         SliderSpeedTrackBar.Minimum = 1;
         SliderSpeedTrackBar.Maximum = 20;
-        SliderSpeedTrackBar.Value = Program.AppSettings.Main.SliderSpeed;
+        SliderSpeedTrackBar.Value = Settings.Main.SliderSpeed;
         SliderSpeedTrackBar.ValueChanged += SliderSpeedTrackBar_ValueChanged;
 
         #endregion
@@ -77,11 +80,11 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         MinimumWidthNumericUpDown.Minimum = 0;
         MinimumWidthNumericUpDown.Maximum = ScreenWidth;
-        MinimumWidthNumericUpDown.Value = Program.AppSettings.Main.MinimumWidth;
+        MinimumWidthNumericUpDown.Value = Settings.Main.MinimumWidth;
 
         MinimumWidthTrackBar.Minimum = 0;
         MinimumWidthTrackBar.Maximum = ScreenWidth;
-        MinimumWidthTrackBar.Value = Program.AppSettings.Main.MinimumWidth;
+        MinimumWidthTrackBar.Value = Settings.Main.MinimumWidth;
 
         #endregion
 
@@ -93,20 +96,20 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         AlarmWarningTimeNumericUpDown.Minimum = 0;
         AlarmWarningTimeNumericUpDown.Maximum = 60;
-        AlarmWarningTimeNumericUpDown.Value = Program.AppSettings.Alarm.AlarmWarningTime;
+        AlarmWarningTimeNumericUpDown.Value = Settings.Alarm.AlarmWarningTime;
 
         #endregion
 
 
         #region Alarm.TimeLeftStringFormat
 
-        TimeLeftFormatExampleTextBox.Text = Program.AppSettings.Alarm.TimeLeftStringFormat;
+        TimeLeftFormatExampleTextBox.Text = Settings.Alarm.TimeLeftStringFormat;
 
         #endregion
 
         #region Alarm.AlarmStartingStringFormat
 
-        AlarmStartFormatTextBox.Text = Program.AppSettings.Alarm.AlarmStartStringFormat;
+        AlarmStartFormatTextBox.Text = Settings.Alarm.AlarmStartStringFormat;
 
         #endregion
 
@@ -114,7 +117,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         AlarmLocationTopNumericUpDown.Minimum = 0;
         AlarmLocationTopNumericUpDown.Maximum = ScreenHeight - 96;
-        AlarmLocationTopNumericUpDown.Value = Program.AppSettings.Alarm.Top;
+        AlarmLocationTopNumericUpDown.Value = Settings.Alarm.Top;
 
         #endregion
 
@@ -122,7 +125,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         AlarmLocationLeftNumericUpDown.Minimum = -1;
         AlarmLocationLeftNumericUpDown.Maximum = ScreenWidth - 330;
-        AlarmLocationLeftNumericUpDown.Value = Program.AppSettings.Alarm.Left;
+        AlarmLocationLeftNumericUpDown.Value = Settings.Alarm.Left;
 
         #endregion
 
@@ -134,7 +137,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         FetchIntervalNumericUpDown.Minimum = 1;
         FetchIntervalNumericUpDown.Maximum = 60;
-        FetchIntervalNumericUpDown.Value = Program.AppSettings.AlarmSource.FetchIntervalInMinutes;
+        FetchIntervalNumericUpDown.Value = Settings.AlarmSource.FetchIntervalInMinutes;
 
         #endregion
 
@@ -142,7 +145,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         FetchTimeNumericUpDown.Minimum = 1;
         FetchTimeNumericUpDown.Maximum = 24;
-        FetchTimeNumericUpDown.Value = Program.AppSettings.AlarmSource.FetchTimeInHours;
+        FetchTimeNumericUpDown.Value = Settings.AlarmSource.FetchTimeInHours;
 
         #endregion
 
@@ -167,8 +170,8 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         DefaultSoundComboBox.DataSource = dataSource;
 
-        // Find the item that matches the Program.AppSettings.Audio.DefaultSound value
-        var defaultSound = dataSource.FirstOrDefault(item => item.Value == Program.AppSettings.Audio.DefaultSound);
+        // Find the item that matches the Settings.Audio.DefaultSound value
+        var defaultSound = dataSource.FirstOrDefault(item => item.Value == Settings.Audio.DefaultSound);
 
         // Set the found item as the selected item
         DefaultSoundComboBox.SelectedItem = defaultSound;
@@ -182,7 +185,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         OffAfterStartNumericUpDown.Minimum = -1;
         OffAfterStartNumericUpDown.Maximum = 60;
-        OffAfterStartNumericUpDown.Value = Program.AppSettings.Audio.TurnOffAlarmAfterStart;
+        OffAfterStartNumericUpDown.Value = Settings.Audio.TurnOffAlarmAfterStart;
 
         #endregion
 
@@ -192,28 +195,28 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         #region Color.AlarmPastStartColor
 
-        ColorAlarmPastStartLabel.BackColor = Program.AppSettings.Color.AlarmPastStartColor;
+        ColorAlarmPastStartLabel.BackColor = Settings.Color.AlarmPastStartColor;
         ColorAlarmPastStartLabel.ForeColor = DetermineTextColor(ColorAlarmPastStartLabel.BackColor);
 
         #endregion
 
         #region Color.GreenColor
 
-        ColorGreenLabel.BackColor = Program.AppSettings.Color.GreenColor;
+        ColorGreenLabel.BackColor = Settings.Color.GreenColor;
         ColorGreenLabel.ForeColor = DetermineTextColor(ColorGreenLabel.BackColor);
 
         #endregion
 
         #region Color.YellowColor
 
-        ColorYellowLabel.BackColor = Program.AppSettings.Color.YellowColor;
+        ColorYellowLabel.BackColor = Settings.Color.YellowColor;
         ColorYellowLabel.ForeColor = DetermineTextColor(ColorYellowLabel.BackColor);
 
         #endregion
 
         #region Color.RedColor
 
-        ColorRedLabel.BackColor = Program.AppSettings.Color.RedColor;
+        ColorRedLabel.BackColor = Settings.Color.RedColor;
         ColorRedLabel.ForeColor = DetermineTextColor(ColorRedLabel.BackColor);
 
         #endregion
@@ -224,24 +227,24 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         #region Time.WorkingDays
 
-        WorkdayStartTimePicker.Value = Program.AppSettings.TimeManagement.WorkingStartTime;
-        WorkdayEndTimePicker.Value = Program.AppSettings.TimeManagement.WorkingEndTime;
-        SundayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Sunday);
-        MondayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Monday);
-        TuesdayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Tuesday);
-        WednesdayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Wednesday);
-        ThursdayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Thursday);
-        FridayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Friday);
-        SaturdayCheckBox.Checked = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Saturday);
-        WorkdayEnabledCheckBox.Checked = Program.AppSettings.TimeManagement.EnableOnlyWorkingPeriods;
-        EnableWorkingDays(Program.AppSettings.TimeManagement.EnableOnlyWorkingPeriods);
+        WorkdayStartTimePicker.Value = Settings.TimeManagement.WorkingStartTime;
+        WorkdayEndTimePicker.Value = Settings.TimeManagement.WorkingEndTime;
+        SundayCheckBox.Checked = Settings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Sunday);
+        MondayCheckBox.Checked = Settings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Monday);
+        TuesdayCheckBox.Checked = Settings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Tuesday);
+        WednesdayCheckBox.Checked = Settings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Wednesday);
+        ThursdayCheckBox.Checked = Settings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Thursday);
+        FridayCheckBox.Checked = Settings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Friday);
+        SaturdayCheckBox.Checked = Settings.TimeManagement.WorkDays.Any(w => w == DayOfWeek.Saturday);
+        WorkdayEnabledCheckBox.Checked = Settings.TimeManagement.EnableOnlyWorkingPeriods;
+        EnableWorkingDays(Settings.TimeManagement.EnableOnlyWorkingPeriods);
 
         #endregion
 
         #region Time.ExceptionCategories
 
         CategoryExceptionListBox.Items.Clear();
-        var exceptionItems = Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>();
+        var exceptionItems = Settings.TimeManagement.ExceptionCategories.ToArray<object>();
         CategoryExceptionListBox.Items.AddRange(exceptionItems);
 
         var exceptionToolStrip = new ContextMenuStrip();
@@ -260,7 +263,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         HolidayListView.Columns.Add("Date");
         HolidayListView.Columns.Add("Description");
         HolidayListView.Items.Clear();
-        foreach (var holiday in Program.AppSettings.TimeManagement.Holidays)
+        foreach (var holiday in Settings.TimeManagement.Holidays)
         {
             // Create a ListViewItem for the holiday
             var item = new ListViewItem(holiday.Name);
@@ -304,19 +307,21 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (sender == LeftTrackBar) return;
 
         LeftTrackBar.Value = (int)LeftNumericUpDown.Value;
-        Program.AppSettings.Main.Left = (int)LeftNumericUpDown.Value;
+        Settings.Main.Left = (int)LeftNumericUpDown.Value;
 
-        if (Owner is IMainForm mainForm)
-            mainForm.Left = Program.AppSettings.Main.Left;
+        if (Owner is IMainForm)
+            Owner.Left = Settings.Main.Left;
     }
 
     private void LeftTrackBarScroll(object sender, EventArgs e)
     {
         LeftNumericUpDown.Value = LeftTrackBar.Value;
-        Program.AppSettings.Main.Left = LeftTrackBar.Value;
+        Settings.Main.Left = LeftTrackBar.Value;
 
-        if (Owner is IMainForm mainForm)
-            mainForm.Left = Program.AppSettings.Main.Left;
+        if (Owner is IMainForm)
+        {
+            Owner.Left = Settings.Main.Left;
+        }
     }
 
     #endregion
@@ -328,7 +333,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (Owner is not IMainForm) return;
 
         Owner.Top = (int)BarHeightNumericUpDown.Value - Owner.Height;
-        Program.AppSettings.Main.BarSize = (int)BarHeightNumericUpDown.Value;
+        Settings.Main.BarSize = (int)BarHeightNumericUpDown.Value;
     }
 
     private void BarHeightNumericUpDown_Enter(object sender, EventArgs e)
@@ -348,13 +353,13 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private void SliderSpeedNumericUpDown_ValueChanged(object? sender, EventArgs e)
     {
         SliderSpeedTrackBar.Value = (int)SliderSpeedNumericUpDown.Value;
-        Program.AppSettings.Main.SliderSpeed = SliderSpeedTrackBar.Value;
+        Settings.Main.SliderSpeed = SliderSpeedTrackBar.Value;
     }
 
     private void SliderSpeedTrackBar_ValueChanged(object? sender, EventArgs e)
     {
         SliderSpeedNumericUpDown.Value = SliderSpeedTrackBar.Value;
-        Program.AppSettings.Main.SliderSpeed = SliderSpeedTrackBar.Value;
+        Settings.Main.SliderSpeed = SliderSpeedTrackBar.Value;
     }
 
     private void SliderSpeedNumericUpDown_Enter(object sender, EventArgs e) { StartSliderPreview(); }
@@ -392,7 +397,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     {
         if (Owner is null) return;
 
-        var targetY = _isExpanded ? 0 : -Owner.Height + Program.AppSettings.Main.BarSize;
+        var targetY = _isExpanded ? 0 : -Owner.Height + Settings.Main.BarSize;
 
         if (Math.Abs(Owner.Location.Y - targetY) <= 1)
         {
@@ -400,7 +405,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         }
         else
         {
-            var step = (targetY - Owner.Location.Y) / Program.AppSettings.Main.SliderSpeed;
+            var step = (targetY - Owner.Location.Y) / Settings.Main.SliderSpeed;
 
             if (step == 0) step = targetY > Owner.Location.Y ? 1 : -1;
 
@@ -417,17 +422,17 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private void MinimumWidthNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
         MinimumWidthTrackBar.Value = (int)MinimumWidthNumericUpDown.Value;
-        Program.AppSettings.Main.MinimumWidth = MinimumWidthTrackBar.Value;
+        Settings.Main.MinimumWidth = MinimumWidthTrackBar.Value;
 
-        if (Owner is not null) Owner.Width = Program.AppSettings.Main.MinimumWidth;
+        if (Owner is not null) Owner.Width = Settings.Main.MinimumWidth;
     }
 
     private void MinimumWidthTrackBar_ValueChanged(object sender, EventArgs e)
     {
         MinimumWidthNumericUpDown.Value = MinimumWidthTrackBar.Value;
-        Program.AppSettings.Main.MinimumWidth = MinimumWidthTrackBar.Value;
+        Settings.Main.MinimumWidth = MinimumWidthTrackBar.Value;
 
-        if (Owner is not null) Owner.Width = Program.AppSettings.Main.MinimumWidth;
+        if (Owner is not null) Owner.Width = Settings.Main.MinimumWidth;
     }
 
     #endregion
@@ -440,7 +445,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void AlarmWarningTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
-        Program.AppSettings.Alarm.AlarmWarningTime = (int)AlarmWarningTimeNumericUpDown.Value;
+        Settings.Alarm.AlarmWarningTime = (int)AlarmWarningTimeNumericUpDown.Value;
     }
 
     #endregion
@@ -455,7 +460,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
             if (string.IsNullOrWhiteSpace(TimeLeftFormatExampleTextBox.Text)) return;
 
-            Program.AppSettings.Alarm.TimeLeftStringFormat = TimeLeftFormatExampleTextBox.Text;
+            Settings.Alarm.TimeLeftStringFormat = TimeLeftFormatExampleTextBox.Text;
         }
         catch
         {
@@ -475,7 +480,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
             if (string.IsNullOrWhiteSpace(AlarmStartFormatExampleLabel.Text)) return;
 
-            Program.AppSettings.Alarm.AlarmStartStringFormat = AlarmStartFormatTextBox.Text;
+            Settings.Alarm.AlarmStartStringFormat = AlarmStartFormatTextBox.Text;
         }
         catch
         {
@@ -489,7 +494,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void AlarmLocationTopNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
-        Program.AppSettings.Alarm.Top = (int)AlarmLocationTopNumericUpDown.Value;
+        Settings.Alarm.Top = (int)AlarmLocationTopNumericUpDown.Value;
     }
 
     #endregion
@@ -498,7 +503,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void AlarmLocationLeftNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
-        Program.AppSettings.Alarm.Left = (int)AlarmLocationLeftNumericUpDown.Value;
+        Settings.Alarm.Left = (int)AlarmLocationLeftNumericUpDown.Value;
     }
 
     #endregion
@@ -511,7 +516,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void FetchIntervalNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
-        Program.AppSettings.AlarmSource.FetchIntervalInMinutes = (int)FetchIntervalNumericUpDown.Value;
+        Settings.AlarmSource.FetchIntervalInMinutes = (int)FetchIntervalNumericUpDown.Value;
     }
 
     #endregion
@@ -520,7 +525,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void FetchTimeNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
-        Program.AppSettings.AlarmSource.FetchTimeInHours = (int)FetchTimeNumericUpDown.Value;
+        Settings.AlarmSource.FetchTimeInHours = (int)FetchTimeNumericUpDown.Value;
     }
 
     #endregion
@@ -565,7 +570,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void DefaultSoundComboBox_SelectedIndexChanged(object? sender, EventArgs e)
     {
-        Program.AppSettings.Audio.DefaultSound = GetDefaultSoundComboBoxSelectedSoundType();
+        Settings.Audio.DefaultSound = GetDefaultSoundComboBoxSelectedSoundType();
     }
 
     private void PlayTestButton_Click(object sender, EventArgs e)
@@ -602,7 +607,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void OffAfterStartNumericUpDown_ValueChanged(object sender, EventArgs e)
     {
-        Program.AppSettings.Audio.TurnOffAlarmAfterStart = (int)OffAfterStartNumericUpDown.Value;
+        Settings.Audio.TurnOffAlarmAfterStart = (int)OffAfterStartNumericUpDown.Value;
     }
 
     #endregion
@@ -618,9 +623,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         ColorAlarmPastStartLabel.BackColor = GetColor(ColorAlarmPastStartLabel.BackColor);
         ColorAlarmPastStartLabel.ForeColor = DetermineTextColor(ColorAlarmPastStartLabel.BackColor);
 
-        if (ColorAlarmPastStartLabel.BackColor == Program.AppSettings.Color.AlarmPastStartColor) return;
+        if (ColorAlarmPastStartLabel.BackColor == Settings.Color.AlarmPastStartColor) return;
 
-        Program.AppSettings.Color.AlarmPastStartColor = ColorAlarmPastStartLabel.BackColor;
+        Settings.Color.AlarmPastStartColor = ColorAlarmPastStartLabel.BackColor;
     }
 
     #endregion
@@ -632,9 +637,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         ColorGreenLabel.BackColor = GetColor(ColorGreenLabel.BackColor);
         ColorGreenLabel.ForeColor = DetermineTextColor(ColorGreenLabel.BackColor);
 
-        if (ColorGreenLabel.BackColor == Program.AppSettings.Color.RedColor) return;
+        if (ColorGreenLabel.BackColor == Settings.Color.RedColor) return;
 
-        Program.AppSettings.Color.GreenColor = ColorGreenLabel.BackColor;
+        Settings.Color.GreenColor = ColorGreenLabel.BackColor;
     }
 
     #endregion
@@ -646,9 +651,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         ColorYellowLabel.BackColor = GetColor(ColorYellowLabel.BackColor);
         ColorYellowLabel.ForeColor = DetermineTextColor(ColorYellowLabel.BackColor);
 
-        if (ColorYellowLabel.BackColor == Program.AppSettings.Color.RedColor) return;
+        if (ColorYellowLabel.BackColor == Settings.Color.RedColor) return;
 
-        Program.AppSettings.Color.YellowColor = ColorYellowLabel.BackColor;
+        Settings.Color.YellowColor = ColorYellowLabel.BackColor;
     }
 
     #endregion
@@ -660,9 +665,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         ColorRedLabel.BackColor = GetColor(ColorRedLabel.BackColor);
         ColorRedLabel.ForeColor = DetermineTextColor(ColorRedLabel.BackColor);
 
-        if (ColorRedLabel.BackColor == Program.AppSettings.Color.RedColor) return;
+        if (ColorRedLabel.BackColor == Settings.Color.RedColor) return;
 
-        Program.AppSettings.Color.RedColor = ColorRedLabel.BackColor;
+        Settings.Color.RedColor = ColorRedLabel.BackColor;
     }
 
     #endregion
@@ -682,7 +687,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void WorkdayEnabledCheckBox_CheckedChanged(object sender, EventArgs e)
     {
-        Program.AppSettings.TimeManagement.EnableOnlyWorkingPeriods = WorkdayEnabledCheckBox.Checked;
+        Settings.TimeManagement.EnableOnlyWorkingPeriods = WorkdayEnabledCheckBox.Checked;
 
         EnableWorkingDays(WorkdayEnabledCheckBox.Checked);
     }
@@ -704,28 +709,28 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
     private void WorkdayStartTimePicker_ValueChanged(object sender, EventArgs e)
     {
-        Program.AppSettings.TimeManagement.WorkingStartTime = WorkdayStartTimePicker.Value;
+        Settings.TimeManagement.WorkingStartTime = WorkdayStartTimePicker.Value;
     }
 
     private void WorkdayEndTimePicker_ValueChanged(object sender, EventArgs e)
     {
-        Program.AppSettings.TimeManagement.WorkingEndTime = WorkdayEndTimePicker.Value;
+        Settings.TimeManagement.WorkingEndTime = WorkdayEndTimePicker.Value;
     }
 
-    private static void SaveDayOfWeekSetting(DayOfWeek dayOfWeek, bool enable)
+    private void SaveDayOfWeekSetting(DayOfWeek dayOfWeek, bool enable)
     {
         if (enable)
         {
-            var exists = Program.AppSettings.TimeManagement.WorkDays.Any(w => w == dayOfWeek);
+            var exists = Settings.TimeManagement.WorkDays.Any(w => w == dayOfWeek);
 
             if(!exists)
-                Program.AppSettings.TimeManagement.WorkDays.Add(dayOfWeek);
+                Settings.TimeManagement.WorkDays.Add(dayOfWeek);
         }
-        else if (Program.AppSettings.TimeManagement.WorkDays.Contains(dayOfWeek))
+        else if (Settings.TimeManagement.WorkDays.Contains(dayOfWeek))
         {
-            var daysToRemove = Program.AppSettings.TimeManagement.WorkDays.Where(d => d == dayOfWeek).ToList();
+            var daysToRemove = Settings.TimeManagement.WorkDays.Where(d => d == dayOfWeek).ToList();
 
-            foreach (var day in daysToRemove) Program.AppSettings.TimeManagement.WorkDays.Remove(day);
+            foreach (var day in daysToRemove) Settings.TimeManagement.WorkDays.Remove(day);
         }
     }
 
@@ -776,12 +781,12 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         if (CategoryExceptionListBox.Items.Contains(category)) return;
 
         // Add the category to the ExceptionCategories collection if it doesn't already exist
-        if (!Program.AppSettings.TimeManagement.ExceptionCategories.Contains(category))
-            Program.AppSettings.TimeManagement.ExceptionCategories.Add(category);
+        if (!Settings.TimeManagement.ExceptionCategories.Contains(category))
+            Settings.TimeManagement.ExceptionCategories.Add(category);
 
         CategoryExceptionListBox.Items.Clear();
         CategoryExceptionListBox.Items.AddRange(
-            Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>());
+            Settings.TimeManagement.ExceptionCategories.ToArray<object>());
 
         CategoryExceptionTextBox.Text = string.Empty;
     }
@@ -792,13 +797,13 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         if (category is null) return;
 
-        var exceptions = Program.AppSettings.TimeManagement.ExceptionCategories.Where(exc => exc == category).ToList();
+        var exceptions = Settings.TimeManagement.ExceptionCategories.Where(exc => exc == category).ToList();
 
-        foreach (var cat in exceptions) Program.AppSettings.TimeManagement.ExceptionCategories.Remove(cat);
+        foreach (var cat in exceptions) Settings.TimeManagement.ExceptionCategories.Remove(cat);
 
         CategoryExceptionListBox.Items.Clear();
         CategoryExceptionListBox.Items.AddRange(
-            Program.AppSettings.TimeManagement.ExceptionCategories.ToArray<object>());
+            Settings.TimeManagement.ExceptionCategories.ToArray<object>());
     }
 
     #endregion
@@ -814,9 +819,9 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         {
             var idText = selectedItem.SubItems[3].Text;
             var id = Guid.Parse(idText);
-            var itemsToRemove = Program.AppSettings.TimeManagement.Holidays.Where(h => h.Id == id).ToList();
+            var itemsToRemove = Settings.TimeManagement.Holidays.Where(h => h.Id == id).ToList();
 
-            foreach (var item in itemsToRemove) Program.AppSettings.TimeManagement.Holidays.Remove(item);
+            foreach (var item in itemsToRemove) Settings.TimeManagement.Holidays.Remove(item);
 
             // Handle the selected item(s)
             HolidayListView.Items.Remove(selectedItem);
@@ -847,10 +852,10 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         if (result != DialogResult.OK) return;
 
-        var remove = Program.AppSettings.TimeManagement.Holidays.Where(h => h.Id == id).ToList();
-        foreach (var h in remove) Program.AppSettings.TimeManagement.Holidays.Remove(h);
+        var remove = Settings.TimeManagement.Holidays.Where(h => h.Id == id).ToList();
+        foreach (var h in remove) Settings.TimeManagement.Holidays.Remove(h);
 
-        Program.AppSettings.TimeManagement.Holidays.Add(editor.Holiday);
+        Settings.TimeManagement.Holidays.Add(editor.Holiday);
 
         holidayItem.Name = editor.Holiday.Name;
         holidayItem.SubItems[0].Text = editor.Holiday.Name;
@@ -871,7 +876,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
 
         if (result != DialogResult.OK) return;
 
-        Program.AppSettings.TimeManagement.Holidays.Add(editor.Holiday);
+        Settings.TimeManagement.Holidays.Add(editor.Holiday);
         var item = new ListViewItem(editor.Holiday.Name);
 
         // Add sub-items for each property to populate the columns

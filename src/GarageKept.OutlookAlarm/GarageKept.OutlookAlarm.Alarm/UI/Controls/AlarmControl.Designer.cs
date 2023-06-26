@@ -29,6 +29,7 @@ partial class AlarmControl
     /// </summary>
     private void InitializeComponent()
     {
+        components = new System.ComponentModel.Container();
         SubjectLabel = new Label();
         progressBar = new ProgressBar();
         TimeLeft = new Label();
@@ -37,6 +38,11 @@ partial class AlarmControl
         OrganizerLabel = new Label();
         HorizontalLine = new Label();
         TeamsLinkLabel = new LinkLabel();
+        RightClickMenuStrip = new ContextMenuStrip(components);
+        removeToolStripMenuItem = new ToolStripMenuItem();
+        dismissToolStripMenuItem = new ToolStripMenuItem();
+        this.RefreshTimer = new System.Windows.Forms.Timer(components);
+        RightClickMenuStrip.SuspendLayout();
         SuspendLayout();
         // 
         // SubjectLabel
@@ -113,6 +119,31 @@ partial class AlarmControl
         TeamsLinkLabel.TabStop = true;
         TeamsLinkLabel.Text = "Launch Teams";
         TeamsLinkLabel.Visible = false;
+        TeamsLinkLabel.LinkClicked += OnTeamsLinkLabelOnLinkClicked;
+        // 
+        // RightClickMenuStrip
+        // 
+        RightClickMenuStrip.Items.AddRange(new ToolStripItem[] { removeToolStripMenuItem, dismissToolStripMenuItem });
+        RightClickMenuStrip.Name = "RightClickMenuStrip";
+        RightClickMenuStrip.Size = new Size(118, 48);
+        // 
+        // removeToolStripMenuItem
+        // 
+        removeToolStripMenuItem.Name = "removeToolStripMenuItem";
+        removeToolStripMenuItem.Size = new Size(117, 22);
+        removeToolStripMenuItem.Text = "Remove";
+        removeToolStripMenuItem.Click += RightClickMenuRemove_Click;
+        // 
+        // dismissToolStripMenuItem
+        // 
+        dismissToolStripMenuItem.Name = "dismissToolStripMenuItem";
+        dismissToolStripMenuItem.Size = new Size(117, 22);
+        dismissToolStripMenuItem.Text = "Dismiss";
+        dismissToolStripMenuItem.Click += RightClickMenuDismiss_Click;
+        // 
+        // RefreshTimer
+        // 
+        this.RefreshTimer.Tick += this.Refresh_Tick;
         // 
         // AlarmControl
         // 
@@ -129,6 +160,7 @@ partial class AlarmControl
         Margin = new Padding(0);
         Name = "AlarmControl";
         Size = new Size(256, 122);
+        RightClickMenuStrip.ResumeLayout(false);
         ResumeLayout(false);
         PerformLayout();
     }
@@ -143,4 +175,8 @@ partial class AlarmControl
     private Label OrganizerLabel;
     private Label HorizontalLine;
     private LinkLabel TeamsLinkLabel;
+    private ContextMenuStrip RightClickMenuStrip;
+    private ToolStripMenuItem removeToolStripMenuItem;
+    private ToolStripMenuItem dismissToolStripMenuItem;
+    private System.Windows.Forms.Timer RefreshTimer;
 }

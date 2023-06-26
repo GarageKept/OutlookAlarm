@@ -1,90 +1,38 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
-using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 
 public partial class AlarmControl : UserControl, IAlarmControl
 {
-    private readonly ContextMenuStrip _appointmentContextMenuStrip = new();
     private IAlarm? _alarm;
 
-    public AlarmControl()
+    public AlarmControl(IAlarmManager alarmManager, ISettings settings)
     {
+        AlarmManager = alarmManager;
+        Settings = settings;
+
         InitializeComponent();
-
-        RefreshTimer.Tick += Refresh_Tick;
-        RefreshTimer.Start();
-
-        AddContextMenu();
-
-        UpdateDisplay();
-
-        TeamsLinkLabel.LinkClicked += OnTeamsLinkLabelOnLinkClicked;
     }
 
-    private Timer RefreshTimer { get; } = new() { Interval = 1000 };
+    private IAlarmManager AlarmManager { get; }
+    private ISettings Settings { get; }
 
     public IAlarm? Alarm
     {
         get => _alarm;
         set
         {
+            if (value is null)
+                RefreshTimer.Stop();
+            else
+                RefreshTimer.Start();
+
             _alarm = value;
 
             UpdateDisplay();
         }
-    }
-
-    public void StopTimers()
-    {
-        RefreshTimer.Stop();
-        RefreshTimer.Dispose();
-    }
-
-    public void UpdateDisplay()
-    {
-        if (Alarm == null) return;
-
-        SetHeaderLabels();
-        SetTimeLabels();
-        SetProgressBar();
-        SetBackgroundColor();
-    }
-
-    private void AddContextMenu()
-    {
-        _appointmentContextMenuStrip.Items.Clear();
-
-        var remove = new ToolStripMenuItem("Remove");
-        remove.Click += RemoveAppointment;
-
-        var dismiss = new ToolStripMenuItem("Dismiss");
-        dismiss.Click += DismissAppointment;
-
-        _appointmentContextMenuStrip.Items.Add(remove);
-        _appointmentContextMenuStrip.Items.Add(dismiss);
-        _appointmentContextMenuStrip.Items.Add(new ToolStripSeparator());
-
-        ContextMenuStrip = _appointmentContextMenuStrip;
-
-
-        MouseDown -= Control_MouseDown;
-        MouseDown += Control_MouseDown;
-    }
-
-    private void Control_MouseDown(object? sender, MouseEventArgs e)
-    {
-        if (e.Button == MouseButtons.Right) _appointmentContextMenuStrip.Show(this, e.Location);
-    }
-
-    private void DismissAppointment(object? sender, EventArgs e)
-    {
-        if (Alarm is null) return;
-
-        Program.AlarmManager?.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -96,8 +44,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
         e.Graphics.DrawLine(borderPen, 0, Height - 1, Width, Height - 1);
     }
 
-    private void OnTeamsLinkLabelOnLinkClicked(object? sender,
-        LinkLabelLinkClickedEventArgs linkLabelLinkClickedEventArgs)
+    private void OnTeamsLinkLabelOnLinkClicked(object? sender, LinkLabelLinkClickedEventArgs linkLabelLinkClickedEventArgs)
     {
         if (Alarm is null) return;
 
@@ -113,16 +60,23 @@ public partial class AlarmControl : UserControl, IAlarmControl
         if (Alarm is null) return;
 
         if (Alarm.End < DateTime.Now)
-            Program.AlarmManager?.DeactivateAlarm(Alarm);
+            AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
 
         UpdateDisplay();
     }
 
-    private void RemoveAppointment(object? sender, EventArgs e)
+    private void RightClickMenuDismiss_Click(object sender, EventArgs e)
     {
         if (Alarm is null) return;
 
-        Program.AlarmManager?.DeactivateAlarm(Alarm);
+        AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+    }
+
+    private void RightClickMenuRemove_Click(object sender, EventArgs e)
+    {
+        if (Alarm is null) return;
+
+        AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Remove);
     }
 
     private void SetBackgroundColor()
@@ -207,7 +161,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
         if (timeLeft.TotalMinutes < 0) timeLeft = TimeSpan.Zero;
 
-        TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, timeLeft);
+        TimeLeft.Text = string.Format(Settings.Alarm.TimeLeftStringFormat, timeLeft);
     }
 
     private void SetTimeRightLabel(string text) { TimeRight.Text = text; }
@@ -221,5 +175,15 @@ public partial class AlarmControl : UserControl, IAlarmControl
         var formatString = timeUntilMeeting.Hours > 0 ? "{0:hh}h {0:mm}m {0:ss}s" : "{0:mm}m {0:ss}s";
 
         TimeLeft.Text = string.Format(formatString, timeUntilMeeting);
+    }
+
+    public void UpdateDisplay()
+    {
+        if (Alarm == null) return;
+
+        SetHeaderLabels();
+        SetTimeLabels();
+        SetProgressBar();
+        SetBackgroundColor();
     }
 }

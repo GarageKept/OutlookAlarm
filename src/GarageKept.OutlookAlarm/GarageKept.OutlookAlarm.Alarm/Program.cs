@@ -12,14 +12,14 @@ namespace GarageKept.OutlookAlarm.Alarm;
 
 internal static class Program
 {
+#if !DEBUG
     private static readonly Mutex OutlookAlarmMutex = new(true, @"GarageKept.OutlookAlarm_ExclusiveMutex");
+#endif
 
     static Program()
     {
         var host = CreateHostBuilder().Build();
         ServiceProvider = host.Services;
-
-        AlarmManager = ServiceProvider.GetRequiredService<IAlarmManager>();
 
 #if !DEBUG
         if (!OutlookAlarmMutex.WaitOne(TimeSpan.Zero, true))
@@ -29,8 +29,6 @@ internal static class Program
     }
 
     internal static IServiceProvider? ServiceProvider { get; }
-    internal static IAlarmManager? AlarmManager { get; private set; }
-    internal static OutlookAlarmSettings AppSettings { get; private set; } = OutlookAlarmSettings.Load();
 
     private static IHostBuilder CreateHostBuilder()
     {
@@ -40,6 +38,7 @@ internal static class Program
             services.AddSingleton<IAlarmManager, OutlookAlarmManager>();
             services.AddSingleton<IAlarmSource, OutlookAlarmSource>();
             services.AddSingleton<IMainForm, MainForm>();
+            services.AddSingleton<ISettings, OutlookAlarmSettings>();
             services.AddSingleton<ISettingsForm, SettingsForm>();
 
             services.AddTransient<IMediaPlayer, MediaPlayer>();
@@ -64,7 +63,7 @@ internal static class Program
 #endif
 
         Application.Run(ServiceProvider?.GetRequiredService<IMainForm>() as Form);
-
+        
 #if !DEBUG
         OutlookAlarmMutex.ReleaseMutex();
 #endif
