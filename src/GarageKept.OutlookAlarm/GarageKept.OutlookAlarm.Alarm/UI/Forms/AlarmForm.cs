@@ -45,7 +45,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
                               TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart);
         var bypassAudio = Program.AppSettings.TimeManagement.BypassAudio();
 
-        if (!Alarm.IsAudible && !tooLateForAudio)
+        if (Alarm.IsAudible && !tooLateForAudio)
         {
             if (bypassAudio)
             {
@@ -90,7 +90,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
     private void PlayAudio()
     {
-        if (Alarm.HasCustomSound)
+        if (Alarm!.HasCustomSound)
             _mediaPlayerPlayer.PlaySound(Alarm.CustomSound, true);
         else
             _mediaPlayerPlayer.PlaySound(Program.AppSettings.Audio.DefaultSound, true);
