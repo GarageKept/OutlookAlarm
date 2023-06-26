@@ -19,6 +19,12 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
             {
                 AlarmControls[i].Alarm = _alarms[i];
             }
+
+            if (InvokeRequired)
+                Invoke(new Action(() =>
+                {
+                    RefreshTimer_Tick(this, EventArgs.Empty);
+                }));
         }
     }
 
@@ -41,6 +47,7 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
 
         ResumeLayout();
 
+        RefreshTimer.Enabled = true;
     }
 
     private void AddFooterRow()
@@ -81,7 +88,7 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
             Controls.Add(control, 0, i);
 
             // Create a new row style with a fixed height
-            var rowStyle = new RowStyle(SizeType.Absolute, 0);
+            var rowStyle = new RowStyle(SizeType.AutoSize, 0);
 
             // Add the row style to the TableLayoutPanel
             RowStyles.Add(rowStyle);

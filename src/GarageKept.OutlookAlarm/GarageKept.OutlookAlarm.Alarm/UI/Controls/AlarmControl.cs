@@ -25,13 +25,14 @@ public partial class AlarmControl : UserControl, IAlarmControl
         set
         {
             if (value is null)
-                RefreshTimer.Stop();
+                RefreshTimer.Enabled = false;
             else
-                RefreshTimer.Start();
+                RefreshTimer.Enabled = true;
 
             _alarm = value;
 
-            UpdateDisplay();
+            if (InvokeRequired)
+                Invoke(UpdateDisplay);
         }
     }
 
@@ -179,11 +180,36 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
     public void UpdateDisplay()
     {
+        Visible = Alarm is not null;
+
         if (Alarm == null) return;
 
         SetHeaderLabels();
         SetTimeLabels();
         SetProgressBar();
         SetBackgroundColor();
+    }
+
+    private void RightClick_15Min_Click(object sender, EventArgs e)
+    {
+        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.FifteenMinBefore);
+    }
+
+    private void RightClick_10Min_Click(object sender, EventArgs e)
+    {
+
+        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.TenMinBefore);
+    }
+
+    private void RightClick_5Min_Click(object sender, EventArgs e)
+    {
+
+        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.FiveMinBefore);
+    }
+
+    private void RightClick_0Min_Click(object sender, EventArgs e)
+    {
+        
+        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.ZeroMinBefore);
     }
 }

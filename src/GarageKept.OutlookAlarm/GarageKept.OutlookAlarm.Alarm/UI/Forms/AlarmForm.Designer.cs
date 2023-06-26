@@ -1,4 +1,6 @@
 ﻿
+using Timer = System.Windows.Forms.Timer;
+
 namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
 partial class AlarmForm
@@ -37,7 +39,7 @@ partial class AlarmForm
         SubjectLabel = new Label();
         DismissButton = new Button();
         SnoozeButton = new Button();
-        RefreshTimer = new System.Windows.Forms.Timer(components);
+        RefreshTimer = new Timer(){Interval = 1000};
         SuspendLayout();
         // 
         // TimeRight
@@ -101,6 +103,7 @@ partial class AlarmForm
         // RefreshTimer
         // 
         RefreshTimer.Tick += FormRefresh;
+        RefreshTimer.Enabled = true;
         // 
         // AlarmForm
         // 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
+using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
@@ -66,9 +67,6 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         UpdateForm();
 
         UpdateDropdown();
-        
-        
-        RefreshTimer.Start();
 
         // Subscribe to MouseEnter and MouseLeave events for each child control
         SetDraggable(this);
@@ -76,6 +74,12 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         Location = new Point(Settings.Alarm.Left, Settings.Alarm.Top);
 
         SetBackGroundColor(Alarm.AlarmColor);
+
+        RefreshTimer = new Timer { Interval = 1000 };
+        RefreshTimer.Tick -= FormRefresh;
+        RefreshTimer.Tick += FormRefresh;
+        RefreshTimer.Enabled = true;
+        RefreshTimer.Start();
 
         if (!IsDisposed)
             base.Show();
@@ -98,7 +102,10 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         Close();
     }
 
-    private void FormRefresh(object? sender, EventArgs? e) { UpdateForm(); }
+    private void FormRefresh(object? sender, EventArgs? e)
+    {
+        UpdateForm();
+    }
 
     private void UpdateForm()
     {
@@ -186,7 +193,5 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         if (DateTime.Now > Alarm?.Start)
             RemoveActionSelectorItem(AlarmAction.ZeroMinBefore);
-
-        //if (ActionSelector.SelectedIndex <= 0) ActionSelector.SelectedIndex = 1;
     }
 }

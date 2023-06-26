@@ -32,7 +32,8 @@ public class Appointment : IAlarm
         IsActive = true;
         HasCustomSound = !string.IsNullOrEmpty(CustomSound);
         Organizer = item.Organizer;
-        Categories.AddRange(item.Categories.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        Categories.AddRange(item.Categories?.Split(new[] { ',' },
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? Array.Empty<string>());
         Location = item.Location;
         TeamsMeetingUrl = ExtractTeamsMeetingUrlFromBody(item.Body);
     }
@@ -41,7 +42,7 @@ public class Appointment : IAlarm
     public bool IsOwnEvent { get; set; }
     public ResponseType Response { get; set; }
     public Color AlarmColor { get; set; }
-    public List<string>? Categories { get; set; } = new();
+    public List<string> Categories { get; set; } = new();
     public string CustomSound { get; set; }
     public DateTime End { get; set; }
     public bool HasCustomSound { get; set; }

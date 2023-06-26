@@ -30,6 +30,12 @@ public sealed class OutlookAlarmManager : IAlarmManager
 
         switch (action)
         {
+            case AlarmAction.FifteenMinBefore:
+                AlarmTimers[alarm.Id] = UpdateReminderTime(alarm, AlarmAction.FifteenMinBefore);
+                break;
+            case AlarmAction.TenMinBefore:
+                AlarmTimers[alarm.Id] = UpdateReminderTime(alarm, AlarmAction.TenMinBefore);
+                break;
             case AlarmAction.FiveMinBefore:
                 AlarmTimers[alarm.Id] = UpdateReminderTime(alarm, AlarmAction.FiveMinBefore);
                 break;
@@ -101,19 +107,20 @@ public sealed class OutlookAlarmManager : IAlarmManager
 
     private void AlarmCallback(object? state)
     {
-        if (state != null) return;
+        if (state is null) return;
 
         if (state is not IAlarm alarm) return;
 
         if (alarm.IsReminderEnabled)
         {
-            ChangeAlarmState(alarm, AlarmAction.Dismiss);
+            // Launch alarm window or perform related actions
+            // Launch alarm window or perform related actions
+            var alarmWindow = Program.ServiceProvider?.GetRequiredService<IAlarmForm>();
+            Application.OpenForms[0]?.Invoke(delegate { alarmWindow?.Show(alarm); });
         }
         else
         {
-            // Launch alarm window or perform related actions
-            var alarmWindow = Program.ServiceProvider?.GetRequiredService<IAlarmForm>();
-            alarmWindow?.Show(alarm);
+            ChangeAlarmState(alarm, AlarmAction.Dismiss);
         }
     }
 
@@ -230,6 +237,12 @@ public sealed class OutlookAlarmManager : IAlarmManager
     {
         switch (action)
         {
+            case AlarmAction.FifteenMinBefore:
+                alarm.ReminderTime = alarm.Start + TimeSpan.FromMinutes(-15);
+                break;
+            case AlarmAction.TenMinBefore:
+                alarm.ReminderTime = alarm.Start + TimeSpan.FromMinutes(-10);
+                break;
             case AlarmAction.FiveMinBefore:
                 alarm.ReminderTime = alarm.Start + TimeSpan.FromMinutes(-5);
                 break;

@@ -41,7 +41,12 @@ partial class AlarmControl
         RightClickMenuStrip = new ContextMenuStrip(components);
         removeToolStripMenuItem = new ToolStripMenuItem();
         dismissToolStripMenuItem = new ToolStripMenuItem();
-        this.RefreshTimer = new System.Windows.Forms.Timer(components);
+        reminderToolStripMenuItem = new ToolStripMenuItem();
+        RightClick_15Min = new ToolStripMenuItem();
+        RightClick_10Min = new ToolStripMenuItem();
+        RightClick_5Min = new ToolStripMenuItem();
+        RightClick_0Min = new ToolStripMenuItem();
+        RefreshTimer = new System.Windows.Forms.Timer(components);
         RightClickMenuStrip.SuspendLayout();
         SuspendLayout();
         // 
@@ -123,32 +128,70 @@ partial class AlarmControl
         // 
         // RightClickMenuStrip
         // 
-        RightClickMenuStrip.Items.AddRange(new ToolStripItem[] { removeToolStripMenuItem, dismissToolStripMenuItem });
+        RightClickMenuStrip.Items.AddRange(new ToolStripItem[] { removeToolStripMenuItem, dismissToolStripMenuItem, reminderToolStripMenuItem });
         RightClickMenuStrip.Name = "RightClickMenuStrip";
-        RightClickMenuStrip.Size = new Size(118, 48);
+        RightClickMenuStrip.Size = new Size(126, 70);
         // 
         // removeToolStripMenuItem
         // 
         removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-        removeToolStripMenuItem.Size = new Size(117, 22);
+        removeToolStripMenuItem.Size = new Size(125, 22);
         removeToolStripMenuItem.Text = "Remove";
         removeToolStripMenuItem.Click += RightClickMenuRemove_Click;
         // 
         // dismissToolStripMenuItem
         // 
         dismissToolStripMenuItem.Name = "dismissToolStripMenuItem";
-        dismissToolStripMenuItem.Size = new Size(117, 22);
+        dismissToolStripMenuItem.Size = new Size(125, 22);
         dismissToolStripMenuItem.Text = "Dismiss";
         dismissToolStripMenuItem.Click += RightClickMenuDismiss_Click;
         // 
+        // reminderToolStripMenuItem
+        // 
+        reminderToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { RightClick_15Min, RightClick_10Min, RightClick_5Min, RightClick_0Min });
+        reminderToolStripMenuItem.Name = "reminderToolStripMenuItem";
+        reminderToolStripMenuItem.Size = new Size(125, 22);
+        reminderToolStripMenuItem.Text = "Reminder";
+        // 
+        // RightClick_15Min
+        // 
+        RightClick_15Min.Name = "RightClick_15Min";
+        RightClick_15Min.Size = new Size(180, 22);
+        RightClick_15Min.Text = "15 Min Before";
+        RightClick_15Min.Click += RightClick_15Min_Click;
+        // 
+        // RightClick_10Min
+        // 
+        RightClick_10Min.Name = "RightClick_10Min";
+        RightClick_10Min.Size = new Size(180, 22);
+        RightClick_10Min.Text = "10 Min Before";
+        RightClick_10Min.Click += RightClick_10Min_Click;
+        // 
+        // RightClick_5Min
+        // 
+        RightClick_5Min.Name = "RightClick_5Min";
+        RightClick_5Min.Size = new Size(180, 22);
+        RightClick_5Min.Text = "5 Min Before";
+        RightClick_5Min.Click += RightClick_5Min_Click;
+        // 
+        // RightClick_0Min
+        // 
+        RightClick_0Min.Name = "RightClick_0Min";
+        RightClick_0Min.Size = new Size(180, 22);
+        RightClick_0Min.Text = "0 min Before";
+        RightClick_0Min.Click += RightClick_0Min_Click;
+        // 
         // RefreshTimer
         // 
-        this.RefreshTimer.Tick += this.Refresh_Tick;
+        RefreshTimer.Enabled = true;
+        RefreshTimer.Interval = 1000;
+        RefreshTimer.Tick += Refresh_Tick;
         // 
         // AlarmControl
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
+        ContextMenuStrip = RightClickMenuStrip;
         Controls.Add(TeamsLinkLabel);
         Controls.Add(HorizontalLine);
         Controls.Add(OrganizerLabel);
@@ -179,4 +222,9 @@ partial class AlarmControl
     private ToolStripMenuItem removeToolStripMenuItem;
     private ToolStripMenuItem dismissToolStripMenuItem;
     private System.Windows.Forms.Timer RefreshTimer;
+    private ToolStripMenuItem reminderToolStripMenuItem;
+    private ToolStripMenuItem RightClick_15Min;
+    private ToolStripMenuItem RightClick_10Min;
+    private ToolStripMenuItem RightClick_5Min;
+    private ToolStripMenuItem RightClick_0Min;
 }
