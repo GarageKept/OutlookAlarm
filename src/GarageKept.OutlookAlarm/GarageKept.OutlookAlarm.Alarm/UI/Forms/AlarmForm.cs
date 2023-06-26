@@ -20,9 +20,10 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         ShowInTaskbar = false;
 
         ActionSelector.Items.Clear();
-        var dataSource = Enum.GetValues(typeof(AlarmAction)).Cast<AlarmAction>()
+        var dataSource = Enum.GetValues(typeof(AlarmAction)).Cast<AlarmAction>().Where(a=>a is not (AlarmAction.Remove or AlarmAction.Dismiss))
             .Select(s => new { Value = s, Text = AlarmActionHelpers.GetEnumDisplayValue(s) })
             .Where(a => a.Text != "Dismissed").ToList();
+
         ActionSelector.DisplayMember = "Text";
         ActionSelector.ValueMember = "Value";
 
@@ -188,6 +189,12 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
     private void UpdateDropdown()
     {
+        if ((Alarm?.Start - DateTime.Now)!.Value.TotalMinutes < TimeSpan.FromMinutes(15).TotalMinutes)
+            RemoveActionSelectorItem(AlarmAction.FifteenMinBefore);
+
+        if ((Alarm?.Start - DateTime.Now)!.Value.TotalMinutes < TimeSpan.FromMinutes(10).TotalMinutes)
+            RemoveActionSelectorItem(AlarmAction.TenMinBefore);
+
         if ((Alarm?.Start - DateTime.Now)!.Value.TotalMinutes < TimeSpan.FromMinutes(5).TotalMinutes)
             RemoveActionSelectorItem(AlarmAction.FiveMinBefore);
 
