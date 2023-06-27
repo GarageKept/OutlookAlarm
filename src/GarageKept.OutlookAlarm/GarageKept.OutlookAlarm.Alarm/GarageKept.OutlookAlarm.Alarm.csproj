@@ -14,6 +14,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Helpers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Audio\Media\double-beep.wav" />
     <None Remove="Audio\Media\guitar-notification.wav" />
     <None Remove="Audio\Media\tick-tock.wav" />
@@ -90,10 +96,6 @@
     <EmbeddedResource Update="UI\Controls\AlarmControl.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Helpers\" />
   </ItemGroup>
 
   <ItemGroup>
