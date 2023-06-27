@@ -47,9 +47,9 @@ partial class AlarmControl
         RightClick_5Min = new ToolStripMenuItem();
         RightClick_0Min = new ToolStripMenuItem();
         RefreshTimer = new System.Windows.Forms.Timer(components);
-        pictureBox1 = new PictureBox();
+        AudioPictureBox = new PictureBox();
         RightClickMenuStrip.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)AudioPictureBox).BeginInit();
         SuspendLayout();
         // 
         // SubjectLabel
@@ -189,20 +189,22 @@ partial class AlarmControl
         RefreshTimer.Interval = 1000;
         RefreshTimer.Tick += Refresh_Tick;
         // 
-        // pictureBox1
+        // AudioPictureBox
         // 
-        pictureBox1.Location = new Point(229, 3);
-        pictureBox1.Name = "pictureBox1";
-        pictureBox1.Size = new Size(24, 24);
-        pictureBox1.TabIndex = 10;
-        pictureBox1.TabStop = false;
+        AudioPictureBox.Location = new Point(229, 3);
+        AudioPictureBox.Name = "AudioPictureBox";
+        AudioPictureBox.Size = new Size(24, 24);
+        AudioPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+        AudioPictureBox.TabIndex = 10;
+        AudioPictureBox.TabStop = false;
+        AudioPictureBox.Click += AudioPictureBox_Click;
         // 
         // AlarmControl
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         ContextMenuStrip = RightClickMenuStrip;
-        Controls.Add(pictureBox1);
+        Controls.Add(AudioPictureBox);
         Controls.Add(TeamsLinkLabel);
         Controls.Add(HorizontalLine);
         Controls.Add(OrganizerLabel);
@@ -215,7 +217,7 @@ partial class AlarmControl
         Name = "AlarmControl";
         Size = new Size(256, 122);
         RightClickMenuStrip.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+        ((System.ComponentModel.ISupportInitialize)AudioPictureBox).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }
@@ -239,5 +241,5 @@ partial class AlarmControl
     private ToolStripMenuItem RightClick_10Min;
     private ToolStripMenuItem RightClick_5Min;
     private ToolStripMenuItem RightClick_0Min;
-    private PictureBox pictureBox1;
+    private PictureBox AudioPictureBox;
 }

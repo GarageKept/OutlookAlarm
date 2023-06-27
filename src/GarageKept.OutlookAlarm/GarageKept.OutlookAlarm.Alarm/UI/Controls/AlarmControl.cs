@@ -187,6 +187,27 @@ public partial class AlarmControl : UserControl, IAlarmControl
         SetTimeLabels();
         SetProgressBar();
         SetBackgroundColor();
+        SetAudibleIcon();
+    }
+
+    private void SetAudibleIcon()
+    {
+        if (Alarm is null) return;
+
+        Icon icon;
+
+        if (Alarm.IsAudible)
+        {
+            using var memoryStream = new MemoryStream(Properties.Resources.bell);
+            icon = new Icon(memoryStream);
+        }
+        else
+        {
+            using var memoryStream = new MemoryStream(Properties.Resources.bell_slash);
+            icon = new Icon(memoryStream);
+        }
+
+        AudioPictureBox.Image = icon.ToBitmap();
     }
 
     private void RightClick_15Min_Click(object sender, EventArgs e)
@@ -210,5 +231,14 @@ public partial class AlarmControl : UserControl, IAlarmControl
     {
 
         AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.ZeroMinBefore);
+    }
+
+    private void AudioPictureBox_Click(object sender, EventArgs e)
+    {
+        if (Alarm is null) return;
+
+        Alarm.IsAudible = !Alarm.IsAudible;
+
+        UpdateDisplay();
     }
 }
