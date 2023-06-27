@@ -9,10 +9,6 @@ public interface IAlarmManager : IDisposable
     void ChangeAlarmState(IAlarm alarm, AlarmAction action);
     void ForceFetch();
     IEnumerable<IAlarm> GetActiveAlarms();
-    IAlarm? GetCurrentAppointment();
-    IAlarm? GetNextAppointment();
-    IAlarm? GetCurrentAppointment();
-    IAlarm? GetNextAppointment();
     void Reset();
     void Start();
     void Stop();
