@@ -7,8 +7,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>GarageKept.OutlookAlarm.Alarm.Program</StartupObject>
-    <AssemblyVersion>1.4.0.328</AssemblyVersion>
-    <FileVersion>1.4.0.328</FileVersion>
+    <AssemblyVersion>1.4.0.330</AssemblyVersion>
+    <FileVersion>1.4.0.330</FileVersion>
     <ApplicationIcon>Clock.ico</ApplicationIcon>
   </PropertyGroup>
 

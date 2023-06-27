@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_A7D3807FB1F34C27AE6B923306BCB12D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_CCB380E4A03646B2B46418289A919EFA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -122,10 +128,30 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A7D3807FB1F34C27AE6B923306BCB12D"
+            {
+            "SourcePath" = "8:..\\..\\..\\images\\Clock.ico"
+            "TargetName" = "8:Clock.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_F77DADE055D5415D90B77745F58C9644"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CCB380E4A03646B2B46418289A919EFA"
             {
             "SourcePath" = "8:..\\GarageKept.OutlookAlarm.Alarm\\bin\\Release\\net7.0-windows10.0.17763.0\\GarageKept.OutlookAlarm.Alarm.exe"
-            "TargetName" = "8:GarageKept.OutlookAlarm.Alarm.exe"
+            "TargetName" = "8:OutlookAlarm.exe"
             "Tag" = "8:"
             "Folder" = "8:_F77DADE055D5415D90B77745F58C9644"
             "Condition" = "8:"
@@ -210,7 +236,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Outlook Alarm"
         "ProductCode" = "8:{7CAA384D-678E-4E49-814B-2EE8151F7DFE}"
-        "PackageCode" = "8:{D8F14277-CD7F-4AA2-A691-E47D4CDD5A37}"
+        "PackageCode" = "8:{DB2B686C-5011-4490-B125-D48E3FDEB6CE}"
         "UpgradeCode" = "8:{BDF3BA3F-997A-4B25-BEE8-5E828A1659AB}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -341,7 +367,7 @@
             "Target" = "8:_CCB380E4A03646B2B46418289A919EFA"
             "Folder" = "8:_6549F4777AB447569C2BA2D7562EB2E7"
             "WorkingFolder" = "8:_F77DADE055D5415D90B77745F58C9644"
-            "Icon" = "8:"
+            "Icon" = "8:_A7D3807FB1F34C27AE6B923306BCB12D"
             "Feature" = "8:"
             }
         }
