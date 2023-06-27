@@ -24,15 +24,14 @@ public partial class AlarmControl : UserControl, IAlarmControl
         get => _alarm;
         set
         {
-            if (value is null)
-                RefreshTimer.Enabled = false;
-            else
-                RefreshTimer.Enabled = true;
+            RefreshTimer.Enabled = value is not null;
 
             _alarm = value;
 
             if (InvokeRequired)
                 Invoke(UpdateDisplay);
+            else
+                UpdateDisplay();
         }
     }
 
@@ -178,7 +177,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
         TimeLeft.Text = string.Format(formatString, timeUntilMeeting);
     }
 
-    public void UpdateDisplay()
+    private void UpdateDisplay()
     {
         Visible = Alarm is not null;
 
@@ -188,6 +187,27 @@ public partial class AlarmControl : UserControl, IAlarmControl
         SetTimeLabels();
         SetProgressBar();
         SetBackgroundColor();
+        SetAudibleIcon();
+    }
+
+    private void SetAudibleIcon()
+    {
+        if (Alarm is null) return;
+
+        Icon icon;
+
+        if (Alarm.IsAudible)
+        {
+            using var memoryStream = new MemoryStream(Properties.Resources.bell);
+            icon = new Icon(memoryStream);
+        }
+        else
+        {
+            using var memoryStream = new MemoryStream(Properties.Resources.bell_slash);
+            icon = new Icon(memoryStream);
+        }
+
+        AudioPictureBox.Image = icon.ToBitmap();
     }
 
     private void RightClick_15Min_Click(object sender, EventArgs e)
@@ -209,7 +229,16 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
     private void RightClick_0Min_Click(object sender, EventArgs e)
     {
-        
+
         AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.ZeroMinBefore);
+    }
+
+    private void AudioPictureBox_Click(object sender, EventArgs e)
+    {
+        if (Alarm is null) return;
+
+        Alarm.IsAudible = !Alarm.IsAudible;
+
+        UpdateDisplay();
     }
 }

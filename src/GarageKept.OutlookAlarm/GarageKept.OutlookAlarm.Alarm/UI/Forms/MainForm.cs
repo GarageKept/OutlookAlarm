@@ -18,7 +18,7 @@ public partial class MainForm : BaseForm, IMainForm
     {
         Settings = settings;
         AlarmManager = alarmManager;
-        alarmManager.AlarmsUpdated += UpdateAlarms;
+        alarmManager.AlarmsUpdatedCallback += UpdateAlarms;
         
         InitializeComponent();
         FormClosing += OnFormClosing;
@@ -67,8 +67,8 @@ public partial class MainForm : BaseForm, IMainForm
         rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
         var advanced = new ToolStripMenuItem("Advanced");
         var advancedDropdown = new ToolStripDropDownMenu();
-        var refresh = new ToolStripMenuItem("Refresh");
-        refresh.Click += RightClickMenu_RefreshClick;
+        var refresh = new ToolStripMenuItem("Fetch Now");
+        refresh.Click += RightClickMenu_FetchNowClick;
         advancedDropdown.Items.Add(refresh);
         var reset = new ToolStripMenuItem("Reset All");
         reset.Click += RightClick_ResetAllAppointments;
@@ -183,7 +183,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    private void RightClickMenu_RefreshClick(object? sender, EventArgs e) { AlarmManager.ForceFetch(); }
+    private void RightClickMenu_FetchNowClick(object? sender, EventArgs e) { AlarmManager.ForceFetch(); }
 
     /// <summary>
     ///     Event handler for the OutlookAlarmSettings menu item click event.

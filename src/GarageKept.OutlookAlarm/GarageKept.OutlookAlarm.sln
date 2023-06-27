@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GarageKept.OutlookAlarm.Ala
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GarageKept.OutlookAlarm.Setup", "GarageKept.OutlookAlarm.Setup\GarageKept.OutlookAlarm.Setup.vdproj", "{D8EE7058-D491-412A-A17A-B8E5ADBB067B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GarageKept.OutlookAlarm.Alarm.Tests", "GarageKept.OutlookAlarm.Alarm.Tests\GarageKept.OutlookAlarm.Alarm.Tests.csproj", "{900EA539-5901-4F20-A075-5CC55315D5EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GarageKept.OutlookAlarm.Alarm.Tests", "GarageKept.OutlookAlarm.Alarm.Tests\GarageKept.OutlookAlarm.Alarm.Tests.csproj", "{900EA539-5901-4F20-A075-5CC55315D5EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,7 +64,6 @@ Global
 		{900EA539-5901-4F20-A075-5CC55315D5EF}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{900EA539-5901-4F20-A075-5CC55315D5EF}.Debug|x86.Build.0 = Debug|Any CPU
 		{900EA539-5901-4F20-A075-5CC55315D5EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{900EA539-5901-4F20-A075-5CC55315D5EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{900EA539-5901-4F20-A075-5CC55315D5EF}.Release|ARM.ActiveCfg = Release|Any CPU
 		{900EA539-5901-4F20-A075-5CC55315D5EF}.Release|ARM.Build.0 = Release|Any CPU
 		{900EA539-5901-4F20-A075-5CC55315D5EF}.Release|ARM64.ActiveCfg = Release|Any CPU

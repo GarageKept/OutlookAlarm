@@ -7,9 +7,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>GarageKept.OutlookAlarm.Alarm.Program</StartupObject>
-    <AssemblyVersion>1.4.0.258</AssemblyVersion>
-    <FileVersion>1.4.0.258</FileVersion>
-    <ApplicationIcon>alarmClock.ico</ApplicationIcon>
+    <AssemblyVersion>1.4.0.330</AssemblyVersion>
+    <FileVersion>1.4.0.330</FileVersion>
+    <ApplicationIcon>Clock.ico</ApplicationIcon>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Clock.ico" />
     <Content Include="alarmClock.ico" />
   </ItemGroup>
 

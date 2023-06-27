@@ -61,6 +61,32 @@ namespace GarageKept.OutlookAlarm.Alarm.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] bell {
+            get {
+                object obj = ResourceManager.GetObject("bell", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] bell_slash {
+            get {
+                object obj = ResourceManager.GetObject("bell_slash", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] clock {
+            get {
+                object obj = ResourceManager.GetObject("clock", resourceCulture);
+                return ((byte[])(obj));
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon alarmClock {
