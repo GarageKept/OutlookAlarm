@@ -10,6 +10,7 @@
     <AssemblyVersion>1.4.0.330</AssemblyVersion>
     <FileVersion>1.4.0.330</FileVersion>
     <ApplicationIcon>Clock.ico</ApplicationIcon>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +34,7 @@
 
   <ItemGroup>
     <Content Include="Clock.ico" />
+    <Content Include="alarmClock.ico" />
   </ItemGroup>
 
   <ItemGroup>
