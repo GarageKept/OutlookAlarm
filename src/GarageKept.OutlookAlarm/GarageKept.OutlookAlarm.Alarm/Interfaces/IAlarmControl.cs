@@ -2,8 +2,5 @@
 
 public interface IAlarmControl : IDisposable
 {
-    IAlarm? Alarm { get; set; }
-    bool Visible { get; set; }
-    void StopTimers();
-    void UpdateDisplay();
+    IAlarm? Alarm { set; }
 }

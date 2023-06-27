@@ -5,14 +5,36 @@ namespace GarageKept.OutlookAlarm.Alarm.Settings;
 
 public class OutlookAlarmSettings : ISettings
 {
+    private static bool _loadedOnce;
+
     public OutlookAlarmSettings()
     {
+
         Alarm = new AlarmSettings(Save);
         AlarmSource = new AlarmSourceSettings(Save);
         Audio = new AudioSettings(Save);
         Color = new ColorSettings(Save);
         Main = new MainSettings(Save);
         TimeManagement = new TimeManagementSettings(Save);
+
+        if (_loadedOnce) return;
+
+        _loadedOnce = true;
+        var settings = Load();
+
+        Alarm = settings.Alarm;
+        AlarmSource = settings.AlarmSource;
+        Audio = settings.Audio;
+        Color = settings.Color;
+        Main = settings.Main;
+        TimeManagement = settings.TimeManagement;
+
+        Alarm.Save = Save;
+        AlarmSource.Save = Save;
+        Audio.Save = Save;
+        Color.Save = Save;
+        Main.Save = Save;
+        TimeManagement.Save = Save;
     }
 
     public AlarmSettings Alarm { get; set; }

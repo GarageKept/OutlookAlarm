@@ -34,24 +34,12 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
         {
             components = new System.ComponentModel.Container();
             rightClickMenu = new ContextMenuStrip(components);
-            upcomingAppointments = (Controls.AlarmContainerControl)Program.ServiceProvider.GetService<IAlarmContainerControl>();
             SuspendLayout();
             // 
             // rightClickMenu
             // 
             rightClickMenu.Name = "contextMenuStrip1";
             rightClickMenu.Size = new Size(61, 4);
-            // 
-            // upcomingAppointments
-            // 
-            upcomingAppointments.AutoSize = true;
-            upcomingAppointments.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            upcomingAppointments.Dock = DockStyle.Fill;
-            upcomingAppointments.Location = new Point(0, 0);
-            upcomingAppointments.Margin = new Padding(0);
-            upcomingAppointments.Name = "upcomingAppointments";
-            upcomingAppointments.Size = new Size(256, 74);
-            upcomingAppointments.TabIndex = 1;
             // 
             // MainForm
             // 
@@ -63,7 +51,6 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(256, 74);
             ContextMenuStrip = rightClickMenu;
-            Controls.Add(upcomingAppointments);
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
@@ -79,6 +66,5 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
 
         #endregion
         private ContextMenuStrip rightClickMenu;
-        private Controls.AlarmContainerControl upcomingAppointments;
     }
 }

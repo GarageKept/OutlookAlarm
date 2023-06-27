@@ -7,22 +7,23 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 
 public partial class AlarmForm : BaseForm, IAlarmForm
 {
-    private readonly IMediaPlayer _mediaPlayerPlayer;
     private bool _playSound = true;
-    private Timer? _refreshTimer;
 
-    public AlarmForm(IMediaPlayer mediaPlayer) : base(false)
+    public AlarmForm(IAlarmManager alarmManager, IMediaPlayer mediaPlayer, ISettings settings) : base(false)
     {
-        InitializeComponent();
+        AlarmManager = alarmManager;
+        MediaPlayerPlayer = mediaPlayer;
+        Settings = settings;
 
-        _mediaPlayerPlayer = mediaPlayer;
+        InitializeComponent();
 
         ShowInTaskbar = false;
 
         ActionSelector.Items.Clear();
-        var dataSource = Enum.GetValues(typeof(AlarmAction)).Cast<AlarmAction>()
+        var dataSource = Enum.GetValues(typeof(AlarmAction)).Cast<AlarmAction>().Where(a=>a is not (AlarmAction.Remove or AlarmAction.Dismiss))
             .Select(s => new { Value = s, Text = AlarmActionHelpers.GetEnumDisplayValue(s) })
             .Where(a => a.Text != "Dismissed").ToList();
+
         ActionSelector.DisplayMember = "Text";
         ActionSelector.ValueMember = "Value";
 
@@ -30,29 +31,29 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         Move += (_, _) =>
         {
-            Program.AppSettings.Alarm.Left = Left;
-            Program.AppSettings.Alarm.Top = Top;
+            Settings.Alarm.Left = Left;
+            Settings.Alarm.Top = Top;
         };
     }
 
+    private IMediaPlayer MediaPlayerPlayer { get; }
     private IAlarm? Alarm { get; set; }
+    private IAlarmManager AlarmManager { get; }
+    private ISettings Settings { get; }
 
     public void Show(IAlarm alarm)
     {
         Alarm = alarm ?? throw new ArgumentNullException(typeof(IAlarm).ToString());
 
-        var tooLateForAudio = DateTime.Now - Alarm.Start >
-                              TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart);
-        var bypassAudio = Program.AppSettings.TimeManagement.BypassAudio();
+        var tooLateForAudio = DateTime.Now - Alarm.Start > TimeSpan.FromMinutes(Settings.Audio.TurnOffAlarmAfterStart);
+        var bypassAudio = Settings.TimeManagement.BypassAudio();
 
         if (Alarm.IsAudible && !tooLateForAudio)
         {
             if (bypassAudio)
             {
-                if (Program.AppSettings.TimeManagement.ExceptionCategories.Intersect(Alarm.Categories).Any())
-                {
+                if (Settings.TimeManagement.ExceptionCategories.Intersect(Alarm.Categories).Any())
                     PlayAudio();
-                }
             }
             else
             {
@@ -61,92 +62,90 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         }
 
         SubjectLabel.Text = Alarm.Name;
-        TimeRight.Text = Alarm.ReminderTime.ToString(Program.AppSettings.Alarm.AlarmStartStringFormat);
-        TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
+        TimeRight.Text = Alarm.ReminderTime.ToString(Settings.Alarm.AlarmStartStringFormat);
+        TimeLeft.Text = string.Format(Settings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm.Start);
 
-        FormRefresh(null, null);
+        UpdateForm();
 
         UpdateDropdown();
-
-        _refreshTimer = new Timer
-        {
-            Interval = 1000 // 1000 ms = 1 second
-        };
-
-        _refreshTimer.Tick -= FormRefresh;
-        _refreshTimer.Tick += FormRefresh;
-        _refreshTimer.Start();
 
         // Subscribe to MouseEnter and MouseLeave events for each child control
         SetDraggable(this);
 
-        Location = new Point(Program.AppSettings.Alarm.Left, Program.AppSettings.Alarm.Top);
+        Location = new Point(Settings.Alarm.Left, Settings.Alarm.Top);
 
         SetBackGroundColor(Alarm.AlarmColor);
+
+        RefreshTimer = new Timer { Interval = 1000 };
+        RefreshTimer.Tick -= FormRefresh;
+        RefreshTimer.Tick += FormRefresh;
+        RefreshTimer.Enabled = true;
+        RefreshTimer.Start();
 
         if (!IsDisposed)
             base.Show();
     }
 
-    private void PlayAudio()
+    private void AlarmForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if (Alarm!.HasCustomSound)
-            _mediaPlayerPlayer.PlaySound(Alarm.CustomSound, true);
-        else
-            _mediaPlayerPlayer.PlaySound(Program.AppSettings.Audio.DefaultSound, true);
+        RefreshTimer?.Stop();
+        RefreshTimer?.Dispose();
+        RefreshTimer = null;
+        MediaPlayerPlayer.StopSound();
     }
-
-    public new void Dispose()
-    {
-        _refreshTimer?.Stop();
-        _refreshTimer?.Dispose();
-        _refreshTimer = null;
-        _mediaPlayerPlayer.StopSound();
-
-        Dispose(true);
-    }
-
-    public new void Close() { Dispose(); }
 
     private void DismissButton_Click(object sender, EventArgs e)
     {
         if (Alarm == null) return;
 
-        Program.AlarmManager?.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+        AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
 
         Close();
     }
 
     private void FormRefresh(object? sender, EventArgs? e)
     {
-        TimeLeft.Text = string.Format(Program.AppSettings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
+        UpdateForm();
+    }
 
-        if (_playSound && Program.AppSettings.Audio.TurnOffAlarmAfterStart >= 0 && DateTime.Now - Alarm?.Start >
-            TimeSpan.FromMinutes(Program.AppSettings.Audio.TurnOffAlarmAfterStart))
+    private void UpdateForm()
+    {
+        TimeLeft.Text = string.Format(Settings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
+
+        if (_playSound && Settings.Audio.TurnOffAlarmAfterStart >= 0 && DateTime.Now - Alarm?.Start >
+            TimeSpan.FromMinutes(Settings.Audio.TurnOffAlarmAfterStart))
         {
-            _mediaPlayerPlayer.StopSound();
+            MediaPlayerPlayer.StopSound();
             _playSound = false;
         }
 
         if (DateTime.Now > Alarm?.End)
         {
-            Program.AlarmManager?.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+            AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
             Close();
         }
 
         if (DateTime.Now > Alarm?.Start)
-            SetBackGroundColor(Program.AppSettings.Color.AlarmPastStartColor);
+            SetBackGroundColor(Settings.Color.AlarmPastStartColor);
 
         UpdateDropdown();
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
-        _mediaPlayerPlayer.StopSound();
+        MediaPlayerPlayer.StopSound();
 
         base.OnFormClosing(e);
 
         Dispose();
+    }
+
+    private void PlayAudio()
+    {
+        if (Alarm!.HasCustomSound)
+            MediaPlayerPlayer.PlaySound(Alarm.CustomSound, true);
+        else
+            MediaPlayerPlayer.PlaySound(Settings.Audio.DefaultSound, true);
     }
 
     private void RemoveActionSelectorItem(AlarmAction action)
@@ -168,7 +167,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
     private void SetBackGroundColor(Color backGroundColor)
     {
-        BackColor = DateTime.Now > Alarm?.Start ? Program.AppSettings.Color.AlarmPastStartColor : backGroundColor;
+        BackColor = DateTime.Now > Alarm?.Start ? Settings.Color.AlarmPastStartColor : backGroundColor;
         ForeColor = DetermineTextColor(backGroundColor);
 
         // Exclude buttons from text color adjustment
@@ -183,19 +182,23 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         var selectedAction = (AlarmAction)(ActionSelector.SelectedValue ?? AlarmAction.FiveMinBefore);
 
-        Program.AlarmManager?.ChangeAlarmState(Alarm, selectedAction);
+        AlarmManager.ChangeAlarmState(Alarm, selectedAction);
 
         Close();
     }
 
     private void UpdateDropdown()
     {
+        if ((Alarm?.Start - DateTime.Now)!.Value.TotalMinutes < TimeSpan.FromMinutes(15).TotalMinutes)
+            RemoveActionSelectorItem(AlarmAction.FifteenMinBefore);
+
+        if ((Alarm?.Start - DateTime.Now)!.Value.TotalMinutes < TimeSpan.FromMinutes(10).TotalMinutes)
+            RemoveActionSelectorItem(AlarmAction.TenMinBefore);
+
         if ((Alarm?.Start - DateTime.Now)!.Value.TotalMinutes < TimeSpan.FromMinutes(5).TotalMinutes)
             RemoveActionSelectorItem(AlarmAction.FiveMinBefore);
 
         if (DateTime.Now > Alarm?.Start)
             RemoveActionSelectorItem(AlarmAction.ZeroMinBefore);
-
-        //if (ActionSelector.SelectedIndex <= 0) ActionSelector.SelectedIndex = 1;
     }
 }
