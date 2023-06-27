@@ -12,7 +12,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
         Alarms = new ConcurrentDictionary<string, IAlarm>();
         AlarmSource = alarmSource;
         AlarmTimers = new ConcurrentDictionary<string, Timer>();
-        AlarmsUpdated = delegate { };
+        AlarmsUpdatedCallback = delegate { };
         Settings = settings;
     }
 
@@ -22,7 +22,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
     private ISettings Settings { get; }
     private Timer? UpdateAlarmListTimer { get; set; }
 
-    public event Action<IEnumerable<IAlarm>> AlarmsUpdated;
+    public IAlarmManager.UpdateAlarmList AlarmsUpdatedCallback { get; set; }
 
     public void ChangeAlarmState(IAlarm alarm, AlarmAction action)
     {
@@ -52,6 +52,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
                 RemoveAlarmTimer(alarm);
                 break;
             case AlarmAction.Remove:
+                DeactivateAlarm(alarm);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(action), action, null);
@@ -62,16 +63,13 @@ public sealed class OutlookAlarmManager : IAlarmManager
 
     public void Reset()
     {
-        var alarmsToRemove = new List<IAlarm>(Alarms.Count);
-
-        foreach (var alarm in Alarms.Values)
+        foreach (var timer in AlarmTimers.Values)
         {
-            alarmsToRemove.Add(alarm);
-
-            RemoveAlarmTimer(alarm);
+            timer.Dispose();
         }
 
-        foreach (var alarm in alarmsToRemove) RemoveAlarm(alarm);
+        Alarms.Clear();
+        AlarmTimers.Clear();
 
         FetchAlarms(this);
     }
@@ -124,6 +122,19 @@ public sealed class OutlookAlarmManager : IAlarmManager
         }
     }
 
+    private void DeactivateAlarm(IAlarm alarm)
+    {
+        if (!Alarms.ContainsKey(alarm.Id)) return;
+
+        alarm.IsActive = false;
+
+        UpdateAlarm(alarm);
+
+        RemoveAlarmTimer(Alarms[alarm.Id]);
+
+        OnAlarmsUpdated();
+    }
+
     private void FetchAlarms(object? signature)
     {
         // Remove alarms that have ended already
@@ -145,7 +156,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
             var removeOrphans = Alarms.Values.Where(a => alarmsToCheck.Contains(a.Id));
             foreach (var alarm in removeOrphans)
             {
-                RemoveAlarm(alarm);
+                DeactivateAlarm(alarm);
                 RemoveAlarmTimer(alarm);
             }
         }
@@ -187,19 +198,22 @@ public sealed class OutlookAlarmManager : IAlarmManager
 
         if (hours >= 24) return alarms;
 
+        // Remove deactivated Alarms
+        var deactivatedAlarms = Alarms.Values.Where(a => !a.IsActive).ToList();
+        foreach (var remove in deactivatedAlarms
+                     .Select(deactivatedAlarm =>
+                         alarms.FirstOrDefault(a => a.Id == deactivatedAlarm.Id && a.Start == deactivatedAlarm.Start))
+                     .Where(remove => remove != null))
+            if (remove != null)
+                alarms.Remove(remove);
+
+        // If we have no more alarms or never did, go get some more (Until we hit 24 hours)
         if (!alarms.Any()) alarms = GetAlarmsFromSource(hours + Settings.AlarmSource.FetchTimeInHours).ToList();
 
         return alarms;
     }
 
-    private void OnAlarmsUpdated() { AlarmsUpdated.Invoke(Alarms.Values); }
-
-    private void RemoveAlarm(IAlarm alarm)
-    {
-        Alarms.TryRemove(alarm.Id, out var removed);
-
-        if (removed != null) RemoveAlarmTimer(removed);
-    }
+    private void OnAlarmsUpdated() { AlarmsUpdatedCallback.Invoke(Alarms.Values.Where(a => a.IsActive)); }
 
     private void RemoveAlarmTimer(IAlarm alarm)
     {
@@ -208,6 +222,8 @@ public sealed class OutlookAlarmManager : IAlarmManager
         var timer = AlarmTimers[alarm.Id];
         timer.Dispose();
         AlarmTimers.Remove(alarm.Id, out _);
+
+        if(!Alarms.Values.Any(a =>a.IsActive)) FetchAlarms(this);
     }
 
     private void RemoveOldAlarms()
@@ -217,7 +233,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
 
         foreach (var alarm in alarmsToRemove)
         {
-            RemoveAlarm(alarm);
+            DeactivateAlarm(alarm);
             RemoveAlarmTimer(alarm);
         }
     }
@@ -256,11 +272,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
                 alarm.ReminderTime = DateTime.Now + TimeSpan.FromMinutes(10);
                 break;
             case AlarmAction.Dismiss:
-                ChangeAlarmState(alarm, AlarmAction.Dismiss);
-                break;
             case AlarmAction.Remove:
-                ChangeAlarmState(alarm, AlarmAction.Remove);
-                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(action), action, null);
         }

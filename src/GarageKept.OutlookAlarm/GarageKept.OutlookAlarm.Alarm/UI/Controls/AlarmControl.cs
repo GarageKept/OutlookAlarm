@@ -24,15 +24,14 @@ public partial class AlarmControl : UserControl, IAlarmControl
         get => _alarm;
         set
         {
-            if (value is null)
-                RefreshTimer.Enabled = false;
-            else
-                RefreshTimer.Enabled = true;
+            RefreshTimer.Enabled = value is not null;
 
             _alarm = value;
 
             if (InvokeRequired)
                 Invoke(UpdateDisplay);
+            else
+                UpdateDisplay();
         }
     }
 
@@ -178,7 +177,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
         TimeLeft.Text = string.Format(formatString, timeUntilMeeting);
     }
 
-    public void UpdateDisplay()
+    private void UpdateDisplay()
     {
         Visible = Alarm is not null;
 
@@ -209,7 +208,7 @@ public partial class AlarmControl : UserControl, IAlarmControl
 
     private void RightClick_0Min_Click(object sender, EventArgs e)
     {
-        
+
         AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.ZeroMinBefore);
     }
 }

@@ -47,7 +47,9 @@ partial class AlarmControl
         RightClick_5Min = new ToolStripMenuItem();
         RightClick_0Min = new ToolStripMenuItem();
         RefreshTimer = new System.Windows.Forms.Timer(components);
+        pictureBox1 = new PictureBox();
         RightClickMenuStrip.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         SuspendLayout();
         // 
         // SubjectLabel
@@ -156,28 +158,28 @@ partial class AlarmControl
         // RightClick_15Min
         // 
         RightClick_15Min.Name = "RightClick_15Min";
-        RightClick_15Min.Size = new Size(180, 22);
+        RightClick_15Min.Size = new Size(147, 22);
         RightClick_15Min.Text = "15 Min Before";
         RightClick_15Min.Click += RightClick_15Min_Click;
         // 
         // RightClick_10Min
         // 
         RightClick_10Min.Name = "RightClick_10Min";
-        RightClick_10Min.Size = new Size(180, 22);
+        RightClick_10Min.Size = new Size(147, 22);
         RightClick_10Min.Text = "10 Min Before";
         RightClick_10Min.Click += RightClick_10Min_Click;
         // 
         // RightClick_5Min
         // 
         RightClick_5Min.Name = "RightClick_5Min";
-        RightClick_5Min.Size = new Size(180, 22);
+        RightClick_5Min.Size = new Size(147, 22);
         RightClick_5Min.Text = "5 Min Before";
         RightClick_5Min.Click += RightClick_5Min_Click;
         // 
         // RightClick_0Min
         // 
         RightClick_0Min.Name = "RightClick_0Min";
-        RightClick_0Min.Size = new Size(180, 22);
+        RightClick_0Min.Size = new Size(147, 22);
         RightClick_0Min.Text = "0 min Before";
         RightClick_0Min.Click += RightClick_0Min_Click;
         // 
@@ -187,11 +189,20 @@ partial class AlarmControl
         RefreshTimer.Interval = 1000;
         RefreshTimer.Tick += Refresh_Tick;
         // 
+        // pictureBox1
+        // 
+        pictureBox1.Location = new Point(229, 3);
+        pictureBox1.Name = "pictureBox1";
+        pictureBox1.Size = new Size(24, 24);
+        pictureBox1.TabIndex = 10;
+        pictureBox1.TabStop = false;
+        // 
         // AlarmControl
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         ContextMenuStrip = RightClickMenuStrip;
+        Controls.Add(pictureBox1);
         Controls.Add(TeamsLinkLabel);
         Controls.Add(HorizontalLine);
         Controls.Add(OrganizerLabel);
@@ -204,6 +215,7 @@ partial class AlarmControl
         Name = "AlarmControl";
         Size = new Size(256, 122);
         RightClickMenuStrip.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }
@@ -227,4 +239,5 @@ partial class AlarmControl
     private ToolStripMenuItem RightClick_10Min;
     private ToolStripMenuItem RightClick_5Min;
     private ToolStripMenuItem RightClick_0Min;
+    private PictureBox pictureBox1;
 }

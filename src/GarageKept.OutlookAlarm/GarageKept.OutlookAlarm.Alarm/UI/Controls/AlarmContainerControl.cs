@@ -15,9 +15,9 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
         {
             _alarms = value.OrderBy(s => s.Start).ToArray();
 
-            for (var i = 0; i < AlarmControls.Length && i < _alarms.Length; i++)
+            for (var i = 0; i < AlarmControls.Length; i++)
             {
-                AlarmControls[i].Alarm = _alarms[i];
+                AlarmControls[i].Alarm = i < _alarms.Length ? _alarms[i] : null;
             }
 
             if (InvokeRequired)
