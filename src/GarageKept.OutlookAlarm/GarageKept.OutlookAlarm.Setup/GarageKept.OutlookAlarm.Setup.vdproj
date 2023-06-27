@@ -183,7 +183,7 @@
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_F77DADE055D5415D90B77745F58C9644"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
+            "DefaultLocation" = "8:[ProgramFiles64Folder][Manufacturer]\\[ProductName]"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -210,7 +210,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Outlook Alarm"
         "ProductCode" = "8:{D5636B36-74BB-4E2C-90DC-E5966B73FD60}"
-        "PackageCode" = "8:{FB291A0E-65A2-4061-98DF-57CE96A8F3BC}"
+        "PackageCode" = "8:{9B9DF19C-AEAF-426E-9F7D-A5E886C630C5}"
         "UpgradeCode" = "8:{BDF3BA3F-997A-4B25-BEE8-5E828A1659AB}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -231,7 +231,7 @@
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
-        "TargetPlatform" = "3:0"
+        "TargetPlatform" = "3:1"
         "PreBuildEvent" = "8:"
         "PostBuildEvent" = "8:"
         "RunPostBuildEvent" = "3:0"

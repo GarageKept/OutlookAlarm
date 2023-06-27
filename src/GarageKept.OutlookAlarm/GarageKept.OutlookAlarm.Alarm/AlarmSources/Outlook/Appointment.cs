@@ -32,7 +32,7 @@ public class Appointment : IAlarm
         IsActive = true;
         HasCustomSound = !string.IsNullOrEmpty(CustomSound);
         Organizer = item.Organizer;
-        Categories.AddRange(item.Categories.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        Categories.AddRange(item.Categories?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>());
         Location = item.Location;
         TeamsMeetingUrl = ExtractTeamsMeetingUrlFromBody(item.Body);
     }
