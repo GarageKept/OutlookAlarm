@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using GarageKept.OutlookAlarm.Alarm.AlarmManager;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
+using GarageKept.OutlookAlarm.Alarm.Properties;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 
@@ -35,6 +36,15 @@ public partial class AlarmControl : UserControl, IAlarmControl
         }
     }
 
+    private void AudioPictureBox_Click(object sender, EventArgs e)
+    {
+        if (Alarm is null) return;
+
+        Alarm.IsAudible = !Alarm.IsAudible;
+
+        UpdateDisplay();
+    }
+
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
@@ -44,7 +54,8 @@ public partial class AlarmControl : UserControl, IAlarmControl
         e.Graphics.DrawLine(borderPen, 0, Height - 1, Width, Height - 1);
     }
 
-    private void OnTeamsLinkLabelOnLinkClicked(object? sender, LinkLabelLinkClickedEventArgs linkLabelLinkClickedEventArgs)
+    private void OnTeamsLinkLabelOnLinkClicked(object? sender,
+        LinkLabelLinkClickedEventArgs linkLabelLinkClickedEventArgs)
     {
         if (Alarm is null) return;
 
@@ -65,6 +76,26 @@ public partial class AlarmControl : UserControl, IAlarmControl
         UpdateDisplay();
     }
 
+    private void RightClick_0Min_Click(object sender, EventArgs e)
+    {
+        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.ZeroMinBefore);
+    }
+
+    private void RightClick_10Min_Click(object sender, EventArgs e)
+    {
+        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.TenMinBefore);
+    }
+
+    private void RightClick_15Min_Click(object sender, EventArgs e)
+    {
+        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.FifteenMinBefore);
+    }
+
+    private void RightClick_5Min_Click(object sender, EventArgs e)
+    {
+        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.FiveMinBefore);
+    }
+
     private void RightClickMenuDismiss_Click(object sender, EventArgs e)
     {
         if (Alarm is null) return;
@@ -77,6 +108,26 @@ public partial class AlarmControl : UserControl, IAlarmControl
         if (Alarm is null) return;
 
         AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Remove);
+    }
+
+    private void SetAudibleIcon()
+    {
+        if (Alarm is null) return;
+
+        Icon icon;
+
+        if (Alarm.IsAudible)
+        {
+            using var memoryStream = new MemoryStream(Resources.bell);
+            icon = new Icon(memoryStream);
+        }
+        else
+        {
+            using var memoryStream = new MemoryStream(Resources.bell_slash);
+            icon = new Icon(memoryStream);
+        }
+
+        AudioPictureBox.Image = icon.ToBitmap();
     }
 
     private void SetBackgroundColor()
@@ -188,57 +239,5 @@ public partial class AlarmControl : UserControl, IAlarmControl
         SetProgressBar();
         SetBackgroundColor();
         SetAudibleIcon();
-    }
-
-    private void SetAudibleIcon()
-    {
-        if (Alarm is null) return;
-
-        Icon icon;
-
-        if (Alarm.IsAudible)
-        {
-            using var memoryStream = new MemoryStream(Properties.Resources.bell);
-            icon = new Icon(memoryStream);
-        }
-        else
-        {
-            using var memoryStream = new MemoryStream(Properties.Resources.bell_slash);
-            icon = new Icon(memoryStream);
-        }
-
-        AudioPictureBox.Image = icon.ToBitmap();
-    }
-
-    private void RightClick_15Min_Click(object sender, EventArgs e)
-    {
-        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.FifteenMinBefore);
-    }
-
-    private void RightClick_10Min_Click(object sender, EventArgs e)
-    {
-
-        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.TenMinBefore);
-    }
-
-    private void RightClick_5Min_Click(object sender, EventArgs e)
-    {
-
-        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.FiveMinBefore);
-    }
-
-    private void RightClick_0Min_Click(object sender, EventArgs e)
-    {
-
-        AlarmManager.ChangeAlarmState(Alarm!, AlarmAction.ZeroMinBefore);
-    }
-
-    private void AudioPictureBox_Click(object sender, EventArgs e)
-    {
-        if (Alarm is null) return;
-
-        Alarm.IsAudible = !Alarm.IsAudible;
-
-        UpdateDisplay();
     }
 }

@@ -63,10 +63,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
 
     public void Reset()
     {
-        foreach (var timer in AlarmTimers.Values)
-        {
-            timer.Dispose();
-        }
+        foreach (var timer in AlarmTimers.Values) timer.Dispose();
 
         Alarms.Clear();
         AlarmTimers.Clear();
@@ -223,7 +220,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
         timer.Dispose();
         AlarmTimers.Remove(alarm.Id, out _);
 
-        if(!Alarms.Values.Any(a =>a.IsActive)) FetchAlarms(this);
+        if (!Alarms.Values.Any(a => a.IsActive)) FetchAlarms(this);
     }
 
     private void RemoveOldAlarms()

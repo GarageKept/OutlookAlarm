@@ -20,7 +20,8 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         ShowInTaskbar = false;
 
         ActionSelector.Items.Clear();
-        var dataSource = Enum.GetValues(typeof(AlarmAction)).Cast<AlarmAction>().Where(a=>a is not (AlarmAction.Remove or AlarmAction.Dismiss))
+        var dataSource = Enum.GetValues(typeof(AlarmAction)).Cast<AlarmAction>()
+            .Where(a => a is not (AlarmAction.Remove or AlarmAction.Dismiss))
             .Select(s => new { Value = s, Text = AlarmActionHelpers.GetEnumDisplayValue(s) })
             .Where(a => a.Text != "Dismissed").ToList();
 
@@ -103,33 +104,7 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         Close();
     }
 
-    private void FormRefresh(object? sender, EventArgs? e)
-    {
-        UpdateForm();
-    }
-
-    private void UpdateForm()
-    {
-        TimeLeft.Text = string.Format(Settings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
-
-        if (_playSound && Settings.Audio.TurnOffAlarmAfterStart >= 0 && DateTime.Now - Alarm?.Start >
-            TimeSpan.FromMinutes(Settings.Audio.TurnOffAlarmAfterStart))
-        {
-            MediaPlayerPlayer.StopSound();
-            _playSound = false;
-        }
-
-        if (DateTime.Now > Alarm?.End)
-        {
-            AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
-            Close();
-        }
-
-        if (DateTime.Now > Alarm?.Start)
-            SetBackGroundColor(Settings.Color.AlarmPastStartColor);
-
-        UpdateDropdown();
-    }
+    private void FormRefresh(object? sender, EventArgs? e) { UpdateForm(); }
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
@@ -200,5 +175,28 @@ public partial class AlarmForm : BaseForm, IAlarmForm
 
         if (DateTime.Now > Alarm?.Start)
             RemoveActionSelectorItem(AlarmAction.ZeroMinBefore);
+    }
+
+    private void UpdateForm()
+    {
+        TimeLeft.Text = string.Format(Settings.Alarm.TimeLeftStringFormat, DateTime.Now - Alarm?.Start);
+
+        if (_playSound && Settings.Audio.TurnOffAlarmAfterStart >= 0 && DateTime.Now - Alarm?.Start >
+            TimeSpan.FromMinutes(Settings.Audio.TurnOffAlarmAfterStart))
+        {
+            MediaPlayerPlayer.StopSound();
+            _playSound = false;
+        }
+
+        if (DateTime.Now > Alarm?.End)
+        {
+            AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+            Close();
+        }
+
+        if (DateTime.Now > Alarm?.Start)
+            SetBackGroundColor(Settings.Color.AlarmPastStartColor);
+
+        UpdateDropdown();
     }
 }

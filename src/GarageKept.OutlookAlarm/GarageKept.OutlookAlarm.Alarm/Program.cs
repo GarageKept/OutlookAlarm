@@ -63,7 +63,7 @@ internal static class Program
 #endif
 
         Application.Run(ServiceProvider?.GetRequiredService<IMainForm>() as Form);
-        
+
 #if !DEBUG
         OutlookAlarmMutex.ReleaseMutex();
 #endif

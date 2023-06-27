@@ -1,3 +1,4 @@
+using System.Reflection;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Timer = System.Windows.Forms.Timer;
@@ -7,27 +8,24 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
 public partial class MainForm : BaseForm, IMainForm
 {
     private readonly Timer _slidingTimer = new() { Interval = 10 };
-    
+
     private bool _isExpanded;
 
-    private ISettings Settings { get; }
-    private IAlarmManager AlarmManager { get; }
-    private IAlarmContainerControl ContainerControl { get; set; }
-
-    public MainForm(ISettings settings, IAlarmManager alarmManager, IAlarmContainerControl containerControl) : base(true)
+    public MainForm(ISettings settings, IAlarmManager alarmManager, IAlarmContainerControl containerControl) :
+        base(true)
     {
         Settings = settings;
         AlarmManager = alarmManager;
         alarmManager.AlarmsUpdatedCallback += UpdateAlarms;
-        
+
         InitializeComponent();
         FormClosing += OnFormClosing;
         ContainerControl = containerControl;
         Controls.Add(ContainerControl as Control);
-        
+
         SetupPosition();
         SetupContextMenu();
-        
+
         // Subscribe to form's mouse enter and leave events
         MouseEnter += MainWindow_MouseEnter;
         MouseLeave += MainWindow_MouseLeave;
@@ -42,48 +40,11 @@ public partial class MainForm : BaseForm, IMainForm
         AlarmManager.Start();
     }
 
-    private void OnFormClosing(object? sender, FormClosingEventArgs e)
-    {
-        AlarmManager.Stop();
-        AlarmManager.Dispose();
-        ContainerControl.Dispose();
-    }
+    private ISettings Settings { get; }
+    private IAlarmManager AlarmManager { get; }
+    private IAlarmContainerControl ContainerControl { get; }
 
-    private void SetupPosition()
-    {
-        // Set the form's start position to manual
-        StartPosition = FormStartPosition.Manual;
-        // Set the form's location
-        Location = new Point(Settings.Main.Left, 0);
-        // Save the form position when moved
-        Move += (_, _) => { Settings.Main.Left = Left; };
-    }
-
-    private void SetupContextMenu()
-    {
-        // Initialize and set up the context menu
-        rightClickMenu.Items.Clear();
-        rightClickMenu.Items.Add("Settings", null, RightClickMenu_SettingsClick);
-        rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
-        var advanced = new ToolStripMenuItem("Advanced");
-        var advancedDropdown = new ToolStripDropDownMenu();
-        var refresh = new ToolStripMenuItem("Fetch Now");
-        refresh.Click += RightClickMenu_FetchNowClick;
-        advancedDropdown.Items.Add(refresh);
-        var reset = new ToolStripMenuItem("Reset All");
-        reset.Click += RightClick_ResetAllAppointments;
-        advancedDropdown.Items.Add(reset);
-        advanced.DropDown = advancedDropdown;
-        rightClickMenu.Items.Add(new ToolStripSeparator());
-        rightClickMenu.Items.Add(advanced);
-        rightClickMenu.Items.Add(new ToolStripSeparator());
-        rightClickMenu.Items.Add("Close", null, (_, _) => Close());
-    }
-
-    public void UpdateAlarms(IEnumerable<IAlarm> alarms)
-    {
-        ContainerControl.Alarms = alarms;
-    }
+    public void UpdateAlarms(IEnumerable<IAlarm> alarms) { ContainerControl.Alarms = alarms; }
 
     /// <summary>
     ///     Subscribes to MouseEnter and MouseLeave events for each child control.
@@ -115,30 +76,6 @@ public partial class MainForm : BaseForm, IMainForm
     }
 
     /// <summary>
-    ///     Event handler for the MouseEnter event.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">An EventArgs that contains the event data.</param>
-    public void MainWindow_MouseEnter(object? sender, EventArgs e)
-    {
-        _isExpanded = true;
-        _slidingTimer.Start();
-    }
-
-    /// <summary>
-    ///     Event handler for the MouseLeave event.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">An EventArgs that contains the event data.</param>
-    public void MainWindow_MouseLeave(object? sender, EventArgs e)
-    {
-        if (rightClickMenu.Visible) return;
-
-        _isExpanded = false;
-        _slidingTimer.Start();
-    }
-
-    /// <summary>
     ///     Event handler for child control's MouseEnter event.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
@@ -163,6 +100,37 @@ public partial class MainForm : BaseForm, IMainForm
         Settings.Main.Left = Location.X;
     }
 
+    /// <summary>
+    ///     Event handler for the MouseEnter event.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">An EventArgs that contains the event data.</param>
+    public void MainWindow_MouseEnter(object? sender, EventArgs e)
+    {
+        _isExpanded = true;
+        _slidingTimer.Start();
+    }
+
+    /// <summary>
+    ///     Event handler for the MouseLeave event.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">An EventArgs that contains the event data.</param>
+    public void MainWindow_MouseLeave(object? sender, EventArgs e)
+    {
+        if (rightClickMenu.Visible) return;
+
+        _isExpanded = false;
+        _slidingTimer.Start();
+    }
+
+    private void OnFormClosing(object? sender, FormClosingEventArgs e)
+    {
+        AlarmManager.Stop();
+        AlarmManager.Dispose();
+        ContainerControl.Dispose();
+    }
+
     private void RightClick_ResetAllAppointments(object? sender, EventArgs e) { AlarmManager.Reset(); }
 
     /// <summary>
@@ -172,7 +140,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// <param name="e">An EventArgs that contains the event data.</param>
     private static void RightClickMenu_AboutClick(object? sender, EventArgs e)
     {
-        var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
         // Implement your About functionality here
         MessageBox.Show(@"Outlook Alarm by Garage Kept " + version);
@@ -197,6 +165,37 @@ public partial class MainForm : BaseForm, IMainForm
         var settingsForm = Program.ServiceProvider.GetRequiredService<ISettingsForm>();
         settingsForm.Owner = this;
         settingsForm.ShowDialog();
+    }
+
+    private void SetupContextMenu()
+    {
+        // Initialize and set up the context menu
+        rightClickMenu.Items.Clear();
+        rightClickMenu.Items.Add("Settings", null, RightClickMenu_SettingsClick);
+        rightClickMenu.Items.Add("About", null, RightClickMenu_AboutClick);
+        var advanced = new ToolStripMenuItem("Advanced");
+        var advancedDropdown = new ToolStripDropDownMenu();
+        var refresh = new ToolStripMenuItem("Fetch Now");
+        refresh.Click += RightClickMenu_FetchNowClick;
+        advancedDropdown.Items.Add(refresh);
+        var reset = new ToolStripMenuItem("Reset All");
+        reset.Click += RightClick_ResetAllAppointments;
+        advancedDropdown.Items.Add(reset);
+        advanced.DropDown = advancedDropdown;
+        rightClickMenu.Items.Add(new ToolStripSeparator());
+        rightClickMenu.Items.Add(advanced);
+        rightClickMenu.Items.Add(new ToolStripSeparator());
+        rightClickMenu.Items.Add("Close", null, (_, _) => Close());
+    }
+
+    private void SetupPosition()
+    {
+        // Set the form's start position to manual
+        StartPosition = FormStartPosition.Manual;
+        // Set the form's location
+        Location = new Point(Settings.Main.Left, 0);
+        // Save the form position when moved
+        Move += (_, _) => { Settings.Main.Left = Left; };
     }
 
     /// <summary>

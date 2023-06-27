@@ -6,29 +6,6 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Controls;
 public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerControl
 {
     private IAlarm[] _alarms;
-    private IAlarmControl[] AlarmControls { get; set; }
-
-    public IEnumerable<IAlarm> Alarms
-    {
-        get => _alarms;
-        set
-        {
-            _alarms = value.OrderBy(s => s.Start).ToArray();
-
-            for (var i = 0; i < AlarmControls.Length; i++)
-            {
-                AlarmControls[i].Alarm = i < _alarms.Length ? _alarms[i] : null;
-            }
-
-            if (InvokeRequired)
-                Invoke(new Action(() =>
-                {
-                    RefreshTimer_Tick(this, EventArgs.Empty);
-                }));
-        }
-    }
-
-    private ISettings Settings { get; }
 
     public AlarmContainerControl(ISettings settings)
     {
@@ -50,6 +27,25 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
         RefreshTimer.Enabled = true;
     }
 
+    private IAlarmControl[] AlarmControls { get; }
+
+    private ISettings Settings { get; }
+
+    public IEnumerable<IAlarm> Alarms
+    {
+        get => _alarms;
+        set
+        {
+            _alarms = value.OrderBy(s => s.Start).ToArray();
+
+            for (var i = 0; i < AlarmControls.Length; i++)
+                AlarmControls[i].Alarm = i < _alarms.Length ? _alarms[i] : null;
+
+            if (InvokeRequired)
+                Invoke(() => { RefreshTimer_Tick(this, EventArgs.Empty); });
+        }
+    }
+
     private void AddFooterRow()
     {
         var newRow = RowCount; // Get the current row count
@@ -68,6 +64,15 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
 
         RefreshTimer_Tick(this, null);
     }
+
+    private IAlarm? GetCurrentAppointment()
+    {
+        var now = DateTime.Now;
+
+        return Alarms.FirstOrDefault(a => a.Start < now && a.End > now);
+    }
+
+    private IAlarm? GetNextAppointment() { return Alarms.FirstOrDefault(a => a.Start > DateTime.Now); }
 
     private void InitializeAlarmControls()
     {
@@ -160,17 +165,5 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
         //value = 3600 - (int)timeUntilNextAppointment.TotalSeconds;
 
         FooterProgressBar.Value = value;
-    }
-
-    private IAlarm? GetNextAppointment()
-    {
-        return Alarms.FirstOrDefault(a => a.Start > DateTime.Now);
-    }
-
-    private IAlarm? GetCurrentAppointment()
-    {
-        var now = DateTime.Now;
-
-        return Alarms.FirstOrDefault(a => a.Start < now && a.End > now);
     }
 }

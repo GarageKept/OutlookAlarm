@@ -20,7 +20,6 @@ public partial class SettingsForm : BaseForm, ISettingsForm
     private readonly IMediaPlayer _mediaPlayer;
     private bool _isExpanded;
     private Timer? _slidingTimer;
-    private ISettings Settings { get; }
 
     public SettingsForm(IMediaPlayer mediaPlayer, ISettings settings) : base(false)
     {
@@ -35,6 +34,8 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         Left = (ScreenWidth - Width) / 2;
         BarHeightNumericUpDown.Value = Settings.Main.BarSize;
     }
+
+    private ISettings Settings { get; }
 
     public new DialogResult ShowDialog()
     {
@@ -318,10 +319,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         LeftNumericUpDown.Value = LeftTrackBar.Value;
         Settings.Main.Left = LeftTrackBar.Value;
 
-        if (Owner is IMainForm)
-        {
-            Owner.Left = Settings.Main.Left;
-        }
+        if (Owner is IMainForm) Owner.Left = Settings.Main.Left;
     }
 
     #endregion
@@ -723,7 +721,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         {
             var exists = Settings.TimeManagement.WorkDays.Any(w => w == dayOfWeek);
 
-            if(!exists)
+            if (!exists)
                 Settings.TimeManagement.WorkDays.Add(dayOfWeek);
         }
         else if (Settings.TimeManagement.WorkDays.Contains(dayOfWeek))
@@ -785,8 +783,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
             Settings.TimeManagement.ExceptionCategories.Add(category);
 
         CategoryExceptionListBox.Items.Clear();
-        CategoryExceptionListBox.Items.AddRange(
-            Settings.TimeManagement.ExceptionCategories.ToArray<object>());
+        CategoryExceptionListBox.Items.AddRange(Settings.TimeManagement.ExceptionCategories.ToArray<object>());
 
         CategoryExceptionTextBox.Text = string.Empty;
     }
@@ -802,8 +799,7 @@ public partial class SettingsForm : BaseForm, ISettingsForm
         foreach (var cat in exceptions) Settings.TimeManagement.ExceptionCategories.Remove(cat);
 
         CategoryExceptionListBox.Items.Clear();
-        CategoryExceptionListBox.Items.AddRange(
-            Settings.TimeManagement.ExceptionCategories.ToArray<object>());
+        CategoryExceptionListBox.Items.AddRange(Settings.TimeManagement.ExceptionCategories.ToArray<object>());
     }
 
     #endregion

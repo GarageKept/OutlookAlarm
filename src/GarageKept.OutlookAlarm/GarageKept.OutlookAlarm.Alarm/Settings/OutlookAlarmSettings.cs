@@ -9,7 +9,6 @@ public class OutlookAlarmSettings : ISettings
 
     public OutlookAlarmSettings()
     {
-
         Alarm = new AlarmSettings(Save);
         AlarmSource = new AlarmSourceSettings(Save);
         Audio = new AudioSettings(Save);
