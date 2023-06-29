@@ -46,7 +46,6 @@ partial class AlarmControl
         RightClick_10Min = new ToolStripMenuItem();
         RightClick_5Min = new ToolStripMenuItem();
         RightClick_0Min = new ToolStripMenuItem();
-        RefreshTimer = new System.Windows.Forms.Timer(components);
         AudioPictureBox = new PictureBox();
         RightClickMenuStrip.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)AudioPictureBox).BeginInit();
@@ -183,12 +182,6 @@ partial class AlarmControl
         RightClick_0Min.Text = "0 min Before";
         RightClick_0Min.Click += RightClick_0Min_Click;
         // 
-        // RefreshTimer
-        // 
-        RefreshTimer.Enabled = true;
-        RefreshTimer.Interval = 1000;
-        RefreshTimer.Tick += Refresh_Tick;
-        // 
         // AudioPictureBox
         // 
         AudioPictureBox.Location = new Point(229, 3);
@@ -235,7 +228,6 @@ partial class AlarmControl
     private ContextMenuStrip RightClickMenuStrip;
     private ToolStripMenuItem removeToolStripMenuItem;
     private ToolStripMenuItem dismissToolStripMenuItem;
-    private System.Windows.Forms.Timer RefreshTimer;
     private ToolStripMenuItem reminderToolStripMenuItem;
     private ToolStripMenuItem RightClick_15Min;
     private ToolStripMenuItem RightClick_10Min;

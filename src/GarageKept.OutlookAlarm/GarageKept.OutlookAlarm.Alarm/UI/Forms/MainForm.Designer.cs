@@ -34,12 +34,18 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
         {
             components = new System.ComponentModel.Container();
             rightClickMenu = new ContextMenuStrip(components);
+            RefreshTimer = new System.Windows.Forms.Timer(components);
             SuspendLayout();
             // 
             // rightClickMenu
             // 
             rightClickMenu.Name = "contextMenuStrip1";
             rightClickMenu.Size = new Size(61, 4);
+            // 
+            // RefreshTimer
+            // 
+            RefreshTimer.Enabled = true;
+            RefreshTimer.Tick += RefreshTimer_Tick;
             // 
             // MainForm
             // 
@@ -59,12 +65,13 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Forms
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.Manual;
             Text = "Main Form";
+            Activated += MainForm_Activated;
             FormClosing += MainForm_FormClosing;
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
         private ContextMenuStrip rightClickMenu;
+        private System.Windows.Forms.Timer RefreshTimer;
     }
 }

@@ -2,5 +2,7 @@
 
 public interface IAlarmControl : IDisposable
 {
-    IAlarm? Alarm { set; }
+    IAlarm? Alarm { get; set; }
+
+    void RefreshTimer_Tick(object? sender, EventArgs e);
 }

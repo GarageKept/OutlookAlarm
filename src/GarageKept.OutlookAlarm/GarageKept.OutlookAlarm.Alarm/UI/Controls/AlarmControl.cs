@@ -25,8 +25,6 @@ public partial class AlarmControl : UserControl, IAlarmControl
         get => _alarm;
         set
         {
-            RefreshTimer.Enabled = value is not null;
-
             _alarm = value;
 
             if (InvokeRequired)
@@ -34,6 +32,16 @@ public partial class AlarmControl : UserControl, IAlarmControl
             else
                 UpdateDisplay();
         }
+    }
+
+    public void RefreshTimer_Tick(object? sender, EventArgs e)
+    {
+        if (Alarm is null) return;
+
+        if (Alarm.End < DateTime.Now)
+            AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
+
+        UpdateDisplay();
     }
 
     private void AudioPictureBox_Click(object sender, EventArgs e)
@@ -64,16 +72,6 @@ public partial class AlarmControl : UserControl, IAlarmControl
             FileName = Alarm?.TeamsMeetingUrl, //"msteams://meetingjoin?url=" + 
             UseShellExecute = true
         });
-    }
-
-    private void Refresh_Tick(object? sender, EventArgs e)
-    {
-        if (Alarm is null) return;
-
-        if (Alarm.End < DateTime.Now)
-            AlarmManager.ChangeAlarmState(Alarm, AlarmAction.Dismiss);
-
-        UpdateDisplay();
     }
 
     private void RightClick_0Min_Click(object sender, EventArgs e)

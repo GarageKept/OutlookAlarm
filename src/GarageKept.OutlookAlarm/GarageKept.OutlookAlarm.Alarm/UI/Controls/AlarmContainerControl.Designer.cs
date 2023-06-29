@@ -1,7 +1,4 @@
-﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
-using Timer = System.Threading.Timer;
-
-namespace GarageKept.OutlookAlarm.Alarm.UI.Controls
+﻿namespace GarageKept.OutlookAlarm.Alarm.UI.Controls
 {
     partial class AlarmContainerControl
     {
@@ -18,7 +15,6 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Controls
         {
             if (disposing && (components != null))
             {
-                this.RefreshTimer.Dispose();
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -33,13 +29,8 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Controls
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            RefreshTimer = new System.Windows.Forms.Timer(components);
             FooterProgressBar = new AlarmProgressBar();
             SuspendLayout();
-            // 
-            // RefreshTimer
-            // 
-            RefreshTimer.Tick += RefreshTimer_Tick;
             // 
             // FooterProgressBar
             // 
@@ -61,7 +52,6 @@ namespace GarageKept.OutlookAlarm.Alarm.UI.Controls
 
         #endregion
 
-        private System.Windows.Forms.Timer RefreshTimer;
         private AlarmProgressBar FooterProgressBar;
     }
 }

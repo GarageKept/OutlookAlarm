@@ -23,8 +23,6 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
         InitializeFooterProgressBar();
 
         ResumeLayout();
-
-        RefreshTimer.Enabled = true;
     }
 
     private IAlarmControl[] AlarmControls { get; }
@@ -44,6 +42,60 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
             if (InvokeRequired)
                 Invoke(() => { RefreshTimer_Tick(this, EventArgs.Empty); });
         }
+    }
+
+    public void RefreshTimer_Tick(object? sender, EventArgs e)
+    {
+        foreach (var alarmControl in AlarmControls.Where(a => a.Alarm is not null))
+            alarmControl.RefreshTimer_Tick(sender, e);
+
+        var currentAppointment = GetCurrentAppointment();
+        var nextAppointment = GetNextAppointment();
+        var backColor = Settings.Color.GreenColor;
+        var barColor = Settings.Color.GreenColor;
+        var value = 3600;
+
+        if (currentAppointment != null) barColor = Settings.Color.RedColor;
+
+        if (currentAppointment?.End >= nextAppointment?.Start) backColor = Settings.Color.YellowColor;
+
+        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ??
+                                       currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
+
+
+        if (nextAppointment is null)
+        {
+            backColor = Settings.Color.GreenColor;
+        }
+        else
+        {
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Settings.Color.YellowColor;
+
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Settings.Alarm.AlarmWarningTime))
+            {
+                barColor = Settings.Color.YellowColor;
+                backColor = Settings.Color.RedColor;
+            }
+
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Settings.Alarm.AlarmWarningTime))
+            {
+                barColor = Settings.Color.YellowColor;
+                backColor = Settings.Color.RedColor;
+            }
+
+            if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Settings.Color.RedColor;
+        }
+
+        FooterProgressBar.BackgroundColor = backColor;
+        FooterProgressBar.BarColor = barColor;
+
+        // now we figure out what the value should be
+        if (timeUntilNextAppointment.TotalSeconds <= 3600)
+            // Update the progress bar value based on the time left
+            value = (int)timeUntilNextAppointment.TotalSeconds;
+        //value = 3600 - (int)timeUntilNextAppointment.TotalSeconds;
+
+        FooterProgressBar.Value = value;
     }
 
     private void AddFooterRow()
@@ -114,56 +166,5 @@ public partial class AlarmContainerControl : TableLayoutPanel, IAlarmContainerCo
         FooterProgressBar.Width = Settings.Main.MinimumWidth;
 
         AddFooterRow();
-    }
-
-    private void RefreshTimer_Tick(object? sender, EventArgs? e)
-    {
-        var currentAppointment = GetCurrentAppointment();
-        var nextAppointment = GetNextAppointment();
-        var backColor = Settings.Color.GreenColor;
-        var barColor = Settings.Color.GreenColor;
-        var value = 3600;
-
-        if (currentAppointment != null) barColor = Settings.Color.RedColor;
-
-        if (currentAppointment?.End >= nextAppointment?.Start) backColor = Settings.Color.YellowColor;
-
-        var timeUntilNextAppointment = nextAppointment?.Start.Subtract(DateTime.Now) ??
-                                       currentAppointment?.End.Subtract(DateTime.Now) ?? TimeSpan.FromHours(1);
-
-
-        if (nextAppointment is null)
-        {
-            backColor = Settings.Color.GreenColor;
-        }
-        else
-        {
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(60)) backColor = Settings.Color.YellowColor;
-
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Settings.Alarm.AlarmWarningTime))
-            {
-                barColor = Settings.Color.YellowColor;
-                backColor = Settings.Color.RedColor;
-            }
-
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(Settings.Alarm.AlarmWarningTime))
-            {
-                barColor = Settings.Color.YellowColor;
-                backColor = Settings.Color.RedColor;
-            }
-
-            if (timeUntilNextAppointment < TimeSpan.FromMinutes(5)) backColor = Settings.Color.RedColor;
-        }
-
-        FooterProgressBar.BackgroundColor = backColor;
-        FooterProgressBar.BarColor = barColor;
-
-        // now we figure out what the value should be
-        if (timeUntilNextAppointment.TotalSeconds <= 3600)
-            // Update the progress bar value based on the time left
-            value = (int)timeUntilNextAppointment.TotalSeconds;
-        //value = 3600 - (int)timeUntilNextAppointment.TotalSeconds;
-
-        FooterProgressBar.Value = value;
     }
 }

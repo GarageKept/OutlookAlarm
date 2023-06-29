@@ -50,7 +50,7 @@ public partial class MainForm : BaseForm, IMainForm
     ///     Subscribes to MouseEnter and MouseLeave events for each child control.
     /// </summary>
     /// <param name="control">The control we are adding mouse events to.</param>
-    public void AddMouseEvents(Control control)
+    private void AddMouseEvents(Control control)
     {
         control.MouseEnter -= ChildControl_MouseEnter;
         control.MouseEnter += ChildControl_MouseEnter;
@@ -65,7 +65,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// <summary>
     ///     Checks if the mouse pointer is still within the form bounds.
     /// </summary>
-    public void CheckMouseLeaveForm()
+    private void CheckMouseLeaveForm()
     {
         var clientCursorPos = PointToClient(Cursor.Position);
 
@@ -89,6 +89,8 @@ public partial class MainForm : BaseForm, IMainForm
     /// <param name="e">An EventArgs that contains the event data.</param>
     private void ChildControl_MouseLeave(object? sender, EventArgs e) { CheckMouseLeaveForm(); }
 
+    private void MainForm_Activated(object sender, EventArgs e) { Top = 0; }
+
     /// <summary>
     ///     Event handler for the FormClosing event.
     /// </summary>
@@ -105,7 +107,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    public void MainWindow_MouseEnter(object? sender, EventArgs e)
+    private void MainWindow_MouseEnter(object? sender, EventArgs e)
     {
         _isExpanded = true;
         _slidingTimer.Start();
@@ -116,7 +118,7 @@ public partial class MainForm : BaseForm, IMainForm
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An EventArgs that contains the event data.</param>
-    public void MainWindow_MouseLeave(object? sender, EventArgs e)
+    private void MainWindow_MouseLeave(object? sender, EventArgs e)
     {
         if (rightClickMenu.Visible) return;
 
@@ -130,6 +132,8 @@ public partial class MainForm : BaseForm, IMainForm
         AlarmManager.Dispose();
         ContainerControl.Dispose();
     }
+
+    private void RefreshTimer_Tick(object sender, EventArgs e) { ContainerControl.RefreshTimer_Tick(sender, e); }
 
     private void RightClick_ResetAllAppointments(object? sender, EventArgs e) { AlarmManager.Reset(); }
 
