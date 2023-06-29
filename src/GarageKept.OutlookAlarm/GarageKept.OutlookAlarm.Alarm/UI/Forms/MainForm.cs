@@ -1,6 +1,7 @@
 using System.Reflection;
 using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GarageKept.OutlookAlarm.Alarm.UI.Forms;
@@ -19,6 +20,7 @@ public partial class MainForm : BaseForm, IMainForm
         alarmManager.AlarmsUpdatedCallback += UpdateAlarms;
 
         InitializeComponent();
+        SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
         FormClosing += OnFormClosing;
         ContainerControl = containerControl;
         Controls.Add(ContainerControl as Control);
@@ -38,6 +40,23 @@ public partial class MainForm : BaseForm, IMainForm
 
         AlarmManager = alarmManager;
         AlarmManager.Start();
+    }
+
+    private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+    {
+        switch (e.Mode)
+        {
+            case PowerModes.Suspend:
+                // System is going to sleep, stop the timer
+                RefreshTimer.Stop();
+                break;
+            case PowerModes.Resume:
+                // System has woken up, restart the timer
+                RefreshTimer.Start();
+                break;
+            case PowerModes.StatusChange:
+                break;
+        }
     }
 
     private ISettings Settings { get; }
@@ -225,4 +244,6 @@ public partial class MainForm : BaseForm, IMainForm
             Location = new Point(Location.X, Location.Y + step);
         }
     }
+
+
 }
