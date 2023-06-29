@@ -108,7 +108,11 @@ public partial class MainForm : BaseForm, IMainForm
     /// <param name="e">An EventArgs that contains the event data.</param>
     private void ChildControl_MouseLeave(object? sender, EventArgs e) { CheckMouseLeaveForm(); }
 
-    private void MainForm_Activated(object sender, EventArgs e) { Top = 0; }
+    private void MainForm_Activated(object sender, EventArgs e)
+    {
+        Top = 0;
+        TopLevel = true;
+    }
 
     /// <summary>
     ///     Event handler for the FormClosing event.
