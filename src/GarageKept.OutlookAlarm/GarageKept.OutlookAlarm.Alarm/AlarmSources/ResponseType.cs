@@ -1,4 +1,4 @@
-﻿namespace GarageKept.OutlookAlarm.Alarm.AlarmSources.Outlook;
+﻿namespace GarageKept.OutlookAlarm.Alarm.AlarmSources;
 
 public enum ResponseType
 {

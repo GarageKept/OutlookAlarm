@@ -59,7 +59,7 @@ public class OutlookAlarmSource : IAlarmSource
             };
         }
     }
-
+    
     void IDisposable.Dispose()
     {
         Marshal.ReleaseComObject(OutlookApp);

@@ -1,7 +1,7 @@
 ﻿using GarageKept.OutlookAlarm.Alarm.Interfaces;
 using Microsoft.Office.Interop.Outlook;
 
-namespace GarageKept.OutlookAlarm.Alarm.AlarmSources.Outlook;
+namespace GarageKept.OutlookAlarm.Alarm.AlarmSources;
 
 public class Appointment : IAlarm
 {

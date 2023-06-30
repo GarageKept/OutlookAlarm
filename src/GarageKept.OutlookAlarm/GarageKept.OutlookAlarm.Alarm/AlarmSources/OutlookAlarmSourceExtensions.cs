@@ -2,7 +2,7 @@
 using Microsoft.Office.Interop.Outlook;
 using Application = Microsoft.Office.Interop.Outlook.Application;
 
-namespace GarageKept.OutlookAlarm.Alarm.AlarmSources.Outlook;
+namespace GarageKept.OutlookAlarm.Alarm.AlarmSources;
 
 public static class OutlookAlarmSourceExtensions
 {
