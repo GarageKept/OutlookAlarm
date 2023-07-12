@@ -69,9 +69,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="UI\Controls\AlarmControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="UI\Controls\AlarmControl.cs" />
     <Compile Update="UI\Controls\AlarmProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
