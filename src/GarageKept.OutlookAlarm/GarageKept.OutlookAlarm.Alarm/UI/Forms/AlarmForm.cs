@@ -47,11 +47,11 @@ public partial class AlarmForm : BaseForm, IAlarmForm
         Alarm = alarm ?? throw new ArgumentNullException(typeof(IAlarm).ToString());
 
         var tooLateForAudio = DateTime.Now - Alarm.Start > TimeSpan.FromMinutes(Settings.Audio.TurnOffAlarmAfterStart);
-        var bypassAudio = Settings.TimeManagement.BypassAudio();
-
+        var inQuietHours = Settings.TimeManagement.InQuietHours() && !Settings.TimeManagement.IsExceptionCategory(alarm.Categories);
+        
         if (Alarm.IsAudible && !tooLateForAudio)
         {
-            if (bypassAudio)
+            if (inQuietHours)
             {
                 if (Settings.TimeManagement.ExceptionCategories.Intersect(Alarm.Categories).Any())
                     PlayAudio();

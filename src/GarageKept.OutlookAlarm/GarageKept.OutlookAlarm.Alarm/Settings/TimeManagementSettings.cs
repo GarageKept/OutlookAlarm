@@ -170,7 +170,7 @@ public class TimeManagementSettings : SettingsBase
     ///     Checks to see if we should bypass playing audio. Checks if we are outside of work hours or it is a holiday
     /// </summary>
     /// <returns>true if we are outside of work hours or it is a holiday</returns>
-    public bool BypassAudio()
+    public bool InQuietHours()
     {
         if (!EnableOnlyWorkingPeriods) return false;
 
@@ -207,7 +207,7 @@ public class TimeManagementSettings : SettingsBase
     /// </summary>
     /// <param name="time">The time to check.</param>
     /// <returns><c>true</c> if the time is within the working period; otherwise, <c>false</c>.</returns>
-    public bool IsDuringWorkingHours(DateTime time)
+    private bool IsDuringWorkingHours(DateTime time)
     {
         if (!WorkDays.Contains(time.DayOfWeek)) return false;
 
@@ -223,7 +223,12 @@ public class TimeManagementSettings : SettingsBase
     /// </summary>
     /// <param name="date">The date to check.</param>
     /// <returns><c>true</c> if the date is a holiday; otherwise, <c>false</c>.</returns>
-    public bool IsHoliday(DateTime date) { return Holidays.Any(holiday => holiday.Date.Date == date.Date); }
+    private bool IsHoliday(DateTime date) { return Holidays.Any(holiday => holiday.Date.Date == date.Date); }
 
     private void WorkDays_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) { Save?.Invoke(); }
+
+    public bool IsExceptionCategory(IEnumerable<string> alarmCategories)
+    {
+        return alarmCategories.Intersect(ExceptionCategories).Any();
+    }
 }

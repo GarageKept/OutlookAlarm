@@ -112,20 +112,36 @@ public partial class AlarmControl : UserControl, IAlarmControl
     {
         if (Alarm is null) return;
 
-        Icon icon;
-
         if (Alarm.IsAudible)
         {
             using var memoryStream = new MemoryStream(Resources.bell);
-            icon = new Icon(memoryStream);
+            var icon = new Icon(memoryStream);
+
+            if (Settings.TimeManagement.InQuietHours() && !Settings.TimeManagement.IsExceptionCategory(Alarm.Categories))
+            {
+                var desiredColor = Color.Red; // Replace with your desired color
+                var coloredBitmap = new Bitmap(icon.Width, icon.Height);
+
+                using var graphics = Graphics.FromImage(coloredBitmap);
+                graphics.Clear(desiredColor);
+                graphics.DrawIcon(icon, 0, 0);
+
+                AudioPictureBox.Image = coloredBitmap;
+            }
+            else
+            {
+                AudioPictureBox.Image = icon.ToBitmap();
+            }
+
+
         }
         else
         {
             using var memoryStream = new MemoryStream(Resources.bell_slash);
-            icon = new Icon(memoryStream);
-        }
+            var icon = new Icon(memoryStream);
 
-        AudioPictureBox.Image = icon.ToBitmap();
+            AudioPictureBox.Image = icon.ToBitmap();
+        }
     }
 
     private void SetBackgroundColor()

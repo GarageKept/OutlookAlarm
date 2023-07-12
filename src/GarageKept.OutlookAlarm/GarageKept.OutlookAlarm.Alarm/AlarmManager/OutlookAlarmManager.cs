@@ -102,13 +102,10 @@ public sealed class OutlookAlarmManager : IAlarmManager
 
     private void AlarmCallback(object? state)
     {
-        if (state is null) return;
-
         if (state is not IAlarm alarm) return;
 
         if (alarm.IsReminderEnabled)
         {
-            // Launch alarm window or perform related actions
             // Launch alarm window or perform related actions
             var alarmWindow = Program.ServiceProvider?.GetRequiredService<IAlarmForm>();
             Application.OpenForms[0]?.Invoke(delegate { alarmWindow?.Show(alarm); });
@@ -187,7 +184,7 @@ public sealed class OutlookAlarmManager : IAlarmManager
         return new Timer(AlarmCallback, alarm, timeToLaunch, Timeout.InfiniteTimeSpan);
     }
 
-    public IEnumerable<IAlarm> GetActiveAlarms() { return Alarms.Values.Where(a => a.IsActive).OrderBy(a => a.Start); }
+    private IEnumerable<IAlarm> GetActiveAlarms() { return Alarms.Values.Where(a => a.IsActive).OrderBy(a => a.Start); }
 
     private IEnumerable<IAlarm> GetAlarmsFromSource(int hours)
     {

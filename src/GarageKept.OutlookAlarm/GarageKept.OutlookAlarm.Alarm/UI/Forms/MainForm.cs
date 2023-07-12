@@ -63,7 +63,23 @@ public partial class MainForm : BaseForm, IMainForm
     private IAlarmManager AlarmManager { get; }
     private IAlarmContainerControl ContainerControl { get; }
 
-    public void UpdateAlarms(IEnumerable<IAlarm> alarms) { ContainerControl.Alarms = alarms; }
+    public void UpdateAlarms(IEnumerable<IAlarm> alarms)
+    {
+        ContainerControl.Alarms = alarms;
+
+        Invoke(()=>{
+
+            // We are hidden
+            if (Top > -Height + Settings.Main.BarSize)
+                Top = -Height + Settings.Main.BarSize;
+
+            // we are off the top dock
+            if (Top < 0)
+                Top = -Height + Settings.Main.BarSize;
+
+            CheckMouseLeaveForm();
+        });
+    }
 
     /// <summary>
     ///     Subscribes to MouseEnter and MouseLeave events for each child control.
@@ -110,7 +126,14 @@ public partial class MainForm : BaseForm, IMainForm
 
     private void MainForm_Activated(object sender, EventArgs e)
     {
-        Top = 0;
+        // We are hidden
+        if (Top > -Height + Settings.Main.BarSize)
+            Top = -Height + Settings.Main.BarSize;
+
+        // we are off the top dock
+        if (Top < 0)
+            Top = -Height + Settings.Main.BarSize;
+
         TopLevel = true;
     }
 
@@ -248,6 +271,4 @@ public partial class MainForm : BaseForm, IMainForm
             Location = new Point(Location.X, Location.Y + step);
         }
     }
-
-
 }
